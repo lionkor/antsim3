@@ -36,16 +36,26 @@
 
 #endif // NOTIMPL
 
-#define FILENAME basename(__FILE__)
+#define FILE_C_STRING std::string(__FILE__).data()
+#define FILENAME (std::string(basename(FILE_C_STRING)))
 #define nameof(x) #x
-#define report(x) std::cout << ANSI_WHITE_BOLD << "[INFO] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl;
-#define report_warning(x) std::cout << ANSI_YELLOW_BOLD << "[WARN] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl;
-#define report_error(x) std::cout << ANSI_RED_BOLD << "[ERROR] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl;
+
+#define TRACE 0
+#if TRACE
+#define report_trace(x) std::cout << ANSI_WHITE << "[TRACE] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
+#else
+#define report_trace(x)
+#endif
+
+#define report(x) std::cout << ANSI_WHITE_BOLD << "[INFO] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
+#define report_warning(x) std::cout << ANSI_YELLOW_BOLD << "[WARN] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
+#define report_error(x) std::cout << ANSI_RED_BOLD << "[ERROR] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
 
 #ifndef ASSERT
 #define ASSERT(cond) _assert(__FILE__, __PRETTY_FUNCTION__, __LINE__, #cond, (cond))
 #define ASSERT_NOT_REACHABLE() _assert(__FILE__, __PRETTY_FUNCTION__, __LINE__, "reached unreachable code", false)
 
+#define DEBUG 1 // TODO: CHANGE ME!
 inline void _assert(const char* file, const char* function, unsigned line,
     const char* condition_string, bool result) {
     if (!result) {
