@@ -5,6 +5,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -Weverything -Wno-c++98
 
 project(antsim3)
 
-add_executable(${CMAKE_PROJECT_NAME} main.cpp)
+add_executable(${CMAKE_PROJECT_NAME} main.cpp
+    Tool.cpp
+    ext_sf.cpp
+    GameWindow.cpp
+    IEventReceiver.cpp
+    EventDispatcher.cpp
+    Event.cpp
+)
 
-#target_link_libraries(${CMAKE_PROJECT_NAME} )
+target_link_libraries(${CMAKE_PROJECT_NAME} 
+    sfml-graphics 
+    sfml-window 
+    sfml-system
+)

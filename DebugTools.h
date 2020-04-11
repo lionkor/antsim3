@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <libgen.h>
+#include <iostream>
 
 #define ANSI_RESET "\u001b[0m"
 
@@ -50,6 +51,8 @@
 #define report(x) std::cout << ANSI_WHITE_BOLD << "[INFO] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
 #define report_warning(x) std::cout << ANSI_YELLOW_BOLD << "[WARN] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
 #define report_error(x) std::cout << ANSI_RED_BOLD << "[ERROR] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
+
+#define report_function() report(ANSI_RESET << ANSI_UNDERLINE << __PRETTY_FUNCTION__ << ANSI_RESET << ANSI_WHITE_BOLD << " was called!")
 
 #ifndef ASSERT
 #define ASSERT(cond) _assert(__FILE__, __PRETTY_FUNCTION__, __LINE__, #cond, (cond))
