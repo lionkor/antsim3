@@ -8,6 +8,7 @@
 #include "DebugTools.h"
 #include <type_traits>
 #include <tuple>
+#include <ostream>
 
 template<typename T, std::enable_if_t<std::is_integral<T>::value, int> = 0>
 struct vec {
@@ -63,6 +64,14 @@ struct vec {
     inline vec<T>& operator/=(const AnyNumberT& i) {
         return *this *= static_cast<AnyNumberT>(1) / i;
     }
+
+    template<typename TT>
+    friend std::ostream& operator<<(std::ostream&, const vec<TT>&);
 };
 
 #endif // VEC_H
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const vec<T>& vec) {
+    return os << "(" << vec.x << "," << vec.y << ")";
+}
