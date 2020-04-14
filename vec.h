@@ -64,14 +64,6 @@ struct vec {
     inline vec<T>& operator/=(const AnyNumberT& i) {
         return *this *= static_cast<AnyNumberT>(1) / i;
     }
-
-    template<typename TT>
-    friend std::ostream& operator<<(std::ostream&, const vec<TT>&);
 };
 
 #endif // VEC_H
-
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const vec<T>& vec) {
-    return os << "(" << vec.x << "," << vec.y << ")";
-}
