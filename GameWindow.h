@@ -50,8 +50,7 @@ protected:
     void zoom_view_at(sf::Vector2i pixel, float zoom);
 
 public:
-    virtual ~GameWindow() {}
-
+    
     typedef boost::shared_ptr<GameWindow> Pointer;
 
     static GameWindow::Pointer create(const std::string& title, sf::Vector2u size);

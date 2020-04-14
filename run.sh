@@ -1,5 +1,6 @@
 #!/bin/sh
 mkdir -p build
+rm -f ./build/antsim3
 echo "-> building..."
 cd build
 cmake ..

@@ -5,14 +5,17 @@
 
 #include "DebugTools.h"
 #include "GameWindow.h"
+#include "World.h"
 
 
 int main(int, char**) {
     try {
         GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
+        World world(30, 20);
 
         while (window->isOpen()) {
             window->clear();
+            world.tick();
             window->draw(sf::RectangleShape({ 200, 100 }), sf::Transform().translate(10, 10));
             window->internal_draw();
             window->display();

@@ -66,7 +66,9 @@ void GameWindow::handle_mouse_button_press() {
         m_mmb_pressed = true;
     } else if (m_event.mouseButton.button == sf::Mouse::Left) {
         Event e;
-        report("dispatching event " << &e);
+        report("dispatching event " << e);
+        e.accept();
+        report("after accepting: " << e);
         m_dispatcher.dispatch(e);
     }
 }
@@ -96,7 +98,7 @@ EventDispatcher& GameWindow::dispatcher() {
 }
 
 std::stringstream GameWindow::to_stream() const {
-    auto ss = Object::to_stream();
+    auto ss   = Object::to_stream();
     auto size = getSize();
     ss << "width=" << size.x << ";";
     ss << "height=" << size.y << ";";
@@ -121,11 +123,11 @@ std::stringstream Widget::to_stream() const {
     auto ss = Object::to_stream();
     if (m_parent)
         ss << "parent=" << *m_parent << ";";
-    else 
+    else
         ss << "parent=nullptr;";
-    if (m_master) 
+    if (m_master)
         ss << "master=" << *m_master << ";";
-    else 
+    else
         ss << "master=nullptr;";
     return ss;
 }

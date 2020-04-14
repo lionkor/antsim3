@@ -12,6 +12,8 @@ add_executable(${CMAKE_PROJECT_NAME} main.cpp
     IEventReceiver.cpp
     EventDispatcher.cpp
     Event.cpp
+    World.cpp
+    Cell.cpp
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME} 
