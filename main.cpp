@@ -11,7 +11,7 @@
 int main(int, char**) {
     try {
         GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
-        World world(30, 20);
+        World               world(10, 10);
 
         while (window->isOpen()) {
             window->clear();

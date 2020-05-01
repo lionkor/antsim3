@@ -80,7 +80,7 @@ protected:
 
 public:
     CopyableObject(const CopyableObject&) {}
-    CopyableObject& operator=(const CopyableObject&) {}
+    CopyableObject& operator=(const CopyableObject&) { return *this; }
 
     virtual inline bool operator==(const Object& other) const = 0;
     virtual inline bool operator!=(const Object& other) const = 0;

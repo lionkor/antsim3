@@ -10,6 +10,8 @@ void World::resize(vec<size_t> new_size) {
         for (size_t y = 0; y < new_size.y; ++y) {
             Cell& cell = cell_at(x, y).value();
             cell       = std::move(Cell({ x, y }, *this));
+            if (Random::chance(50))
+                cell.kill();
         }
 }
 
@@ -57,11 +59,15 @@ boost::optional<boost::reference_wrapper<Cell> > World::find_empty_neighbor(size
             auto result = cell_at(size_t(int(x) + i), size_t(int(y) + k));
             if (result.has_value()) {
                 Cell& cell = result.value();
-                found_cells.push_back(&cell);
+                if (cell.alive())
+                    found_cells.push_back(&cell);
             }
         }
     }
-    return boost::ref(*Random::random_from(found_cells));
+    if (found_cells.size() != 0)
+        return boost::ref(*Random::random_from(found_cells));
+    else
+        return boost::none;
 }
 
 std::stringstream World::to_stream() const {

@@ -29,6 +29,12 @@
 #define ANSI_BOLD "\u001b[1m"
 #define ANSI_UNDERLINE "\u001b[4m"
 
+#include <string>
+
+inline std::string bool_str(bool b) {
+    return b ? "true" : "false";
+}
+
 #ifndef NOTIMPL
 #define NOTIMPL                                                                    \
     fprintf(stderr, "%s%s called but not implemented / unfinished in %s%s:%u%s\n", \
@@ -41,7 +47,7 @@
 #define FILENAME (std::string(basename(FILE_C_STRING)))
 #define nameof(x) #x
 
-#define TRACE 0
+#define TRACE 1
 #if TRACE
 #define report_trace(x) std::cout << ANSI_WHITE << "[TRACE] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
 #else

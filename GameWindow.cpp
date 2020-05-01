@@ -54,6 +54,7 @@ void GameWindow::handle_events() {
                 zoom_view_at({ m_event.mouseWheelScroll.x, m_event.mouseWheelScroll.y }, (1.f / 1.1f));
             else if (m_event.mouseWheelScroll.delta < 0)
                 zoom_view_at({ m_event.mouseWheelScroll.x, m_event.mouseWheelScroll.y }, 1.1f);
+            break;
         }
         default:
             report_trace("not handled: " << m_event.type);
@@ -91,7 +92,8 @@ void GameWindow::handle_key_press() {
     }
 }
 
-void GameWindow::internal_draw() {}
+void GameWindow::internal_draw() {
+}
 
 EventDispatcher& GameWindow::dispatcher() {
     return m_dispatcher;
@@ -109,14 +111,12 @@ Widget::Widget(Widget& parent)
     : IEventReceiver(parent.m_master->dispatcher())
     , m_parent(&parent)
     , m_master(parent.m_master) {
-    report(__PRETTY_FUNCTION__ << " called");
 }
 
 Widget::Widget(GameWindow& master)
     : IEventReceiver(master.dispatcher())
     , m_parent(nullptr)
     , m_master(&master) {
-    report(__PRETTY_FUNCTION__ << " called");
 }
 
 std::stringstream Widget::to_stream() const {
