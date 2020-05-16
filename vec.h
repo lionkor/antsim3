@@ -6,27 +6,34 @@
  */
 
 #include "DebugTools.h"
+#include "Object.h"
 #include <type_traits>
 #include <tuple>
 #include <ostream>
 
-template<typename T, std::enable_if_t<std::is_integral<T>::value, int> = 0>
-struct vec {
+template<typename T>
+struct vec : public CopyableObject {
+    OBJECT(vec)
+
     T x;
     T y;
 
-    vec(T _x, T _y)
-        : x(_x), y(_y) {}
+    template<typename Vector2DT>
+    vec(const Vector2DT& v)
+        : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)) { }
 
-    vec(T val)
-        : x(val), y(val) {}
+    vec(T _x, T _y)
+        : x(static_cast<T>(_x)), y(static_cast<T>(_y)) { }
+
+    explicit vec(T val)
+        : x(static_cast<T>(val)), y(static_cast<T>(val)) { }
 
     inline std::tuple<T, T> get() const { return std::tie(x, y); }
 
-    template<class IndexT, std::enable_if_t<std::is_integral<T>::value, int> = 0>
+    template<class IndexT>
     inline T& operator[](IndexT index) { return index == static_cast<IndexT>(0) ? x : y; }
 
-    template<class IndexT, std::enable_if_t<std::is_integral<T>::value, int> = 0>
+    template<class IndexT>
     inline T operator[](IndexT index) const { return index == static_cast<IndexT>(0) ? x : y; }
 
     inline bool operator==(const vec& v) const { return std::tie(x, y) == std::tie(v.x, v.y); }
@@ -64,6 +71,17 @@ struct vec {
     inline vec<T>& operator/=(const AnyNumberT& i) {
         return *this *= static_cast<AnyNumberT>(1) / i;
     }
+
+    // Object interface
+public:
+    virtual std::stringstream to_stream() const override {
+        auto ss = CopyableObject::to_stream();
+        ss << "x=" << x << ";"
+           << "y=" << y << ";";
+        return ss;
+    }
+    virtual bool operator ==(const Object&) const override { return false; }
+    virtual bool operator !=(const Object&) const override { return true; }
 };
 
 #endif // VEC_H

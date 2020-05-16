@@ -6,6 +6,8 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <sstream>
 
+#define SHOW_UUID 0
+
 #include "DebugTools.h"
 
 /*
@@ -35,15 +37,12 @@ protected:
     }
 
 public:
-    virtual ~Object() {
-    }
-
     Object(const Object&) = delete;
 
     inline Object& operator=(const Object&) = delete;
 
     Object(Object&& other)
-        : m_uuid(std::move(other.m_uuid)) {}
+        : m_uuid(std::move(other.m_uuid)) { }
 
     inline Object& operator=(Object&& other) {
         m_uuid = std::move(other.m_uuid);
@@ -60,7 +59,9 @@ public:
     virtual std::string       class_name() const = 0;
     virtual std::stringstream to_stream() const {
         std::stringstream ss;
+#if SHOW_UUID
         ss << "uuid=" << boost::uuids::to_string(m_uuid) << ";";
+#endif // SHOW_UUID
         return ss;
     }
 
@@ -76,10 +77,10 @@ class CopyableObject
 {
 protected:
     CopyableObject()
-        : Object() {}
+        : Object() { }
 
 public:
-    CopyableObject(const CopyableObject&) {}
+    CopyableObject(const CopyableObject&) { }
     CopyableObject& operator=(const CopyableObject&) { return *this; }
 
     virtual inline bool operator==(const Object& other) const = 0;

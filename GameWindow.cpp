@@ -3,8 +3,9 @@
 
 GameWindow::GameWindow(const std::string& title, sf::Vector2u size)
     : sf::RenderWindow(sf::VideoMode(size.x, size.y), title)
-    , m_main_widget(*this) {
-    setFramerateLimit(60);
+    , m_surface(*this)
+    , m_fps_logger("fps.csv") {
+    //setFramerateLimit(60);
 }
 
 void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {
@@ -66,11 +67,12 @@ void GameWindow::handle_mouse_button_press() {
     if (m_event.mouseButton.button == sf::Mouse::Middle) {
         m_mmb_pressed = true;
     } else if (m_event.mouseButton.button == sf::Mouse::Left) {
+        vec<int>    screen_pos(m_event.mouseButton);
+        vec<double> world_pos = mapPixelToCoords({ screen_pos.x, screen_pos.y });
+        if (on_left_click)
+            on_left_click(world_pos);
         Event e;
-        report("dispatching event " << e);
-        e.accept();
-        report("after accepting: " << e);
-        m_dispatcher.dispatch(e);
+        dispatch(e);
     }
 }
 
@@ -93,10 +95,8 @@ void GameWindow::handle_key_press() {
 }
 
 void GameWindow::internal_draw() {
-}
-
-EventDispatcher& GameWindow::dispatcher() {
-    return m_dispatcher;
+    auto time = m_fps_clock.restart();
+    m_fps_logger.log_fps(1 / time.asSeconds());
 }
 
 std::stringstream GameWindow::to_stream() const {
@@ -108,13 +108,13 @@ std::stringstream GameWindow::to_stream() const {
 }
 
 Widget::Widget(Widget& parent)
-    : IEventReceiver(parent.m_master->dispatcher())
+    : IEventReceiver(static_cast<EventDispatcher&>(*parent.m_master))
     , m_parent(&parent)
     , m_master(parent.m_master) {
 }
 
 Widget::Widget(GameWindow& master)
-    : IEventReceiver(master.dispatcher())
+    : IEventReceiver(static_cast<EventDispatcher&>(master))
     , m_parent(nullptr)
     , m_master(&master) {
 }

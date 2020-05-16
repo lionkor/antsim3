@@ -1,17 +1,19 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include "DebugTools.h"
-#include "Object.h"
-
 #include <boost/container/vector.hpp>
-
-#include "vec.h"
-#include "Cell.h"
-
+#include <boost/container/set.hpp>
 #include <boost/ref.hpp>
 #include <boost/optional.hpp>
 
+#include "DebugTools.h"
+#include "Object.h"
+#include "vec.h"
+#include "IHittable.h"
+#include "PhysicalObject.h"
+#include "GameWindow.h"
+
+class RayHit;
 
 class World
     : public Object
@@ -19,26 +21,25 @@ class World
     OBJECT(World)
 
 private:
-    boost::container::vector<Cell> m_cells;
-    vec<size_t>                    m_size;
-    
+    // FIXME: This should really be a map, but maybe one that isn't slow?
+    boost::container::vector<std::unique_ptr<PhysicalObject>> m_objects;
+    boost::container::set<const PhysicalObject*>              m_selected_objects;
+
 public:
-    World(size_t width, size_t height);
-    
-    void resize(vec<size_t> new_size);
+    World();
+    virtual ~World() { }
 
-    // advances the simulation one step
-    void tick();
+    void     add_object(PhysicalObject* obj);
+    RayHit&& try_hit(const vec<double>& pos);
+    auto     begin() { return m_objects.begin(); }
+    auto     begin() const { return m_objects.begin(); }
+    auto     end() { return m_objects.begin(); }
+    auto     end() const { return m_objects.begin(); }
 
-    bool set_cell_at(const vec<size_t>& pos, Cell cell);
+    void extend_selection(const PhysicalObject*);
+    void reduce_selection(const PhysicalObject*);
 
-    boost::optional<boost::reference_wrapper<Cell>> cell_at(size_t x, size_t y);
-    boost::optional<Cell>                           cell_at(size_t x, size_t y) const;
-
-    boost::optional<boost::reference_wrapper<Cell>> find_empty_neighbor(const vec<size_t>& pos);
-    boost::optional<boost::reference_wrapper<Cell>> find_empty_neighbor(size_t x, size_t y);
-    
-    inline vec<size_t> size() const { return m_size; }
+    void update(GameWindow&);
 
     // Object interface
 public:

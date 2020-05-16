@@ -6,9 +6,8 @@
 
 class IEventReceiver;
 
-class EventDispatcher : public Object
+class EventDispatcher
 {
-    OBJECT(EventDispatcher)
 private:
     boost::container::deque<IEventReceiver*> m_receivers;
 
@@ -22,10 +21,6 @@ public:
     void register_receiver(IEventReceiver&);
     void unregister_receiver(IEventReceiver&);
     void dispatch(Event&);
-    
-    // Object interface
-public:
-    virtual std::stringstream to_stream() const override;
 };
 
 #endif // EVENTDISPATCHER_H

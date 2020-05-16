@@ -13,16 +13,14 @@ IEventReceiver::~IEventReceiver() {
     m_dispatcher.unregister_receiver(*this);
 }
 
-bool IEventReceiver::operator==(const IEventReceiver& e) {
+bool IEventReceiver::operator==(const IEventReceiver& e) const {
     return m_uuid == e.m_uuid;
 }
 
-bool IEventReceiver::operator!=(const IEventReceiver& e) {
+bool IEventReceiver::operator!=(const IEventReceiver& e) const {
     return !(*this == e);
 }
 
 void IEventReceiver::handle(Event& e) {
-    report_function();
-    e.accept();
-    report("event received!");
+    report_warning("event received but not handled (using this default handler): " << e);
 }

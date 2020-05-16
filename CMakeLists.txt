@@ -14,6 +14,20 @@ add_executable(${CMAKE_PROJECT_NAME} main.cpp
     Event.cpp
     World.cpp
     Cell.cpp
+    Ray.cpp
+    PhysicalObject.cpp
+    Draw.cpp
+    Tool.h
+    ext_sf.h
+    GameWindow.h
+    IEventReceiver.h
+    EventDispatcher.h
+    Event.h
+    World.h
+    Cell.h
+    Ray.h
+    PhysicalObject.h
+    Draw.h
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME} 

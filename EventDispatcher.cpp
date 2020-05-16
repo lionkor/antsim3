@@ -19,15 +19,9 @@ void EventDispatcher::unregister_receiver(IEventReceiver& recv) {
 void EventDispatcher::dispatch(Event& event) {
     for (auto& recv : m_receivers) {
         if (event.accepted()) {
-            report("accepted, breaking");
+            report_trace("accepted, breaking");
             break;
         }
         recv->handle(event);
     }
-}
-
-std::stringstream EventDispatcher::to_stream() const {
-    auto ss = Object::to_stream();
-    ss << "receiver_count=" << m_receivers.size() << ";";
-    return ss;
 }

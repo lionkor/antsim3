@@ -31,10 +31,6 @@
 
 #include <string>
 
-inline std::string bool_str(bool b) {
-    return b ? "true" : "false";
-}
-
 #ifndef NOTIMPL
 #define NOTIMPL                                                                    \
     fprintf(stderr, "%s%s called but not implemented / unfinished in %s%s:%u%s\n", \
