@@ -23,12 +23,10 @@ RayHit&& World::try_hit(const vec<double>& pos) {
 }
 
 void World::extend_selection(const PhysicalObject* ptr) {
-    report("extended by: " << *ptr);
     m_selected_objects.insert(ptr);
 }
 
 void World::reduce_selection(const PhysicalObject* ptr) {
-    report("reduced by: " << *ptr);
     m_selected_objects.erase(ptr);
 }
 

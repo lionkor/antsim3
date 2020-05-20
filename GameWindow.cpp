@@ -5,7 +5,7 @@ GameWindow::GameWindow(const std::string& title, sf::Vector2u size)
     : sf::RenderWindow(sf::VideoMode(size.x, size.y), title)
     , m_surface(*this)
     , m_fps_logger("fps.csv") {
-    //setFramerateLimit(60);
+    setFramerateLimit(120);
 }
 
 void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {
@@ -96,7 +96,9 @@ void GameWindow::handle_key_press() {
 
 void GameWindow::internal_draw() {
     auto time = m_fps_clock.restart();
-    m_fps_logger.log_fps(1 / time.asSeconds());
+    auto val  = 1.0 / time.asSeconds();
+    if (val < 140)
+        m_fps_logger.log_fps(1.0 / time.asSeconds());
 }
 
 std::stringstream GameWindow::to_stream() const {

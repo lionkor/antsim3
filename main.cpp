@@ -33,6 +33,7 @@ public:
                 color = Color::Magenta;
             else
                 color = Color::Green;
+            // FIXME: Why is this the way I chose to do it?!
             surface.update_rectangle(m_index, Rectangle(m_pos, m_size), color);
             m_changed = false;
         }
@@ -63,7 +64,7 @@ int main(int, char**) {
 
         for (int i = 0; i < 1000; i += 10) {
             for (int k = 0; k < 1000; k += 10) {
-                world.add_object(new SelectableObject(vec<double>(i, k), vec<double>(9, 9), world));
+                world.add_object(new SelectableObject(vec<double>(i, k), vec<double>(10, 10), world));
             }
         }
 
