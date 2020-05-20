@@ -22,5 +22,5 @@ bool IEventReceiver::operator!=(const IEventReceiver& e) const {
 }
 
 void IEventReceiver::handle(Event& e) {
-    report_warning("event received but not handled (using this default handler): " << e);
+    report_warning("event received but not handled (using this default handler): ", e);
 }

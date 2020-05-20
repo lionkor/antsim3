@@ -45,16 +45,16 @@
 
 #define TRACE 1
 #if TRACE
-#define report_trace(x) std::cout << ANSI_WHITE << "[TRACE] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
+#define report_trace(...) std::cout << String::format("[TRACE] in ", FILENAME, ":", __LINE__, " in ", __FUNCTION__, ": ", __VA_ARGS__, ANSI_RESET) << std::endl
 #else
 #define report_trace(x)
 #endif
 
-#define report(x) std::cout << ANSI_WHITE_BOLD << "[INFO] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
-#define report_warning(x) std::cout << ANSI_YELLOW_BOLD << "[WARN] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
-#define report_error(x) std::cout << ANSI_RED_BOLD << "[ERROR] in " << FILENAME << ":" << __LINE__ << " in " << __FUNCTION__ << ": " << x << ANSI_RESET << std::endl
+#define report(...) std::cout << String::format(ANSI_WHITE_BOLD, "[INFO] in ", FILENAME, ":", __LINE__, " in ", __FUNCTION__, ": ", __VA_ARGS__, ANSI_RESET) << std::endl
+#define report_warning(...) std::cout << String::format(ANSI_YELLOW_BOLD, "[WARNING] in ", FILENAME, ":", __LINE__, " in ", __FUNCTION__, ": ", __VA_ARGS__, ANSI_RESET) << std::endl
+#define report_error(...) std::cout << String::format(ANSI_RED_BOLD, "[ERROR] in ", FILENAME, ":", __LINE__, " in ", __FUNCTION__, ": ", __VA_ARGS__, ANSI_RESET) << std::endl
 
-#define report_function() report(ANSI_RESET << ANSI_UNDERLINE << __PRETTY_FUNCTION__ << ANSI_RESET << ANSI_WHITE_BOLD << " was called!")
+#define report_function() report(ANSI_RESET, ANSI_UNDERLINE, __PRETTY_FUNCTION__, ANSI_RESET, ANSI_WHITE_BOLD, " was called!")
 
 #ifndef ASSERT
 #define ASSERT(cond) _assert(__FILE__, __PRETTY_FUNCTION__, __LINE__, #cond, (cond))

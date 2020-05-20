@@ -11,6 +11,8 @@
 #include "Ray.h"
 #include "Draw.h"
 
+#include <String.h>
+
 class Widget
     : public Object,
       public IEventReceiver
@@ -27,7 +29,7 @@ public:
     // IEventReceiver interface
 public:
     virtual void handle(Event& e) override {
-        report(__PRETTY_FUNCTION__ << " called with " << e);
+        report(__PRETTY_FUNCTION__, " called with ", e);
     }
 
     // Object interface
@@ -41,7 +43,7 @@ private:
     std::ofstream m_file;
 
 public:
-    FpsLogger(std::string filename) {
+    FpsLogger(String filename) {
         m_file = std::ofstream(filename);
     }
     ~FpsLogger() {
@@ -62,7 +64,7 @@ class GameWindow
 {
     OBJECT(GameWindow)
 protected:
-    GameWindow(const std::string& title, sf::Vector2u size);
+    GameWindow(const String& title, sf::Vector2u size);
 
     sf::Event    m_event;
     sf::Vector2i m_mouse_pos;
@@ -76,7 +78,7 @@ protected:
 public:
     typedef boost::shared_ptr<GameWindow> Pointer;
 
-    static GameWindow::Pointer create(const std::string& title, sf::Vector2u size);
+    static GameWindow::Pointer create(const String& title, sf::Vector2u size);
 
     void handle_events();
     void handle_mouse_button_press();

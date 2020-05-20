@@ -77,6 +77,6 @@ int main(int, char**) {
         }
 
     } catch (std::exception& e) {
-        report_error("fatal exception occured: " << e.what());
+        report_error("fatal exception occured: ", e.what());
     }
 }

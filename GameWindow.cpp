@@ -1,8 +1,8 @@
 #include "GameWindow.h"
 #include "DebugTools.h"
 
-GameWindow::GameWindow(const std::string& title, sf::Vector2u size)
-    : sf::RenderWindow(sf::VideoMode(size.x, size.y), title)
+GameWindow::GameWindow(const String& title, sf::Vector2u size)
+    : sf::RenderWindow(sf::VideoMode(size.x, size.y), title.as_std_string())
     , m_surface(*this)
     , m_fps_logger("fps.csv") {
     setFramerateLimit(120);
@@ -19,7 +19,7 @@ void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {
     setView(view);
 }
 
-GameWindow::Pointer GameWindow::create(const std::string& title, sf::Vector2u size) {
+GameWindow::Pointer GameWindow::create(const String& title, sf::Vector2u size) {
     return Pointer(new GameWindow(title, size));
 }
 
@@ -31,7 +31,7 @@ void GameWindow::handle_events() {
             close();
             break;
         case sf::Event::KeyPressed:
-            report_trace(nameof(sf::Event::KeyPressed) << " with key.code=" << m_event.key.code);
+            report_trace(nameof(sf::Event::KeyPressed), " with key.code=", m_event.key.code);
             handle_key_press();
             break;
         case sf::Event::MouseButtonPressed:
@@ -58,7 +58,7 @@ void GameWindow::handle_events() {
             break;
         }
         default:
-            report_trace("not handled: " << m_event.type);
+            report_trace("not handled: ", m_event.type);
         }
     }
 }
@@ -90,7 +90,7 @@ void GameWindow::handle_key_press() {
         close();
         break;
     default:
-        report_trace("not handled: " << m_event.key.code);
+        report_trace("not handled: ", m_event.key.code);
     }
 }
 
