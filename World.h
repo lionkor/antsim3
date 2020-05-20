@@ -16,6 +16,8 @@
 
 class RayHit;
 
+
+/// The world manages all physical objects.
 class World
     : public Object,
       public boost::enable_shared_from_this<World>
@@ -34,18 +36,29 @@ public:
 
     typedef boost::shared_ptr<World> Pointer;
 
+    /// Constructs a new world.
     static World::Pointer create();
 
-    void     add_object(PhysicalObject* obj);
+    /// Takes ownership of the passed (new-allocated) pointer `obj`.
+    void add_object(PhysicalObject* obj);
+    /// Generates a Ray at the position, returns the RayHit describing what was hit.
     RayHit&& try_hit(const vec<double>& pos);
-    auto     begin() { return m_objects.begin(); }
-    auto     begin() const { return m_objects.begin(); }
-    auto     end() { return m_objects.begin(); }
-    auto     end() const { return m_objects.begin(); }
+    /// Begin of the container holding all objects.
+    auto begin() { return m_objects.begin(); }
+    /// Begin of the container holding all objects.
+    auto begin() const { return m_objects.begin(); }
+    /// End of the container holding all objects.
+    auto end() { return m_objects.begin(); }
+    /// End of the container holding all objects.
+    auto end() const { return m_objects.begin(); }
 
+    /// Extends the internal set of selected objects by this object.
+    /// Inserting the same object multiple times has no effect.
     void extend_selection(const PhysicalObject*);
+    /// Reduces the internal set of selected objects by this object.
     void reduce_selection(const PhysicalObject*);
 
+    /// Updates the world and calls into the window to update, too.
     void update(GameWindow&);
 
     // Object interface

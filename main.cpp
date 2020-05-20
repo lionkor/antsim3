@@ -59,8 +59,11 @@ public:
 
 int main(int, char**) {
     try {
-        GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
-        World::Pointer      world  = World::create();
+        GameWindow::Pointer window;
+        {
+            window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
+        }
+        World::Pointer world = World::create();
 
         for (int i = 0; i < 1000; i += 10) {
             for (int k = 0; k < 1000; k += 10) {
@@ -74,6 +77,7 @@ int main(int, char**) {
 
         while (window->isOpen()) {
             world->update(*window);
+            report_error(window->title());
         }
 
     } catch (std::exception& e) {

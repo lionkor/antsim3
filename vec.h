@@ -1,16 +1,13 @@
 #ifndef VEC_H
 #define VEC_H
 
-/*
- * really simple vector struct for 2d vectors
- */
-
 #include "DebugTools.h"
 #include "Object.h"
 #include <type_traits>
 #include <tuple>
 #include <ostream>
 
+/// Minimal 2D-vector struct.
 template<typename T>
 struct vec : public CopyableObject {
     OBJECT(vec)

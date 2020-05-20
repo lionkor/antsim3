@@ -4,7 +4,8 @@
 GameWindow::GameWindow(const String& title, sf::Vector2u size)
     : sf::RenderWindow(sf::VideoMode(size.x, size.y), title.as_std_string())
     , m_surface(*this)
-    , m_fps_logger("fps.csv") {
+    , m_fps_logger("fps.csv")
+    , m_title(title) {
     setFramerateLimit(120);
 }
 
@@ -99,6 +100,15 @@ void GameWindow::internal_draw() {
     auto val  = 1.0 / time.asSeconds();
     if (val < 140)
         m_fps_logger.log_fps(1.0 / time.asSeconds());
+}
+
+const String& GameWindow::title() const {
+    return m_title;
+}
+
+void GameWindow::set_title(const String& title) {
+    m_title = title;
+    setTitle(title.as_std_string());
 }
 
 std::stringstream GameWindow::to_stream() const {
