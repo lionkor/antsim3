@@ -43,15 +43,13 @@ class GameWindow;
 
 class DrawSurface
 {
-
     struct DrawRectangle {
         sf::Vertex vertices[4];
     };
 
-    GameWindow&                          m_window;
-    boost::container::vector<sf::Vertex> m_verts;
-    std::unique_ptr<sf::VertexBuffer>    m_vb;
-    bool                                 m_changed { true };
+    GameWindow&                             m_window;
+    boost::container::vector<DrawRectangle> m_rects;
+    boost::container::vector<std::size_t>   m_changed_indices;
 
 public:
     DrawSurface(GameWindow& window);

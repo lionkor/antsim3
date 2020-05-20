@@ -3,6 +3,8 @@
 #include "Random.h"
 #include "Ray.h"
 
+#include <boost/range/algorithm/find_if.hpp>
+
 World::World() {
 }
 
@@ -37,10 +39,25 @@ void World::reduce_selection(const PhysicalObject* ptr) {
 void World::update(GameWindow& window) {
     window.clear();
     window.internal_draw();
-
+    
+    // FIXME: This might be slow
+    for (auto& obj : m_objects) {
+        obj->try_update();
+    }
+    
+    const auto find_destroyed_pred = [&](const auto& obj) -> bool {
+        return obj->destroyed();
+    };
+    
+    auto iter = boost::find_if(m_objects, find_destroyed_pred);
+    while (iter != m_objects.end()) {
+        m_objects.erase(iter);
+        iter = boost::find_if(m_objects, find_destroyed_pred);
+    }
+    
     auto& surface = window.surface();
     for (auto& obj : m_objects) {
-        obj->draw(surface);
+        obj->try_draw(surface);
     }
     surface.finalize();
 
