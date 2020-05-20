@@ -6,6 +6,10 @@
 World::World() {
 }
 
+World::Pointer World::create() {
+    return Pointer(new World());
+}
+
 void World::add_object(PhysicalObject* obj) {
     m_objects.emplace_back(std::unique_ptr<PhysicalObject>(obj));
 }
@@ -47,4 +51,3 @@ void World::update(GameWindow& window) {
 std::stringstream World::to_stream() const {
     return Object::to_stream();
 }
-

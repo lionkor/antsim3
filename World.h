@@ -1,6 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/container/vector.hpp>
 #include <boost/container/set.hpp>
 #include <boost/ref.hpp>
@@ -16,7 +17,8 @@
 class RayHit;
 
 class World
-    : public Object
+    : public Object,
+      public boost::enable_shared_from_this<World>
 {
     OBJECT(World)
 
@@ -25,9 +27,14 @@ private:
     boost::container::vector<std::unique_ptr<PhysicalObject>> m_objects;
     boost::container::set<const PhysicalObject*>              m_selected_objects;
 
-public:
     World();
+
+public:
     virtual ~World() { }
+
+    typedef boost::shared_ptr<World> Pointer;
+
+    static World::Pointer create();
 
     void     add_object(PhysicalObject* obj);
     RayHit&& try_hit(const vec<double>& pos);

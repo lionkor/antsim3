@@ -60,20 +60,20 @@ public:
 int main(int, char**) {
     try {
         GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
-        World               world;
+        World::Pointer      world  = World::create();
 
         for (int i = 0; i < 1000; i += 10) {
             for (int k = 0; k < 1000; k += 10) {
-                world.add_object(new SelectableObject(vec<double>(i, k), vec<double>(10, 10), world));
+                world->add_object(new SelectableObject(vec<double>(i, k), vec<double>(10, 10), *world));
             }
         }
 
         window->on_left_click = [&](auto& pos) {
-            world.try_hit(pos);
+            world->try_hit(pos);
         };
 
         while (window->isOpen()) {
-            world.update(*window);
+            world->update(*window);
         }
 
     } catch (std::exception& e) {
