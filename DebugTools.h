@@ -44,14 +44,14 @@ static constexpr ConstString ANSI_UNDERLINE = "\u001b[4m";
 #define FILENAME (std::string(basename(FILE_C_STRING)))
 #define nameof(x) #x
 
-#define TRACE 0
+#define TRACE 1
 #if TRACE
 #define report_trace(...) std::cout << String::format("[TRACE] in ", FILENAME, ":", __LINE__, " in ", __FUNCTION__, ": ", __VA_ARGS__, ANSI_RESET) << std::endl
 #else
 #define report_trace(...)
 #endif
 
-#if 0
+#if 1
 #define report(...) std::cout << String::format(ANSI_WHITE_BOLD, "[INFO] in ", FILENAME, ":", __LINE__, " in ", __FUNCTION__, ": ", __VA_ARGS__, ANSI_RESET) << std::endl
 #else
 #define report(...)

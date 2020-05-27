@@ -9,6 +9,8 @@
 #include "GameWindow.h"
 #include "World.h"
 
+#define CLOSE_AFTER -1
+
 class SelectableObject : public PhysicalObject
 {
     OBJECT(SelectableObject)
@@ -115,10 +117,10 @@ public:
 public:
     virtual void on_hit(const vec<double>& hit_pos) override {
         destroy();
-        int n = Random::random(10, 40);
+        int n = Random::random(10, 60);
         m_world.add_object(new RandomlyMovingObject({ 50, 50 }, { 10, 10 }, m_world));
         for (int i = 0; i < n; ++i) {
-            m_world.add_object(new Particle(hit_pos, Random::random_real(0.5f, 4.0f), m_world));
+            m_world.add_object(new Particle(hit_pos, Random::random_real(0.5f, 10.0f), m_world));
         }
     }
 };
@@ -147,8 +149,7 @@ int main(int, char**) {
         auto start = time(nullptr);
         while (window->isOpen()) {
             world->update(*window);
-            if (time(nullptr) > start + 15) {
-                report_warning("Benchmark ended.");
+            if (CLOSE_AFTER != -1 && time(nullptr) > start + CLOSE_AFTER) {
                 break;
             }
         }
