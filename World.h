@@ -42,7 +42,7 @@ public:
     /// Takes ownership of the passed (new-allocated) pointer `obj`.
     void add_object(PhysicalObject* obj);
     /// Generates a Ray at the position, returns the RayHit describing what was hit.
-    RayHit&& try_hit(const vec<double>& pos);
+    RayHit try_hit(const vec<double>& pos);
     /// Begin of the container holding all objects.
     auto begin() { return m_objects.begin(); }
     /// Begin of the container holding all objects.

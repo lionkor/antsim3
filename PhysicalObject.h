@@ -37,7 +37,6 @@ public:
     PhysicalObject(const vec<double> pos, const vec<double> size, World& world);
     
     virtual ~PhysicalObject() {
-        report_function();
     }
 
     /// Marks this object as dead. The object will stop being displayed or updated

@@ -5,7 +5,6 @@ PhysicalObject::PhysicalObject(const vec<double> pos, const vec<double> size, Wo
     : m_pos(pos)
     , m_size(size)
     , m_world(world) {
-    report_function();
 }
 
 void PhysicalObject::destroy() {

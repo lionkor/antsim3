@@ -12,15 +12,15 @@
 struct Rectangle : public CopyableObject {
     OBJECT(Rectangle)
 
-    Rectangle(double x, double y, double w, double h)
+    Rectangle(float x, float y, float w, float h)
         : pos(x, y), size(w, h) { }
 
     template<typename SomeT>
     Rectangle(SomeT _pos, SomeT _size)
         : pos(_pos), size(_size) { }
 
-    vec<double> pos;
-    vec<double> size;
+    vec<float> pos;
+    vec<float> size;
 
     bool operator==(const Rectangle& rect) const { return pos == rect.pos && size == rect.size; }
     bool operator!=(const Rectangle& rect) const { return !(*this == rect); }

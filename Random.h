@@ -25,7 +25,7 @@ public:
     /// Random integer between min and max.
     template<class IntT>
     static auto random(IntT min, IntT max) {
-        boost::random::uniform_int_distribution<> dist(min, max);
+        boost::random::uniform_int_distribution<IntT> dist(min, max);
         return dist(s_generator);
     }
     
@@ -38,11 +38,11 @@ public:
     template<typename FloatT>
     static FloatT random_real(FloatT min = 0.0, FloatT max = 1.0) {
         boost::random::uniform_real_distribution<FloatT> dist(min, max);
-        return dist(s_generator);
+        return FloatT(dist(s_generator));
     }
 };
 
 /// Internally used singleton generator instance.
-inline boost::random::mt19937 Random::s_generator { static_cast<unsigned long>(std::time(nullptr)) };
+inline boost::random::mt19937 Random::s_generator { static_cast<unsigned int>(std::time(nullptr)) };
 
 #endif // RANDOM_H

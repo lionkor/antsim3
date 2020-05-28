@@ -11,39 +11,13 @@
 #include "Ray.h"
 #include "Draw.h"
 
-#include <String.h>
-
-class Widget
-    : public Object,
-      public IEventReceiver
-{
-    OBJECT(Widget)
-protected:
-    Widget*           m_parent;
-    class GameWindow* m_master;
-
-public:
-    Widget(Widget& parent);
-    Widget(GameWindow& master);
-
-    // IEventReceiver interface
-public:
-    virtual void handle(Event& e) override {
-        report(__PRETTY_FUNCTION__, " called with ", e);
-    }
-
-    // Object interface
-public:
-    virtual std::stringstream to_stream() const override;
-};
-
 class FpsLogger
 {
 private:
     std::ofstream m_file;
 
 public:
-    FpsLogger(String filename) {
+    FpsLogger(const std::string& filename) {
         m_file = std::ofstream(filename);
     }
     ~FpsLogger() {
@@ -66,7 +40,7 @@ class GameWindow
 {
     OBJECT(GameWindow)
 protected:
-    GameWindow(const String& title, sf::Vector2u size);
+    GameWindow(const std::string& title, sf::Vector2u size);
 
     sf::Event    m_event;
     sf::Vector2i m_mouse_pos;
@@ -74,7 +48,7 @@ protected:
     DrawSurface  m_surface;
     FpsLogger    m_fps_logger;
     sf::Clock    m_fps_clock;
-    String       m_title;
+    std::string       m_title;
 
     /// Zooms the current camera's view by zoom, moving relative to the specified 
     /// pixel.
@@ -85,7 +59,7 @@ public:
 
     /// Creates a new GameWindow, returns a pointer. This is the proper way of 
     /// creating a window.
-    static GameWindow::Pointer create(const String& title, sf::Vector2u size);
+    static GameWindow::Pointer create(const std::string& title, sf::Vector2u size);
 
     void handle_events();
     void handle_mouse_button_press();
@@ -94,9 +68,9 @@ public:
     void internal_draw();
     
     /// Gets the title.
-    const String& title() const;
+    const std::string& title() const;
     /// Sets the title property and calls into sfml to change the title.
-    void set_title(const String& title);
+    void set_title(const std::string& title);
 
     /// Gets the surface to be used for drawing geometry into the window.
     DrawSurface& surface() { return m_surface; }

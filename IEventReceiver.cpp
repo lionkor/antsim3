@@ -1,6 +1,8 @@
 #include "IEventReceiver.h"
 #include "DebugTools.h"
 
+static boost::uuids::random_generator s_ieventreceiver_uuid_gen;
+
 IEventReceiver::IEventReceiver(EventDispatcher& dispatcher)
     : m_uuid(s_ieventreceiver_uuid_gen())
     , m_dispatcher(dispatcher) {

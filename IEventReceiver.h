@@ -7,8 +7,6 @@
 #include "EventDispatcher.h"
 #include "Object.h"
 
-static boost::uuids::random_generator s_ieventreceiver_uuid_gen;
-
 // Interfaces do not inherit from Object
 class IEventReceiver
 {

@@ -8,6 +8,7 @@
 #include "DebugTools.h"
 #include "GameWindow.h"
 #include "World.h"
+#include "Random.h"
 
 #define CLOSE_AFTER -1
 
@@ -85,7 +86,7 @@ protected:
     }
 
 public:
-    Particle(vec<double> pos, double lifetime_secs, World& world)
+    Particle(vec<double> pos, unsigned lifetime_secs, World& world)
         : PhysicalObject(pos, { 3, 3 }, world)
         , m_dir(Random::random_real(-1.0, 1.0), Random::random_real(-1.0, 1.0))
         , m_speed(Random::random_real(0.01, 0.4))
@@ -120,7 +121,7 @@ public:
         int n = Random::random(10, 60);
         m_world.add_object(new RandomlyMovingObject({ 50, 50 }, { 10, 10 }, m_world));
         for (int i = 0; i < n; ++i) {
-            m_world.add_object(new Particle(hit_pos, Random::random_real(0.5f, 10.0f), m_world));
+            m_world.add_object(new Particle(hit_pos, Random::random<unsigned>(1, 10), m_world));
         }
     }
 };
@@ -130,6 +131,8 @@ int main(int, char**) {
         GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
         World::Pointer      world  = World::create();
 
+        report("{}", *world);
+        
         /*
         for (int i = 0; i < 1000; i += 10) {
             for (int k = 0; k < 1000; k += 10) {
@@ -155,7 +158,7 @@ int main(int, char**) {
         }
 
     } catch (std::exception& e) {
-        report_error("fatal exception occured: ", e.what());
+        report_error("fatal exception occured: {}", e.what());
         throw e;
     }
 }

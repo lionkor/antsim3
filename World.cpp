@@ -16,7 +16,7 @@ void World::add_object(PhysicalObject* obj) {
     m_objects.emplace_back(std::unique_ptr<PhysicalObject>(obj));
 }
 
-RayHit&& World::try_hit(const vec<double>& pos) {
+RayHit World::try_hit(const vec<double>& pos) {
     Ray ray(pos);
     for (auto& object : m_objects) {
         ray.try_intersect(*object);
@@ -25,7 +25,7 @@ RayHit&& World::try_hit(const vec<double>& pos) {
     for (auto& h : hit) {
         h->on_hit(pos);
     }
-    return std::move(hit);
+    return hit;
 }
 
 void World::extend_selection(const PhysicalObject* ptr) {

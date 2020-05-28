@@ -5,7 +5,6 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <sstream>
-#include <String.h>
 
 #define SHOW_UUID 0
 
@@ -57,7 +56,7 @@ public:
 
     // to be defined by the inheritor
     // use the OBJECT(...) macro for this!
-    virtual String            class_name() const = 0;
+    virtual std::string       class_name() const = 0;
     virtual std::stringstream to_stream() const {
         std::stringstream ss;
 #if SHOW_UUID
@@ -81,17 +80,18 @@ protected:
         : Object() { }
 
 public:
-    CopyableObject(const CopyableObject&) { }
+    CopyableObject(const CopyableObject&)
+        : Object() { }
     CopyableObject& operator=(const CopyableObject&) { return *this; }
 
     virtual inline bool operator==(const Object& other) const = 0;
     virtual inline bool operator!=(const Object& other) const = 0;
 };
 
-#define OBJECT(classname)                               \
-public:                                                 \
-    virtual inline String class_name() const override { \
-        return String(#classname);                      \
+#define OBJECT(classname)                                    \
+public:                                                      \
+    virtual inline std::string class_name() const override { \
+        return std::string(#classname);                      \
     }
 
 #endif // OBJECT_H

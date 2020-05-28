@@ -1,8 +1,8 @@
 #include "GameWindow.h"
 #include "DebugTools.h"
 
-GameWindow::GameWindow(const String& title, sf::Vector2u size)
-    : sf::RenderWindow(sf::VideoMode(size.x, size.y), title.as_std_string())
+GameWindow::GameWindow(const std::string& title, sf::Vector2u size)
+    : sf::RenderWindow(sf::VideoMode(size.x, size.y), title)
     , m_surface(*this)
     , m_fps_logger("fps.csv")
     , m_title(title) {
@@ -20,7 +20,7 @@ void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {
     setView(view);
 }
 
-GameWindow::Pointer GameWindow::create(const String& title, sf::Vector2u size) {
+GameWindow::Pointer GameWindow::create(const std::string& title, sf::Vector2u size) {
     return Pointer(new GameWindow(title, size));
 }
 
@@ -102,13 +102,13 @@ void GameWindow::internal_draw() {
         m_fps_logger.log_fps(1.0 / time.asSeconds());
 }
 
-const String& GameWindow::title() const {
+const std::string& GameWindow::title() const {
     return m_title;
 }
 
-void GameWindow::set_title(const String& title) {
+void GameWindow::set_title(const std::string& title) {
     m_title = title;
-    setTitle(title.as_std_string());
+    setTitle(title);
 }
 
 std::stringstream GameWindow::to_stream() const {
@@ -116,30 +116,5 @@ std::stringstream GameWindow::to_stream() const {
     auto size = getSize();
     ss << "width=" << size.x << ";";
     ss << "height=" << size.y << ";";
-    return ss;
-}
-
-Widget::Widget(Widget& parent)
-    : IEventReceiver(static_cast<EventDispatcher&>(*parent.m_master))
-    , m_parent(&parent)
-    , m_master(parent.m_master) {
-}
-
-Widget::Widget(GameWindow& master)
-    : IEventReceiver(static_cast<EventDispatcher&>(master))
-    , m_parent(nullptr)
-    , m_master(&master) {
-}
-
-std::stringstream Widget::to_stream() const {
-    auto ss = Object::to_stream();
-    if (m_parent)
-        ss << "parent=" << *m_parent << ";";
-    else
-        ss << "parent=nullptr;";
-    if (m_master)
-        ss << "master=" << *m_master << ";";
-    else
-        ss << "master=nullptr;";
     return ss;
 }
