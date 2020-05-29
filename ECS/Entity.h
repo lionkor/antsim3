@@ -5,8 +5,10 @@
 
 #include "Core/Object.h"
 #include "Component.h"
+#include "Utils/Managed.h"
 
-class Entity
+/// Monolithic class describing any Entity. Uses composition.
+class Entity final
     : public Object
 {
     OBJECT(Entity)
@@ -26,7 +28,10 @@ public:
     template<class DerivedComponentT, typename... Args>
     requires std::derived_from<DerivedComponentT, Component> Component& add_component(Args&&... args) {
         m_comps.push_back(new DerivedComponentT(std::forward<Args>(args)...));
-        return *m_comps.back();
+        auto& ref = *m_comps.back();
+        // set parent
+        ref.m_parent = this;
+        return ref;
     }
 };
 

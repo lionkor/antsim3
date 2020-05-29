@@ -17,10 +17,10 @@ public:
     Component()                   = default;
     virtual ~Component() noexcept = default;
 
-    Component(const Component& other);
-    Component(Component&& other) noexcept = default;
-
     bool has_parent() const noexcept { return static_cast<bool>(m_parent); }
+
+    virtual void on_update() { }
+    virtual void on_draw() { }
 };
 
 #endif // COMPONENT_H
