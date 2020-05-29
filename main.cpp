@@ -9,6 +9,7 @@
 #include "GameWindow.h"
 #include "World.h"
 #include "Random.h"
+#include "PhysicsObject.h"
 
 #define CLOSE_AFTER -1
 
@@ -131,8 +132,8 @@ int main(int, char**) {
         GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
         World::Pointer      world  = World::create();
 
-        report("{}", *world);
-        
+        PhysicsObject obj({ 100, 200 }, { 40, 50 }, *world);
+
         /*
         for (int i = 0; i < 1000; i += 10) {
             for (int k = 0; k < 1000; k += 10) {

@@ -77,8 +77,8 @@ public:
            << "y=" << y << ";";
         return ss;
     }
-    virtual bool operator ==(const Object&) const override { return false; }
-    virtual bool operator !=(const Object&) const override { return true; }
+    virtual bool operator==(const Object&) const override { return false; }
+    virtual bool operator!=(const Object&) const override { return true; }
 };
 
 #endif // VEC_H

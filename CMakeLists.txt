@@ -14,6 +14,8 @@ include_directories(antsim3 "fmt/include")
 add_executable(${CMAKE_PROJECT_NAME} main.cpp
     Cell.h
     Cell.cpp
+    Collider.h
+    Collider.cpp
     Draw.h
     Draw.cpp
     Event.h
@@ -30,6 +32,7 @@ add_executable(${CMAKE_PROJECT_NAME} main.cpp
     PhysicsObject.cpp
     Ray.h
     Ray.cpp
+    Result.h
     World.h
     World.cpp
     

@@ -23,12 +23,32 @@ public:
     bool ok() const { return m_value.has_value(); }
     bool error() const { return !ok(); }
 
+    std::string message() const { return m_message; }
+
     static Result<T> error(const std::string& error_message) {
         Result<T> result;
         result.m_value   = std::nullopt;
         result.m_message = error_message;
         return result;
     }
+};
+
+class OkResult
+{
+private:
+    const bool        m_ok;
+    const std::string m_message;
+
+    OkResult(bool _ok, const std::string& msg)
+        : m_ok(_ok)
+        , m_message(msg) { }
+
+public:
+    operator bool() const { return m_ok; }
+    std::string message() const { return m_message; }
+
+    static OkResult ok() { return OkResult { true, "" }; }
+    static OkResult error(const std::string& error_message = "none") { return OkResult { false, error_message }; }
 };
 
 #endif // RESULT_H

@@ -49,6 +49,8 @@ public:
         return *this;
     }
 
+    virtual ~Object() { }
+
     inline const UUID& uuid() const { return m_uuid; }
 
     virtual inline bool operator==(const Object& other) const { return m_uuid == other.m_uuid; }
@@ -93,5 +95,6 @@ public:                                                      \
     virtual inline std::string class_name() const override { \
         return std::string(#classname);                      \
     }
+
 
 #endif // OBJECT_H
