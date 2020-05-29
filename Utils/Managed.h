@@ -12,6 +12,7 @@ class Managed
 public:
     Managed(T*&& ptr)
         : m_ptr(std::move(ptr)) {
+        // cleanup moved-from
         ptr = nullptr;
     }
     Managed(Managed&& ptr) {

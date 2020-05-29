@@ -12,8 +12,8 @@ World::Pointer World::create() {
     return Pointer(new World());
 }
 
-void World::add_object(PhysicalObject* obj) {
-    m_objects.emplace_back(std::unique_ptr<PhysicalObject>(obj));
+void World::add_object(PhysicalObject*&& obj) {
+    m_objects.emplace_back(Managed<PhysicalObject>(std::move(obj)));
 }
 
 RayHit World::try_hit(const vec<double>& pos) {

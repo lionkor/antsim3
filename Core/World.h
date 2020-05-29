@@ -8,6 +8,7 @@
 #include <boost/optional.hpp>
 
 #include "Utils/DebugTools.h"
+#include "Utils/Managed.h"
 #include "Core/Object.h"
 #include "Physics/vec.h"
 #include "Physics/IHittable.h"
@@ -25,7 +26,7 @@ class World
 
 private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
-    std::vector<std::unique_ptr<PhysicalObject>> m_objects;
+    std::vector<Managed<PhysicalObject>> m_objects;
     std::set<const PhysicalObject*>              m_selected_objects;
 
     World();
@@ -39,7 +40,7 @@ public:
     static World::Pointer create();
 
     /// Takes ownership of the passed (new-allocated) pointer `obj`.
-    void add_object(PhysicalObject* obj);
+    void add_object(PhysicalObject*&& obj);
     /// Generates a Ray at the position, returns the RayHit describing what was hit.
     RayHit try_hit(const vec<double>& pos);
     /// Begin of the container holding all objects.
