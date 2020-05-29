@@ -9,7 +9,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -fconcepts")
 
 project(antsim3)
 
-include_directories(antsim3 "fmt/include")
+include_directories(antsim3 
+    "."
+    "./fmt/include"
+)
 
 add_executable(${CMAKE_PROJECT_NAME} main.cpp
     Cell.h
