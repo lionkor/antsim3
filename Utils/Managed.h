@@ -31,13 +31,7 @@ public:
     ~Managed() {
         delete m_ptr;
     }
-
-    static Managed adopt(T*& ptr) {
-        Managed<T> managed(ptr);
-        ptr = nullptr;
-        return managed;
-    }
-
+    
     T*       operator->() { return m_ptr; }
     const T* operator->() const { return m_ptr; }
 
