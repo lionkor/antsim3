@@ -1,8 +1,8 @@
 #ifndef VEC_H
 #define VEC_H
 
-#include "DebugTools.h"
-#include "Object.h"
+#include "Utils/DebugTools.h"
+#include "Core/Object.h"
 #include <type_traits>
 #include <tuple>
 #include <ostream>

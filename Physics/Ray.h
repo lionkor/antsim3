@@ -1,7 +1,7 @@
 #ifndef RAY_H
 #define RAY_H
 
-#include "Object.h"
+#include "Core/Object.h"
 #include "vec.h"
 #include <boost/container/vector.hpp>
 #include <boost/sort/sort.hpp>

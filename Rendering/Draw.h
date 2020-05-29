@@ -5,9 +5,9 @@
 #include <boost/container/vector.hpp>
 #include <memory>
 
-#include "Object.h"
-#include "DebugTools.h"
-#include "vec.h"
+#include "Core/Object.h"
+#include "Utils/DebugTools.h"
+#include "Physics/vec.h"
 
 struct Rectangle : public CopyableObject {
     OBJECT(Rectangle)

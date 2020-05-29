@@ -7,12 +7,12 @@
 #include <boost/ref.hpp>
 #include <boost/optional.hpp>
 
-#include "DebugTools.h"
-#include "Object.h"
-#include "vec.h"
-#include "IHittable.h"
-#include "PhysicalObject.h"
-#include "GameWindow.h"
+#include "Utils/DebugTools.h"
+#include "Core/Object.h"
+#include "Physics/vec.h"
+#include "Physics/IHittable.h"
+#include "Physics/PhysicalObject.h"
+#include "Core/GameWindow.h"
 
 class RayHit;
 

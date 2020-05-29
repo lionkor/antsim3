@@ -8,7 +8,7 @@
 
 #define SHOW_UUID 0
 
-#include "DebugTools.h"
+#include "Utils/DebugTools.h"
 
 /*
  * Universal base class for all objects.

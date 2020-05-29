@@ -1,5 +1,5 @@
 #include "IEventReceiver.h"
-#include "DebugTools.h"
+#include "Utils/DebugTools.h"
 
 static boost::uuids::random_generator s_ieventreceiver_uuid_gen;
 

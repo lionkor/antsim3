@@ -1,7 +1,7 @@
 #ifndef PHYSICSOBJECT_H
 #define PHYSICSOBJECT_H
 
-#include "DebugTools.h"
+#include "Utils/DebugTools.h"
 #include "PhysicalObject.h"
 #include "Collider.h"
 

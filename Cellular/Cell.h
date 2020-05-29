@@ -1,8 +1,8 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include "Object.h"
-#include "vec.h"
+#include "Core/Object.h"
+#include "Physics/vec.h"
 
 class World;
 

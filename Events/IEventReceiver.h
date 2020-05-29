@@ -5,7 +5,7 @@
 #include <cstdint>
 
 #include "EventDispatcher.h"
-#include "Object.h"
+#include "Core/Object.h"
 
 // Interfaces do not inherit from Object
 class IEventReceiver

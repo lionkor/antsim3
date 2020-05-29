@@ -1,9 +1,9 @@
 #ifndef PHYSICAL_OBJECT_H
 #define PHYSICAL_OBJECT_H
 
-#include "Object.h"
+#include "Core/Object.h"
 #include "IHittable.h"
-#include "Draw.h"
+#include "Rendering/Draw.h"
 #include "vec.h"
 
 class World;

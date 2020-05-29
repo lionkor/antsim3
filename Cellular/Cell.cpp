@@ -1,6 +1,6 @@
 #include "Cell.h"
-#include "World.h"
-#include "Random.h"
+#include "Core/World.h"
+#include "Utils/Random.h"
 #include <algorithm>
 
 

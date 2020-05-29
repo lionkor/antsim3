@@ -1,6 +1,6 @@
 #include "EventDispatcher.h"
 #include "IEventReceiver.h"
-#include "DebugTools.h"
+#include "Utils/DebugTools.h"
 
 #include <boost/container/vector.hpp>
 #include <boost/range/algorithm_ext/erase.hpp>

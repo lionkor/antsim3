@@ -1,5 +1,5 @@
 #include "GameWindow.h"
-#include "DebugTools.h"
+#include "Utils/DebugTools.h"
 
 GameWindow::GameWindow(const std::string& title, sf::Vector2u size)
     : sf::RenderWindow(sf::VideoMode(size.x, size.y), title)

@@ -5,11 +5,11 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <fstream>
 
-#include "IEventReceiver.h"
-#include "DebugTools.h"
-#include "Object.h"
-#include "Ray.h"
-#include "Draw.h"
+#include "Events/IEventReceiver.h"
+#include "Utils/DebugTools.h"
+#include "Core/Object.h"
+#include "Physics/Ray.h"
+#include "Rendering/Draw.h"
 
 class FpsLogger
 {

@@ -1,10 +1,10 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
-#include "DebugTools.h"
-#include "Object.h"
+#include "Utils/DebugTools.h"
+#include "Core/Object.h"
+#include "Utils/Result.h"
 #include "vec.h"
-#include "Result.h"
 
 class Collider
     : public Object

@@ -2,7 +2,7 @@
 #define EVENTDISPATCHER_H
 
 #include <boost/container/deque.hpp>
-#include "Event.h"
+#include "Events/Event.h"
 
 class IEventReceiver;
 

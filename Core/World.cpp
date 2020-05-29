@@ -1,7 +1,7 @@
 #include "World.h"
-#include "DebugTools.h"
-#include "Random.h"
-#include "Ray.h"
+#include "Utils/DebugTools.h"
+#include "Utils/Random.h"
+#include "Physics/Ray.h"
 
 #include <boost/range/algorithm/find_if.hpp>
 

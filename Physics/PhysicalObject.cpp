@@ -1,5 +1,5 @@
 #include "PhysicalObject.h"
-#include "World.h"
+#include "Core/World.h"
 
 PhysicalObject::PhysicalObject(const vec<double> pos, const vec<double> size, World& world)
     : m_pos(pos)

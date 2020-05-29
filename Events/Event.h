@@ -2,7 +2,7 @@
 #define EVENT_H
 
 #include <boost/atomic.hpp>
-#include "Object.h"
+#include "Core/Object.h"
 
 class Event : public Object
 {

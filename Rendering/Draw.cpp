@@ -1,5 +1,5 @@
 #include "Draw.h"
-#include "GameWindow.h"
+#include "Core/GameWindow.h"
 
 DrawSurface::DrawSurface(GameWindow& window)
     : m_window(window) {
