@@ -5,13 +5,8 @@
 #include <cmath>
 #include <chrono>
 
-#include "DebugTools.h"
-#include "GameWindow.h"
-#include "World.h"
-#include "Random.h"
-#include "PhysicsObject.h"
-
-#define CLOSE_AFTER -1
+#include "Core.h"
+#include "Utils.h"
 
 class SelectableObject : public PhysicalObject
 {
