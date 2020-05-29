@@ -2,7 +2,7 @@
 #define GAMEWINDOW_H
 
 #include <SFML/Graphics.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
 #include <fstream>
 
 #include "Events/IEventReceiver.h"
@@ -34,7 +34,6 @@ public:
 /// Manages anything window- and rendering related.
 class GameWindow
     : public Object,
-      public boost::enable_shared_from_this<GameWindow>,
       public sf::RenderWindow,
       public EventDispatcher
 {
@@ -55,7 +54,7 @@ protected:
     void zoom_view_at(sf::Vector2i pixel, float zoom);
 
 public:
-    typedef boost::shared_ptr<GameWindow> Pointer;
+    typedef std::unique_ptr<GameWindow> Pointer;
 
     /// Creates a new GameWindow, returns a pointer. This is the proper way of 
     /// creating a window.

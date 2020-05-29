@@ -22,8 +22,6 @@ static boost::uuids::random_generator s_uuid_gen;
 
 class Object
 {
-    friend class CopyableObject;
-
 private:
     UUID m_uuid;
 
@@ -74,24 +72,8 @@ inline std::ostream& operator<<(std::ostream& os, const Object& obj) {
     return os << "[" << (&obj)->class_name() << "]:{" << obj.to_stream().str() << "}";
 }
 
-class CopyableObject
-    : public Object
-{
-protected:
-    CopyableObject()
-        : Object() { }
-
-public:
-    CopyableObject(const CopyableObject&)
-        : Object() { }
-    CopyableObject& operator=(const CopyableObject&) { return *this; }
-
-    virtual inline bool operator==(const Object& other) const = 0;
-    virtual inline bool operator!=(const Object& other) const = 0;
-};
-
 #define OBJECT(classname)                                    \
-public:                                                      \
+Gpublic:                                                      \
     virtual inline std::string class_name() const override { \
         return std::string(#classname);                      \
     }

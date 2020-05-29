@@ -1,4 +1,5 @@
 
+
 cmake_minimum_required(VERSION 3.15)
 set(CMAKE_CXX_COMPILER "/usr/lib/ccache/bin/g++")
 set(CMAKE_C_COMPILER "/usr/lib/ccache/bin/gcc")
@@ -17,6 +18,8 @@ include_directories(Engine
 add_library(Engine SHARED
     Cellular/Cell.cpp
     Cellular/Cell.h
+    Core/GameObject.cpp
+    Core/GameObject.h
     Core/GameWindow.cpp
     Core/GameWindow.h
     Core/World.cpp
