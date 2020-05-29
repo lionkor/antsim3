@@ -9,7 +9,7 @@
 #include "Utils/DebugTools.h"
 #include "Physics/vec.h"
 
-struct Rectangle : public CopyableObject {
+struct Rectangle : public Object {
     OBJECT(Rectangle)
 
     Rectangle(float x, float y, float w, float h)
@@ -30,7 +30,7 @@ public:
     virtual bool              operator==(const Object&) const override { return false; }
     virtual bool              operator!=(const Object&) const override { return true; }
     virtual std::stringstream to_stream() const override {
-        auto ss = CopyableObject::to_stream();
+        auto ss = Object::to_stream();
         ss << "pos=" << pos << ";"
            << "size=" << size << ";";
         return ss;

@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/smart_ptr.hpp>
@@ -7,6 +7,9 @@
 
 #include "Core.h"
 #include "Utils.h"
+#include "ECS/Entity.h"
+
+/*
 
 class SelectableObject : public PhysicalObject
 {
@@ -121,21 +124,52 @@ public:
         }
     }
 };
+*/
+
+class MyComp1 : public Component
+{
+    OBJECT(MyComp1)
+};
+
+class MyComp1_1 : public MyComp1
+{
+    OBJECT(MyComp1_1)
+};
+
+class MyComp2 : public Component
+{
+    OBJECT(MyComp2)
+};
+
+class MyComp2_1 : public MyComp2
+{
+    OBJECT(MyComp2_1)
+};
 
 int main(int, char**) {
+
+    Entity e;
+    e.add_component<MyComp1_1>();
+    e.add_component<MyComp2_1>();
+    e.add_component<Component>();
+    report("has component MyComp1: {}", e.has_component<MyComp1>());
+    report("has component MyComp1_1: {}", e.has_component<MyComp1_1>());
+    report("has component MyComp2: {}", e.has_component<MyComp2>());
+    report("has component MyComp2_1: {}", e.has_component<MyComp2_1>());
+    report("has component Component: {}", e.has_component<Component>());
+
+    /*
     try {
         GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
         World::Pointer      world  = World::create();
 
         PhysicsObject obj({ 100, 200 }, { 40, 50 }, *world);
 
-        /*
-        for (int i = 0; i < 1000; i += 10) {
-            for (int k = 0; k < 1000; k += 10) {
-                world->add_object(new SelectableObject(vec<double>(i, k), vec<double>(5, 5), *world));
-            }
-        }
-        */
+//        for (int i = 0; i < 1000; i += 10) {
+  //          for (int k = 0; k < 1000; k += 10) {
+    //            world->add_object(new SelectableObject(vec<double>(i, k), vec<double>(5, 5), *world));
+      //      }
+        //}
 
         for (int i = 0; i < 20; ++i) {
             world->add_object(new RandomlyMovingObject({ 50, 50 }, { 10, 10 }, *world));
@@ -157,4 +191,5 @@ int main(int, char**) {
         report_error("fatal exception occured: {}", e.what());
         throw e;
     }
+*/
 }

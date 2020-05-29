@@ -18,19 +18,22 @@ include_directories(Engine
 add_library(Engine SHARED
     Cellular/Cell.cpp
     Cellular/Cell.h
-    Core/GameObject.cpp
-    Core/GameObject.h
+    Core.h
     Core/GameWindow.cpp
     Core/GameWindow.h
+    Core/Object.h
     Core/World.cpp
     Core/World.h
+    ECS/Component.cpp
+    ECS/Component.h
+    ECS/Entity.cpp
+    ECS/Entity.h
     Events/Event.cpp
     Events/Event.h
     Events/EventDispatcher.cpp
     Events/EventDispatcher.h
     Events/IEventReceiver.cpp
     Events/IEventReceiver.h
-    Core/Object.h
     Physics/Collider.cpp
     Physics/Collider.h
     Physics/IHittable.h
@@ -45,9 +48,13 @@ add_library(Engine SHARED
     Rendering/Draw.h
     Rendering/ext_sf.cpp
     Rendering/ext_sf.h
+    Unused/Tool.cpp
+    Unused/Tool.h
+    Utils.h
     Utils/DebugTools.h
     Utils/Random.h
     Utils/Result.h
+    Utils/Managed.h
 
     # fmt
     fmt/src/format.cc

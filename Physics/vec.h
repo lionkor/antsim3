@@ -9,11 +9,22 @@
 
 /// Minimal 2D-vector struct.
 template<typename T>
-struct vec : public CopyableObject {
+struct vec : public Object {
     OBJECT(vec)
 
     T x;
     T y;
+
+    vec()           = default;
+    vec(const vec&) = default;
+    vec& operator=(const vec&) = default;
+
+    vec(vec&& v)
+        : x(std::move(v.x))
+        , y(std::move(v.y)) {
+        v.x = 0;
+        v.y = 0;
+    }
 
     template<typename Vector2DT>
     vec(const Vector2DT& v)
@@ -72,7 +83,7 @@ struct vec : public CopyableObject {
     // Object interface
 public:
     virtual std::stringstream to_stream() const override {
-        auto ss = CopyableObject::to_stream();
+        auto ss = Object::to_stream();
         ss << "x=" << x << ";"
            << "y=" << y << ";";
         return ss;

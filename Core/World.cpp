@@ -3,7 +3,7 @@
 #include "Utils/Random.h"
 #include "Physics/Ray.h"
 
-#include <boost/range/algorithm/find_if.hpp>
+#include <algorithm>
 
 World::World() {
 }
@@ -49,10 +49,10 @@ void World::update(GameWindow& window) {
         return obj->destroyed();
     };
     
-    auto iter = boost::find_if(m_objects, find_destroyed_pred);
+    auto iter = std::find_if(m_objects.begin(), m_objects.end(), find_destroyed_pred);
     while (iter != m_objects.end()) {
         m_objects.erase(iter);
-        iter = boost::find_if(m_objects, find_destroyed_pred);
+        iter = std::find_if(m_objects.begin(), m_objects.end(), find_destroyed_pred);
     }
     
     auto& surface = window.surface();

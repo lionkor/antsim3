@@ -1,6 +1,1 @@
-#include "GameObject.h"
-
-GameObject::GameObject()
-{
-    
-}
+#include "Entity.h"

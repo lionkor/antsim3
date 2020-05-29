@@ -7,7 +7,7 @@
 class World;
 
 class Cell
-    : public CopyableObject
+    : public Object
 {
     OBJECT(Cell)
 

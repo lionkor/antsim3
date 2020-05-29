@@ -1,9 +1,9 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/container/vector.hpp>
-#include <boost/container/set.hpp>
+#include <memory>
+#include <vector>
+#include <set>
 #include <boost/ref.hpp>
 #include <boost/optional.hpp>
 
@@ -19,22 +19,21 @@ class RayHit;
 
 /// The world manages all physical objects.
 class World
-    : public Object,
-      public boost::enable_shared_from_this<World>
+    : public Object
 {
     OBJECT(World)
 
 private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
-    boost::container::vector<std::unique_ptr<PhysicalObject>> m_objects;
-    boost::container::set<const PhysicalObject*>              m_selected_objects;
+    std::vector<std::unique_ptr<PhysicalObject>> m_objects;
+    std::set<const PhysicalObject*>              m_selected_objects;
 
     World();
 
 public:
     virtual ~World() { }
 
-    typedef boost::shared_ptr<World> Pointer;
+    typedef std::unique_ptr<World> Pointer;
 
     /// Constructs a new world.
     static World::Pointer create();

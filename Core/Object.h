@@ -4,7 +4,9 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/uuid_generators.hpp>
+#include <string>
 #include <sstream>
+#include <functional>
 
 #define SHOW_UUID 0
 
@@ -25,19 +27,23 @@ class Object
 private:
     UUID m_uuid;
 
-    static inline UUID new_guid() {
+    static inline UUID new_uuid() {
         return s_uuid_gen();
     }
 
 protected:
     Object()
-        : m_uuid(new_guid()) {
+        : m_uuid(new_uuid()) {
     }
 
 public:
-    Object(const Object&) = delete;
+    Object(const Object&)
+        : Object() { }
 
-    inline Object& operator=(const Object&) = delete;
+    inline Object& operator=(const Object&) {
+        m_uuid = new_uuid();
+        return *this;
+    }
 
     Object(Object&& other)
         : m_uuid(std::move(other.m_uuid)) { }
@@ -49,10 +55,10 @@ public:
 
     virtual ~Object() { }
 
-    inline const UUID& uuid() const { return m_uuid; }
+    virtual const UUID& uuid() const final { return m_uuid; }
 
-    virtual inline bool operator==(const Object& other) const { return m_uuid == other.m_uuid; }
-    virtual inline bool operator!=(const Object& other) const { return !(*this == other); }
+    virtual bool operator==(const Object& other) const { return m_uuid == other.m_uuid; }
+    virtual bool operator!=(const Object& other) const { return !(*this == other); }
 
     // to be defined by the inheritor
     // use the OBJECT(...) macro for this!
@@ -72,10 +78,10 @@ inline std::ostream& operator<<(std::ostream& os, const Object& obj) {
     return os << "[" << (&obj)->class_name() << "]:{" << obj.to_stream().str() << "}";
 }
 
-#define OBJECT(classname)                                    \
-Gpublic:                                                      \
-    virtual inline std::string class_name() const override { \
-        return std::string(#classname);                      \
+#define OBJECT(classname)                             \
+public:                                               \
+    virtual std::string class_name() const override { \
+        return std::string(#classname);               \
     }
 
 
