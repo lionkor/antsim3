@@ -14,7 +14,6 @@ public:
         : m_ptr(std::move(ptr)) {
         ptr = nullptr;
     }
-    Managed(const Managed&) = delete;
     Managed(Managed&& ptr) {
         delete m_ptr;
         m_ptr     = ptr.m_ptr;
@@ -25,6 +24,9 @@ public:
         m_ptr     = ptr.m_ptr;
         ptr.m_ptr = nullptr;
     }
+
+    Managed(const Managed&) = delete;
+    Managed& operator=(const Managed&) = delete;
 
     ~Managed() {
         delete m_ptr;
