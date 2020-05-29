@@ -30,6 +30,7 @@ public:
         m_ptr = ptr.m_ptr;
         // cleanup the moved-from object
         ptr.m_ptr = nullptr;
+        return *this;
     }
 
     Managed(const Managed&) = delete;
