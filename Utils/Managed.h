@@ -15,13 +15,19 @@ public:
         ptr = nullptr;
     }
     Managed(Managed&& ptr) {
+        // delete held pointer
         delete m_ptr;
-        m_ptr     = ptr.m_ptr;
+        // take new pointer
+        m_ptr = ptr.m_ptr;
+        // cleanup the moved-from object
         ptr.m_ptr = nullptr;
     }
     Managed& operator=(Managed&& ptr) {
+        // delete held pointer
         delete m_ptr;
-        m_ptr     = ptr.m_ptr;
+        // take new pointer
+        m_ptr = ptr.m_ptr;
+        // cleanup the moved-from object
         ptr.m_ptr = nullptr;
     }
 
@@ -31,7 +37,7 @@ public:
     ~Managed() {
         delete m_ptr;
     }
-    
+
     T*       operator->() { return m_ptr; }
     const T* operator->() const { return m_ptr; }
 
