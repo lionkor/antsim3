@@ -20,10 +20,6 @@ void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {
     setView(view);
 }
 
-GameWindow::Pointer GameWindow::create(const std::string& title, sf::Vector2u size) {
-    return Pointer(new GameWindow(title, size));
-}
-
 void GameWindow::handle_events() {
     while (pollEvent(m_event)) {
         switch (m_event.type) {

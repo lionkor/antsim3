@@ -126,38 +126,13 @@ public:
 };
 */
 
-class MyComp1 : public Component
-{
-    OBJECT(MyComp1)
-};
-
-class MyComp1_1 : public MyComp1
-{
-    OBJECT(MyComp1_1)
-};
-
-class MyComp2 : public Component
-{
-    OBJECT(MyComp2)
-};
-
-class MyComp2_1 : public MyComp2
-{
-    OBJECT(MyComp2_1)
-};
-
 int main(int, char**) {
+    Application app(new GameWindow("AntSim3", {1280, 720}), new World);
+    
+    auto& world = app.world();
+    auto& window = app.window();
 
-    Entity e;
-    e.add_component<MyComp1_1>();
-    e.add_component<MyComp2_1>();
-    e.add_component<Component>();
-    report("has component MyComp1: {}", e.has_component<MyComp1>());
-    report("has component MyComp1_1: {}", e.has_component<MyComp1_1>());
-    report("has component MyComp2: {}", e.has_component<MyComp2>());
-    report("has component MyComp2_1: {}", e.has_component<MyComp2_1>());
-    report("has component Component: {}", e.has_component<Component>());
-
+    return app.run();
     /*
     try {
         GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
@@ -193,3 +168,4 @@ int main(int, char**) {
     }
 */
 }
+

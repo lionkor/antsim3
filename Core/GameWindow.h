@@ -39,7 +39,6 @@ class GameWindow
 {
     OBJECT(GameWindow)
 protected:
-    GameWindow(const std::string& title, sf::Vector2u size);
 
     sf::Event    m_event;
     sf::Vector2i m_mouse_pos;
@@ -54,11 +53,7 @@ protected:
     void zoom_view_at(sf::Vector2i pixel, float zoom);
 
 public:
-    typedef std::unique_ptr<GameWindow> Pointer;
-
-    /// Creates a new GameWindow, returns a pointer. This is the proper way of 
-    /// creating a window.
-    static GameWindow::Pointer create(const std::string& title, sf::Vector2u size);
+    GameWindow(const std::string& title, sf::Vector2u size);
 
     void handle_events();
     void handle_mouse_button_press();

@@ -8,10 +8,6 @@
 World::World() {
 }
 
-World::Pointer World::create() {
-    return Pointer(new World());
-}
-
 void World::add_object(PhysicalObject*&& obj) {
     m_objects.emplace_back(Managed<PhysicalObject>(std::move(obj)));
 }

@@ -29,15 +29,9 @@ private:
     std::vector<Managed<PhysicalObject>> m_objects;
     std::set<const PhysicalObject*>              m_selected_objects;
 
-    World();
-
 public:
+    World();
     virtual ~World() { }
-
-    typedef std::unique_ptr<World> Pointer;
-
-    /// Constructs a new world.
-    static World::Pointer create();
 
     /// Takes ownership of the passed (new-allocated) pointer `obj`.
     void add_object(PhysicalObject*&& obj);

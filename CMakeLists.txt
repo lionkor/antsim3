@@ -19,6 +19,8 @@ add_library(Engine SHARED
     Cellular/Cell.cpp
     Cellular/Cell.h
     Core.h
+    Core/Application.cpp
+    Core/Application.h
     Core/GameWindow.cpp
     Core/GameWindow.h
     Core/Object.h
