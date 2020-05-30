@@ -6,6 +6,7 @@
 #include "Core/Object.h"
 #include "Component.h"
 #include "Utils/Managed.h"
+#include "Rendering/Draw.h"
 
 /// Monolithic class describing any Entity. Uses composition.
 class Entity final
@@ -14,8 +15,11 @@ class Entity final
     OBJECT(Entity)
 private:
     std::vector<Managed<Component>> m_comps;
+    TransformComponent& m_transform;
 
 public:
+    Entity(const vec<double>& pos = { 0, 0 });
+    
     template<class DerivedComponentT>
     requires std::derived_from<DerivedComponentT, Component> bool has_component() const {
         const std::string name = DerivedComponentT().class_name();
@@ -26,13 +30,19 @@ public:
     }
 
     template<class DerivedComponentT, typename... Args>
-    requires std::derived_from<DerivedComponentT, Component> Component& add_component(Args&&... args) {
+    requires std::derived_from<DerivedComponentT, Component> DerivedComponentT& add_component(Args&&... args) {
         m_comps.push_back(new DerivedComponentT(std::forward<Args>(args)...));
         auto& ref = *m_comps.back();
         // set parent
         ref.m_parent = this;
-        return ref;
+        return dynamic_cast<DerivedComponentT&>(ref);
     }
+    
+    void on_update();
+    void on_draw(DrawSurface&);
+    
+    TransformComponent& transform() { return m_transform; }
+    const TransformComponent& transform() const { return m_transform; }
 };
 
 #endif // GAMEOBJECT_H
