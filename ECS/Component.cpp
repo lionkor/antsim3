@@ -42,7 +42,8 @@ void SpriteComponent::on_draw(DrawSurface& surface) {
     if (!m_initialized) {
         const vec<double>& pos = parent()->transform().position();
         m_render_id            = surface.draw_new_rectangle(Rectangle(pos + m_sprite_pos, m_sprite_size));
-        m_initialized          = true;
+        m_initialized = true;
+        //m_changed     = true;
     }
     if (m_changed) {
         const vec<double>& pos = parent()->transform().position();
@@ -52,6 +53,20 @@ void SpriteComponent::on_draw(DrawSurface& surface) {
 }
 
 std::stringstream SpriteComponent::to_stream() const {
+    /*
+    m_sprite_pos;
+    m_sprite_size;
+    m_changed { true };
+    m_initialized { false };
+    m_render_id;
+    m_cached_pos { 0, 0 };
+    */
     auto ss = Component::to_stream();
+    ss << "sprite_pos=" << m_sprite_pos << ";"
+       << "sprite_size=" << m_sprite_size << ";"
+       << "changed=" << m_changed << ";"
+       << "initialized=" << m_initialized << ";"
+       << "render_id=" << m_render_id << ";"
+       << "cached_pos=" << m_cached_pos << ";";
     return ss;
 }

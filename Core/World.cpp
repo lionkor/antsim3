@@ -8,14 +8,16 @@
 World::World() {
 }
 
-void World::add_object(PhysicalObject*&& obj) {
-    m_objects.emplace_back(Managed<PhysicalObject>(std::move(obj)));
+Entity& World::add_entity(Entity*&& obj) {
+    ASSERT(obj != nullptr);
+    m_entities.push_back(Managed<Entity>(std::move(obj)));
+    return *m_entities.back();
 }
 
 RayHit World::try_hit(const vec<double>& pos) {
     Ray ray(pos);
-    for (auto& object : m_objects) {
-        ray.try_intersect(*object);
+    for (auto& object : m_entities) {
+        // TODO BROKEN MESS
     }
     RayHit hit = ray.result();
     for (auto& h : hit) {
@@ -24,36 +26,18 @@ RayHit World::try_hit(const vec<double>& pos) {
     return hit;
 }
 
-void World::extend_selection(const PhysicalObject* ptr) {
-    m_selected_objects.insert(ptr);
-}
-
-void World::reduce_selection(const PhysicalObject* ptr) {
-    m_selected_objects.erase(ptr);
-}
-
 void World::update(GameWindow& window) {
     window.clear();
     window.internal_draw();
     
     // FIXME: This might be slow
-    for (auto& obj : m_objects) {
-        obj->try_update();
-    }
-    
-    const auto find_destroyed_pred = [&](const auto& obj) -> bool {
-        return obj->destroyed();
-    };
-    
-    auto iter = std::find_if(m_objects.begin(), m_objects.end(), find_destroyed_pred);
-    while (iter != m_objects.end()) {
-        m_objects.erase(iter);
-        iter = std::find_if(m_objects.begin(), m_objects.end(), find_destroyed_pred);
+    for (auto& entity : m_entities) {
+        entity->on_update();
     }
     
     auto& surface = window.surface();
-    for (auto& obj : m_objects) {
-        obj->try_draw(surface);
+    for (auto& entity : m_entities) {
+        entity->on_draw(surface);
     }
     surface.finalize();
 

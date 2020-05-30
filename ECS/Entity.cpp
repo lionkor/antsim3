@@ -2,7 +2,7 @@
 
 Entity::Entity(const vec<double>& pos)
     // all entitie have a transform component
-    : m_transform(add_component<TransformComponent>(pos)) { }
+    : m_transform(add_component(new TransformComponent(pos))) { }
 
 void Entity::on_update() {
     for (auto& comp : m_comps) {

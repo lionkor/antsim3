@@ -50,6 +50,8 @@ class DrawSurface
     GameWindow&                             m_window;
     boost::container::vector<DrawRectangle> m_rects;
     boost::container::vector<std::size_t>   m_changed_indices;
+    
+    std::vector<sf::Vertex> m_vertices;
 
 public:
     DrawSurface(GameWindow& window);

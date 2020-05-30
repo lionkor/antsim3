@@ -74,7 +74,7 @@ class SpriteComponent
 private:
     vec<double> m_sprite_pos;
     vec<double> m_sprite_size;
-    bool        m_changed { true };
+    bool        m_changed { false };
     bool        m_initialized { false };
     std::size_t m_render_id;
     vec<double> m_cached_pos { 0, 0 };

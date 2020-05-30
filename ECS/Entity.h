@@ -30,11 +30,13 @@ public:
     }
 
     template<class DerivedComponentT, typename... Args>
-    requires std::derived_from<DerivedComponentT, Component> DerivedComponentT& add_component(Args&&... args) {
-        m_comps.push_back(new DerivedComponentT(std::forward<Args>(args)...));
+    requires std::derived_from<DerivedComponentT, Component> DerivedComponentT& add_component(DerivedComponentT*&& ptr) {
+        m_comps.push_back(std::move(ptr));
+        ptr = nullptr;
         auto& ref = *m_comps.back();
         // set parent
         ref.m_parent = this;
+        report("Added component: {}", ref);
         return dynamic_cast<DerivedComponentT&>(ref);
     }
     

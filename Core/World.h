@@ -12,7 +12,7 @@
 #include "Core/Object.h"
 #include "Physics/vec.h"
 #include "Physics/IHittable.h"
-#include "Physics/PhysicalObject.h"
+#include "ECS/Entity.h"
 #include "Core/GameWindow.h"
 
 class RayHit;
@@ -26,31 +26,24 @@ class World
 
 private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
-    std::vector<Managed<PhysicalObject>> m_objects;
-    std::set<const PhysicalObject*>              m_selected_objects;
+    std::vector<Managed<Entity>> m_entities;
 
 public:
     World();
     virtual ~World() { }
 
     /// Takes ownership of the passed (new-allocated) pointer `obj`.
-    void add_object(PhysicalObject*&& obj);
+    Entity& add_entity(Entity*&& obj);
     /// Generates a Ray at the position, returns the RayHit describing what was hit.
     RayHit try_hit(const vec<double>& pos);
     /// Begin of the container holding all objects.
-    auto begin() { return m_objects.begin(); }
+    auto begin() { return m_entities.begin(); }
     /// Begin of the container holding all objects.
-    auto begin() const { return m_objects.begin(); }
+    auto begin() const { return m_entities.begin(); }
     /// End of the container holding all objects.
-    auto end() { return m_objects.begin(); }
+    auto end() { return m_entities.end(); }
     /// End of the container holding all objects.
-    auto end() const { return m_objects.begin(); }
-
-    /// Extends the internal set of selected objects by this object.
-    /// Inserting the same object multiple times has no effect.
-    void extend_selection(const PhysicalObject*);
-    /// Reduces the internal set of selected objects by this object.
-    void reduce_selection(const PhysicalObject*);
+    auto end() const { return m_entities.end(); }
 
     /// Updates the world and calls into the window to update, too.
     void update(GameWindow&);
