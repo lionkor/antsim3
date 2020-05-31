@@ -1,11 +1,23 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
+#include <thread>
+
 #include "Utils/DebugTools.h"
 #include "Utils/Managed.h"
+#include "Utils/Mutexed.h"
 #include "Object.h"
 #include "World.h"
 #include "GameWindow.h"
+
+class ResourceManager
+{
+private:
+public:
+    void
+    operator()() {
+    }
+};
 
 class Application : public Object
 {

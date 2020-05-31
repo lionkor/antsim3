@@ -54,9 +54,12 @@ add_library(Engine SHARED
     Unused/Tool.h
     Utils.h
     Utils/DebugTools.h
+    Utils/LazyFile.h
+    Utils/LazyFile.cpp
     Utils/Random.h
     Utils/Result.h
     Utils/Managed.h
+    Utils/Mutexed.h
 
     # fmt
     fmt/src/format.cc

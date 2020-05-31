@@ -135,40 +135,48 @@ int main(int, char**) {
 
     auto& entity = world.add_entity(new Entity({ 100, 200 }));
     entity.add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }));
+    
+    LazyFile file("build");
+    report("file: {}", file);
+    auto res = file.load();
+    if (res.error()) {
+        report_error("error in file.load: {}", res.message());
+    } else {
+    }
 
     return app.run();
-    /*
-    try {
-        GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
-        World::Pointer      world  = World::create();
+}
+/*
+try {
+    GameWindow::Pointer window = GameWindow::create("AntSim 3", sf::Vector2u { 1280, 720 });
+    World::Pointer      world  = World::create();
 
-        PhysicsObject obj({ 100, 200 }, { 40, 50 }, *world);
+    PhysicsObject obj({ 100, 200 }, { 40, 50 }, *world);
 
 //        for (int i = 0; i < 1000; i += 10) {
-  //          for (int k = 0; k < 1000; k += 10) {
-    //            world->add_object(new SelectableObject(vec<double>(i, k), vec<double>(5, 5), *world));
-      //      }
-        //}
+//          for (int k = 0; k < 1000; k += 10) {
+//            world->add_object(new SelectableObject(vec<double>(i, k), vec<double>(5, 5), *world));
+  //      }
+    //}
 
-        for (int i = 0; i < 20; ++i) {
-            world->add_object(new RandomlyMovingObject({ 50, 50 }, { 10, 10 }, *world));
-        }
-
-        window->on_left_click = [&](auto& pos) {
-            world->try_hit(pos);
-        };
-
-        auto start = time(nullptr);
-        while (window->isOpen()) {
-            world->update(*window);
-            if (CLOSE_AFTER != -1 && time(nullptr) > start + CLOSE_AFTER) {
-                break;
-            }
-        }
-
-    } catch (std::exception& e) {
-        report_error("fatal exception occured: {}", e.what());
-        throw e;
+    for (int i = 0; i < 20; ++i) {
+        world->add_object(new RandomlyMovingObject({ 50, 50 }, { 10, 10 }, *world));
     }
-*/
+
+    window->on_left_click = [&](auto& pos) {
+        world->try_hit(pos);
+    };
+
+    auto start = time(nullptr);
+    while (window->isOpen()) {
+        world->update(*window);
+        if (CLOSE_AFTER != -1 && time(nullptr) > start + CLOSE_AFTER) {
+            break;
+        }
+    }
+
+} catch (std::exception& e) {
+    report_error("fatal exception occured: {}", e.what());
+    throw e;
 }
+*/

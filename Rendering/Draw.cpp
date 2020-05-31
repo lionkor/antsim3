@@ -41,6 +41,4 @@ void DrawSurface::finalize() {
         m_changed_indices.clear();
     }
     m_window.draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Quads);
-
-    m_changed_indices.clear();
 }

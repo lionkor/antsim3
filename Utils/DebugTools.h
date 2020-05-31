@@ -50,6 +50,9 @@ static const char* const ANSI_UNDERLINE = "\u001b[4m";
 #define FILENAME (std::string(basename(FILE_C_STRING)))
 #define nameof(x) #x
 
+
+#define HERE() fmt::format("{}:{}, {}", FILENAME, __LINE__, __FUNCTION__)
+
 namespace impl {
 
 template<typename... Args>

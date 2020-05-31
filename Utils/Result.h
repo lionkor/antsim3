@@ -5,6 +5,7 @@
 #include <utility>
 #include <string>
 #include <optional>
+#include "DebugTools.h"
 
 template<class T>
 class Result
@@ -13,42 +14,31 @@ class Result
     std::string      m_message;
 
 public:
-    template<class S>
-    Result(S value)
-        : m_value(std::forward<S>(value)) { }
+    Result()
+        : m_value(std::nullopt)
+        , m_message("internal: uninitialized result") { }
 
-    auto get() { return m_value.value(); }
-    auto get_or(T _else) { return m_value.value_or(_else); }
-
-    bool ok() const { return m_value.has_value(); }
-    bool error() const { return !ok(); }
-
-    std::string message() const { return m_message; }
-
-    static Result<T> error(const std::string& error_message) {
-        Result<T> result;
-        result.m_value   = std::nullopt;
-        result.m_message = error_message;
-        return result;
+    Result& set_value(T value) {
+        m_value   = std::optional<T>(std::forward<T>(value));
+        m_message = "Success";
+        return *this;
     }
-};
 
-class OkResult
-{
-private:
-    const bool        m_ok;
-    const std::string m_message;
+    template<typename... Args>
+    Result& set_error(const std::string& format_string, Args&&... args) {
+        m_value   = std::nullopt;
+        m_message = fmt::format(format_string, std::forward<Args>(args)...);
+        return *this;
+    }
 
-    OkResult(bool _ok, const std::string& msg)
-        : m_ok(_ok)
-        , m_message(msg) { }
+    auto value() { return m_value.value(); }
+    auto value_or(T _else) { return m_value.value_or(_else); }
 
-public:
-    operator bool() const { return m_ok; }
+    bool        ok() const { return m_value.has_value(); }
+    bool        error() const { return !ok(); }
     std::string message() const { return m_message; }
 
-    static OkResult ok() { return OkResult { true, "" }; }
-    static OkResult error(const std::string& error_message = "none") { return OkResult { false, error_message }; }
+    operator bool() const { return ok(); }
 };
 
 #endif // RESULT_H

@@ -26,8 +26,8 @@ private:
 public:
     Collider(const Collider::Shape& shape = Shape::Rectangle);
 
-    OkResult set_points(const std::vector<vec<double>>& points);
-    OkResult set_radius(double radius);
+//    OkResult set_points(const std::vector<vec<double>>& points);
+//    OkResult set_radius(double radius);
 
     // Object interface
 public:
