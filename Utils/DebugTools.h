@@ -72,12 +72,12 @@ static inline void report_trace_impl(const std::experimental::source_location& l
 
 template<typename... Args>
 static inline void report_warning_impl(const std::experimental::source_location& location, const std::string& format, Args&&... args) {
-    impl::report_impl("{}{}[WARNING] in {}:{} in {}: {}{}\n", ANSI_RESET, ANSI_YELLOW_BOLD, basename(const_cast<char*>(location.file_name())), location.line(), location.function_name(), fmt::format(format, std::forward<Args>(args)...), ANSI_RESET);
+    impl::report_impl("{}{}[WARNING] in {}:{} in {}: {}{}\n", ANSI_RESET, ANSI_YELLOW, basename(const_cast<char*>(location.file_name())), location.line(), location.function_name(), fmt::format(format, std::forward<Args>(args)...), ANSI_RESET);
 }
 
 template<typename... Args>
 static inline void report_error_impl(const std::experimental::source_location& location, const std::string& format, Args&&... args) {
-    impl::report_impl("{}{}[ERROR] in {}:{} in {}: {}{}\n", ANSI_RESET, ANSI_RED_BOLD, basename(const_cast<char*>(location.file_name())), location.line(), location.function_name(), fmt::format(format, std::forward<Args>(args)...), ANSI_RESET);
+    impl::report_impl("{}{}[ERROR] in {}:{} in {}: {}{}\n", ANSI_RESET, ANSI_RED, basename(const_cast<char*>(location.file_name())), location.line(), location.function_name(), fmt::format(format, std::forward<Args>(args)...), ANSI_RESET);
 }
 
 static inline void report_trace_impl(const std::experimental::source_location& location, const std::string& str) {
@@ -85,11 +85,11 @@ static inline void report_trace_impl(const std::experimental::source_location& l
 }
 
 static inline void report_warning_impl(const std::experimental::source_location& location, const std::string& str) {
-    impl::report_impl("{}{}[WARNING] in {}:{} in {}: {}{}\n", ANSI_RESET, ANSI_YELLOW_BOLD, basename(const_cast<char*>(location.file_name())), location.line(), location.function_name(), str, ANSI_RESET);
+    impl::report_impl("{}{}[WARNING] in {}:{} in {}: {}{}\n", ANSI_RESET, ANSI_YELLOW, basename(const_cast<char*>(location.file_name())), location.line(), location.function_name(), str, ANSI_RESET);
 }
 
 static inline void report_error_impl(const std::experimental::source_location& location, const std::string& str) {
-    impl::report_impl("{}{}[ERROR] in {}:{} in {}: {}{}\n", ANSI_RESET, ANSI_RED_BOLD, basename(const_cast<char*>(location.file_name())), location.line(), location.function_name(), str, ANSI_RESET);
+    impl::report_impl("{}{}[ERROR] in {}:{} in {}: {}{}\n", ANSI_RESET, ANSI_RED, basename(const_cast<char*>(location.file_name())), location.line(), location.function_name(), str, ANSI_RESET);
 }
 
 }

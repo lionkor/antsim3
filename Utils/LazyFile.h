@@ -23,6 +23,7 @@ private:
     bool                      m_loaded { false };
 
     void                       reset();
+    // TODO: validate, called from ctor // CONTINUE
     [[nodiscard]] Result<bool> restat();
 
 public:

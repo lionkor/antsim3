@@ -136,9 +136,15 @@ int main(int, char**) {
     auto& entity = world.add_entity(new Entity({ 100, 200 }));
     entity.add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }));
     
-    LazyFile file("build");
+    LazyFile file("main.cpp");
     report("file: {}", file);
     auto res = file.load();
+    report("file: {}", file);
+    res = file.load();
+    report("file: {}", file);
+    res = file.load();
+    report("file: {}", file);
+    
     if (res.error()) {
         report_error("error in file.load: {}", res.message());
     } else {

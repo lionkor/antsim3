@@ -4,6 +4,7 @@
 
 void LazyFile::reset() {
     m_data.clear();
+    m_loaded = false;
 }
 
 Result<bool> LazyFile::restat() {
@@ -21,28 +22,40 @@ Result<bool> LazyFile::restat() {
 
 LazyFile::LazyFile(const std::filesystem::path& path)
     : m_path(path) {
-    m_validation_result.set_value(true);
-    if (!std::filesystem::exists(path)) {
-        m_validation_result.set_error("file {} does not exist", path);
-    }
-    if (m_validation_result) {
-        m_path = std::filesystem::absolute(path);
-        if (!std::filesystem::is_regular_file(m_path)) {
-            m_validation_result.set_error("file {} is not a regular file", m_path);
-        } else {
-            auto res = restat();
-            if (!res) {
-                m_validation_result.set_error("restat for {} failed: {}", m_path, res.message());
-            }
+    try {
+        m_validation_result.set_value(true);
+        if (!std::filesystem::exists(path)) {
+            m_validation_result.set_error("file {} does not exist", path);
         }
-    } else {
-        report_error("Validating file {} failed: {}", m_path, m_validation_result.message());
+        if (m_validation_result) {
+            m_path = std::filesystem::absolute(path);
+            if (!std::filesystem::is_regular_file(m_path)) {
+                m_validation_result.set_error("file {} is not a regular file", m_path);
+            } else {
+                auto res = restat();
+                if (!res) {
+                    m_validation_result.set_error("restat for {} failed: {}", m_path, res.message());
+                }
+            }
+        } else {
+            report_error("Validating file {} failed: {}", m_path, m_validation_result.message());
+        }
+    } catch (std::exception& e) {
+        m_validation_result.set_error("(fatal) exception validating file {}: {}", path, e.what());
+        report_error(m_validation_result.message());
     }
 }
 
 Result<bool> LazyFile::force_reload() {
-    report_error("not implemented");
-    return Result<bool>().set_error("ERROR");
+    reset();
+    Result<bool> result;
+    auto res = restat();
+    if (!res) {
+        result.set_error("force_reload {} failed: {}", m_path, res.message());
+        report(result.message());
+        return result;
+    }
+    
 }
 
 Result<std::reference_wrapper<std::vector<uint8_t>>> LazyFile::load() {
@@ -50,6 +63,7 @@ Result<std::reference_wrapper<std::vector<uint8_t>>> LazyFile::load() {
 
     // if we loaded before, just return the data
     if (m_validation_result && m_loaded) {
+        report("already loaded {}", m_path);
         return result.set_value(m_data);
     }
 
@@ -64,6 +78,7 @@ Result<std::reference_wrapper<std::vector<uint8_t>>> LazyFile::load() {
     // call reset(), then return.
 
     try {
+        report("loading {}!", m_path);
         if (!m_validation_result) {
             result.set_error(m_validation_result.message());
             report_error(result.message());
@@ -116,7 +131,6 @@ std::stringstream LazyFile::to_stream() const {
     auto ss = Object::to_stream();
     ss << "valid=" << bool(m_validation_result) << ";"
        << "path=" << m_path << ";"
-       << "loaded=" << m_loaded << ";"
-       << "validation_error=\"" << m_validation_result.message() << "\";";
+       << "loaded=" << m_loaded << ";";
     return ss;
 }
