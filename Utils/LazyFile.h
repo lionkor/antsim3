@@ -22,9 +22,8 @@ private:
     struct stat               m_stat;
     bool                      m_loaded { false };
 
-    void                       reset();
-    // TODO: validate, called from ctor // CONTINUE
-    [[nodiscard]] Result<bool> restat();
+    void reset();
+    void validate();
 
 public:
     LazyFile(const std::filesystem::path&);
@@ -33,9 +32,17 @@ public:
     LazyFile& operator=(const LazyFile&) = delete;
 
     [[nodiscard]] Result<bool>                                              force_reload();
-    [[nodiscard]] Result<std::reference_wrapper<std::vector<std::uint8_t>>> load();
+    [[nodiscard]] Result<std::reference_wrapper<std::vector<std::uint8_t>>> get();
+
+    bool        is_valid() const { return m_validation_result.ok(); }
+    std::string validation_error_message() const { return m_validation_result.message(); }
 
     std::size_t size_on_disk() const { return m_stat.st_size; }
+
+    /// Whether the file has changed on disk. update the LazyFile with restat()
+    bool has_changed_on_disk() const;
+
+    [[nodiscard]] Result<bool> restat();
 
     // Object interface
 public:
