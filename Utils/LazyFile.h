@@ -40,6 +40,7 @@ public:
 
     [[nodiscard]] Result<bool> force_reload();
     [[nodiscard]] Result<bool> restat();
+    void                       force_unload();
 
     const std::filesystem::path& path() const { return m_path; }
     std::filesystem::path        filename() const { return m_path.filename(); }

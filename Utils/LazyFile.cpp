@@ -45,6 +45,10 @@ Result<bool> LazyFile::restat() {
     return result.set_value(true);
 }
 
+void LazyFile::force_unload() {
+    reset();
+}
+
 LazyFile::LazyFile(const std::filesystem::path& path)
     : m_path(path) {
     validate();

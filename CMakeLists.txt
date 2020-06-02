@@ -1,11 +1,9 @@
-
-
 cmake_minimum_required(VERSION 3.15)
 set(CMAKE_CXX_COMPILER "/usr/lib/ccache/bin/g++")
 set(CMAKE_C_COMPILER "/usr/lib/ccache/bin/gcc")
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -g -pedantic-errors -Wformat -Wformat-overflow -Wnull-dereference -Wimplicit-fallthrough -Wmisleading-indentation -Wparentheses -Wunused-parameter -Wuninitialized -Wstringop-overflow -Wsuggest-attribute=const -Warith-conversion -Wconversion -Wduplicated-branches -Wduplicated-cond -Wfloat-equal -Wshadow -Wcast-qual -Wparentheses -Winline")
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -O3 -pedantic-errors -Wformat -Wformat-overflow -Wnull-dereference -Wimplicit-fallthrough -Wmisleading-indentation -Wparentheses -Wunused-parameter -Wuninitialized -Wstringop-overflow -Wsuggest-attribute=const -Warith-conversion -Wconversion -Wduplicated-branches -Wduplicated-cond -Wfloat-equal -Wshadow -Wcast-qual -Wparentheses -Winline")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -fconcepts")
 
 project(Engine)
@@ -60,6 +58,8 @@ add_library(Engine SHARED
     Utils/Result.h
     Utils/Managed.h
     Utils/Mutexed.h
+    Utils/ResourceManager.h
+    Utils/ResourceManager.cpp
 
     # fmt
     fmt/src/format.cc
@@ -81,3 +81,9 @@ add_executable(antsim3
 target_link_libraries(antsim3
     Engine
 )
+
+project(cells)
+
+add_executable(cells cells.cpp)
+
+target_link_libraries(cells Engine)

@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <fstream>
+#include <chrono>
 
 #include "Events/IEventReceiver.h"
 #include "Utils/DebugTools.h"
@@ -39,16 +40,15 @@ class GameWindow
 {
     OBJECT(GameWindow)
 protected:
-
     sf::Event    m_event;
     sf::Vector2i m_mouse_pos;
     bool         m_mmb_pressed { false };
     DrawSurface  m_surface;
     FpsLogger    m_fps_logger;
     sf::Clock    m_fps_clock;
-    std::string       m_title;
+    std::string  m_title;
 
-    /// Zooms the current camera's view by zoom, moving relative to the specified 
+    /// Zooms the current camera's view by zoom, moving relative to the specified
     /// pixel.
     void zoom_view_at(sf::Vector2i pixel, float zoom);
 
@@ -60,7 +60,7 @@ public:
     void handle_mouse_button_release();
     void handle_key_press();
     void internal_draw();
-    
+
     /// Gets the title.
     const std::string& title() const;
     /// Sets the title property and calls into sfml to change the title.
@@ -68,6 +68,8 @@ public:
 
     /// Gets the surface to be used for drawing geometry into the window.
     DrawSurface& surface() { return m_surface; }
+
+    void set_framerate_limit(std::size_t limit);
 
     /// Callback that is called whenever the left mouse button has been clicked.
     std::function<void(const vec<double>&)> on_left_click { nullptr };

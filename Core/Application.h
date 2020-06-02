@@ -10,15 +10,6 @@
 #include "World.h"
 #include "GameWindow.h"
 
-class ResourceManager
-{
-private:
-public:
-    void
-    operator()() {
-    }
-};
-
 class Application : public Object
 {
     OBJECT(Application)

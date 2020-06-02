@@ -6,6 +6,7 @@
 #include <set>
 #include <boost/ref.hpp>
 #include <boost/optional.hpp>
+#include <chrono>
 
 #include "Utils/DebugTools.h"
 #include "Utils/Managed.h"
@@ -27,6 +28,9 @@ class World
 private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
     std::vector<Managed<Entity>> m_entities;
+    std::size_t                  m_update_interval_ms;
+
+    sf::Clock m_update_timer;
 
 public:
     World();
@@ -44,6 +48,10 @@ public:
     auto end() { return m_entities.end(); }
     /// End of the container holding all objects.
     auto end() const { return m_entities.end(); }
+
+    void set_update_interval(std::size_t ms) {
+        m_update_interval_ms = ms;
+    }
 
     /// Updates the world and calls into the window to update, too.
     void update(GameWindow&);

@@ -135,34 +135,6 @@ int main(int, char**) {
 
     auto& entity = world.add_entity(new Entity({ 100, 200 }));
     entity.add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }));
-    /*
-    LazyFile file("main.cpp");
-    report("file: {}", file);
-    auto res = file.get();
-    report("file: {}", file);
-    res = file.get();
-    report("file: {}", file);
-    auto r = file.force_reload();
-    report(r.message());
-    report("file after forced reload: {}", file);
-    res = file.get();
-    report("file: {}", file);
-    
-    if (res.error()) {
-        report_error("error in file.load: {}", res.message());
-    } else {
-    }
-    */
-
-    LazyFile file("test.txt");
-    if (!file.is_valid())
-        report_error(file.validation_error_message());
-
-    while (!file.has_changed_on_disk()) {
-        report("not yet...");
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-    report_warning("changed!");
 
     return app.run();
 }

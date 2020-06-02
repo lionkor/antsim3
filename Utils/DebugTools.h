@@ -94,7 +94,9 @@ static inline void report_error_impl(const std::experimental::source_location& l
 
 }
 
+#ifndef TRACE
 #define TRACE 0
+#endif
 #if TRACE
 #define report_trace(...) impl::report_trace_impl(std::experimental::source_location::current(), __VA_ARGS__)
 #else

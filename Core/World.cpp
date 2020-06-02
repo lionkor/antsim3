@@ -6,6 +6,7 @@
 #include <algorithm>
 
 World::World() {
+    m_update_timer.restart();
 }
 
 Entity& World::add_entity(Entity*&& obj) {
@@ -29,12 +30,16 @@ RayHit World::try_hit(const vec<double>& pos) {
 void World::update(GameWindow& window) {
     window.clear();
     window.internal_draw();
-    
+
     // FIXME: This might be slow
-    for (auto& entity : m_entities) {
-        entity->on_update();
+    auto ms = std::size_t(m_update_timer.getElapsedTime().asMilliseconds());
+    if (m_update_interval_ms == 0 || ms >= m_update_interval_ms) {
+        for (auto& entity : m_entities) {
+            entity->on_update();
+        }
+        m_update_timer.restart();
     }
-    
+
     auto& surface = window.surface();
     for (auto& entity : m_entities) {
         entity->on_draw(surface);

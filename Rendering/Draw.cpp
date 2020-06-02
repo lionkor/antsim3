@@ -28,6 +28,15 @@ std::size_t DrawSurface::draw_new_rectangle(const Rectangle& rect, const Color& 
     return index;
 }
 
+std::size_t DrawSurface::submit_custom_varray(const sf::VertexArray& varray) {
+    m_custom_varrays.push_back(varray);
+    return m_custom_varrays.size() - 1;
+}
+
+void DrawSurface::update_custom_varray(std::size_t index, const sf::VertexArray& varray) {
+    m_custom_varrays.at(index) = varray;
+}
+
 void DrawSurface::finalize() {
     // if it takes too long, we could update until a certain amount of time has passed,
     // or just do this in a seperate thread
@@ -41,4 +50,8 @@ void DrawSurface::finalize() {
         m_changed_indices.clear();
     }
     m_window.draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Quads);
+    // FIXME: This sucks but we need something like this.
+    for (auto& varray : m_custom_varrays) {
+        m_window.draw(varray);
+    }
 }
