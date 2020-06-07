@@ -43,6 +43,7 @@ target_link_libraries(Engine
     sfml-graphics 
     sfml-window 
     sfml-system
+    pthread
 )
 
 project(antsim3)

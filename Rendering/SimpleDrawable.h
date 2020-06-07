@@ -10,6 +10,7 @@ class SimpleDrawable
 private:
     mutable bool    m_initialized { false };
     mutable size_t  m_index {};
+    mutable bool    m_changed { true };
     sf::VertexArray m_varray {};
 
 public:
@@ -23,10 +24,11 @@ public:
 
     Vertex&       operator[](size_t index) { return m_varray[index]; }
     const Vertex& operator[](size_t index) const { return m_varray[index]; }
-    void          resize(size_t size) { m_varray.resize(size); }
-    void          clear() { m_varray.clear(); }
+    void          resize(size_t size);
+    void          clear();
     void          draw(DrawSurface& surface) const;
     size_t        size() const { return m_varray.getVertexCount(); }
+    void          set_changed() { m_changed = true; }
 };
 
 #endif // SIMPLEDRAWABLE_H

@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Physics/vec.h"
 #include "Rendering/Draw.h"
+#include "Rendering/SimpleDrawable.h"
 
 class Entity;
 
