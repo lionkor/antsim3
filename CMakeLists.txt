@@ -15,50 +15,23 @@ include_directories(Engine
 
 add_library(Engine SHARED
     Cellular/Cell.cpp
-    Cellular/Cell.h
-    Core.h
     Core/Application.cpp
-    Core/Application.h
     Core/GameWindow.cpp
-    Core/GameWindow.h
-    Core/Object.h
     Core/World.cpp
-    Core/World.h
     ECS/Component.cpp
-    ECS/Component.h
     ECS/Entity.cpp
-    ECS/Entity.h
     Events/Event.cpp
-    Events/Event.h
     Events/EventDispatcher.cpp
-    Events/EventDispatcher.h
     Events/IEventReceiver.cpp
-    Events/IEventReceiver.h
     Physics/Collider.cpp
-    Physics/Collider.h
-    Physics/IHittable.h
     Physics/PhysicalObject.cpp
-    Physics/PhysicalObject.h
     Physics/PhysicsObject.cpp
-    Physics/PhysicsObject.h
     Physics/Ray.cpp
-    Physics/Ray.h
-    Physics/vec.h
     Rendering/Draw.cpp
-    Rendering/Draw.h
+    Rendering/SimpleDrawable.cpp
     Rendering/ext_sf.cpp
-    Rendering/ext_sf.h
     Unused/Tool.cpp
-    Unused/Tool.h
-    Utils.h
-    Utils/DebugTools.h
-    Utils/LazyFile.h
     Utils/LazyFile.cpp
-    Utils/Random.h
-    Utils/Result.h
-    Utils/Managed.h
-    Utils/Mutexed.h
-    Utils/ResourceManager.h
     Utils/ResourceManager.cpp
 
     # fmt
