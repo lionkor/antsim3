@@ -6,4 +6,6 @@
 #include "Core/Object.h"
 #include "Core/Application.h"
 
+using std::size_t;
+
 #endif // CORE_H

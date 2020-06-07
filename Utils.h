@@ -8,4 +8,6 @@
 #include "Utils/Result.h"
 #include "Utils/LazyFile.h"
 
+using std::size_t;
+
 #endif // UTILS_H

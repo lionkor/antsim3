@@ -1,9 +1,12 @@
 #define TRACE 0
-#include "Core.h"
-#include "Utils.h"
+#include "Engine.h"
 #include "ECS/Component.h"
 
 #include <vector>
+
+static constexpr size_t index_3to1(size_t x, size_t y, size_t z, size_t height, size_t depth) {
+    return x * height * depth + y * depth + z;
+}
 
 struct Cell {
     bool alive;
@@ -15,16 +18,14 @@ class GridComponent : public Component
 private:
     std::vector<Cell>   m_cells;
     const vec<unsigned> m_size;
-    bool                m_initialized { false };
-    sf::VertexArray     m_varray;
-    std::size_t         m_index;
+    SimpleDrawable      m_SimpleDrawable;
 
 
 public:
     GridComponent(std::size_t w, std::size_t h)
         : m_cells(w * h)
         , m_size(w, h)
-        , m_varray(sf::PrimitiveType::Quads) {
+        , m_SimpleDrawable(SimpleDrawable::PrimitiveType::Quads, w * h * 4) {
         for (auto& cell : m_cells) {
             cell.alive = Random::chance(10);
         }
@@ -44,7 +45,7 @@ public:
 
     virtual void on_update() override {
         auto gc = *this;
-        m_varray.clear();
+        //m_varray.clear();
         for (std::size_t x = 0; x < m_size.x; ++x) {
             for (std::size_t y = 0; y < m_size.y; ++y) {
                 int nb = 0;
@@ -65,21 +66,17 @@ public:
                     at(x, y).alive = false;
                 }
 
-                const auto color = at(x, y).alive ? sf::Color::White : sf::Color::Black;
-                m_varray.append(sf::Vertex(sf::Vector2f(x * 10, y * 10), color));
-                m_varray.append(sf::Vertex(sf::Vector2f(x * 10 + 10, y * 10), color));
-                m_varray.append(sf::Vertex(sf::Vector2f(x * 10 + 10, y * 10 + 10), color));
-                m_varray.append(sf::Vertex(sf::Vector2f(x * 10, y * 10 + 10), color));
+                const auto color                                   = at(x, y).alive ? sf::Color::White : sf::Color::Black;
+                m_SimpleDrawable[index_3to1(x, y, 0, m_size.y, 4)] = SimpleDrawable::Vertex(sf::Vector2f(x * 10, y * 10), color);
+                m_SimpleDrawable[index_3to1(x, y, 1, m_size.y, 4)] = SimpleDrawable::Vertex(sf::Vector2f(x * 10 + 10, y * 10), color);
+                m_SimpleDrawable[index_3to1(x, y, 2, m_size.y, 4)] = SimpleDrawable::Vertex(sf::Vector2f(x * 10 + 10, y * 10 + 10), color);
+                m_SimpleDrawable[index_3to1(x, y, 3, m_size.y, 4)] = SimpleDrawable::Vertex(sf::Vector2f(x * 10, y * 10 + 10), color);
             }
         }
     }
 
     virtual void on_draw(DrawSurface& surf) override {
-        if (!m_initialized) {
-            m_index       = surf.submit_custom_varray(m_varray);
-            m_initialized = true;
-        }
-        surf.update_custom_varray(m_index, m_varray);
+        m_SimpleDrawable.draw(surf);
     }
 };
 
