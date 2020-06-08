@@ -7,6 +7,8 @@
 #include "Utils/Mutexed.h"
 #include "Utils/Result.h"
 #include "Utils/LazyFile.h"
+#include "Utils/Common.h"
+#include "Utils/CsvLogger.h"
 
 using std::size_t;
 
