@@ -31,6 +31,7 @@ add_library(Engine SHARED
     Rendering/SimpleDrawable.cpp
     Rendering/ext_sf.cpp
     Unused/Tool.cpp
+    Utils/CsvLogger.cpp
     Utils/LazyFile.cpp
     Utils/ResourceManager.cpp
 
@@ -61,3 +62,10 @@ project(cells)
 add_executable(cells cells.cpp)
 
 target_link_libraries(cells Engine)
+
+
+project(testing)
+
+add_executable(testing testing.cpp)
+
+target_link_libraries(testing Engine)

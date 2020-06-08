@@ -7,5 +7,5 @@ cmake ..
 make -j 9
 cd ..
 echo "-> running..."
-./build/antsim3
+./build/$*
 echo "-> done!"

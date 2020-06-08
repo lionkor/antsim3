@@ -2,7 +2,7 @@
 #define DEBUGTOOLS_H
 
 #include <cstdio>
-#include <cstdlib>
+#include <stdlib.h>
 #include <libgen.h>
 #include <iostream>
 // TODO: common.h, precompiled
