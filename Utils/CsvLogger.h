@@ -7,6 +7,7 @@
 #include <atomic>
 #include <queue>
 #include <thread>
+#include <mutex>
 
 class CsvLogger
 {
@@ -16,6 +17,7 @@ private:
     std::queue<std::string> m_queue;
     std::thread             m_thread;
     bool                    m_kill_thread { false };
+    std::mutex              m_mutex;
 
 public:
     CsvLogger(const std::string& filename);
@@ -26,8 +28,9 @@ public:
 
     template<typename T>
     void log(const T& value) {
-        m_queue.emplace(fmt::format("{},", value));
+        std::scoped_lock lock(m_mutex);
+        m_queue.emplace(fmt::format("{}\n", value));
     }
 };
 
-#endif // CSVLOGGER_H
+#endif // CSVLOGGER_H 

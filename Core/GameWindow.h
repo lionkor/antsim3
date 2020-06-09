@@ -71,6 +71,12 @@ public:
 
     void set_framerate_limit(std::size_t limit);
 
+    template<typename T>
+    T width() const { return static_cast<T>(getSize().x); }
+    
+    template<typename T>
+    T height() const { return static_cast<T>(getSize().y); }
+
     /// Callback that is called whenever the left mouse button has been clicked.
     std::function<void(const vec<double>&)> on_left_click { nullptr };
 

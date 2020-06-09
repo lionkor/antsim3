@@ -80,6 +80,19 @@ struct vec : public Object {
         return *this *= static_cast<AnyNumberT>(1) / i;
     }
 
+    T length() const {
+        return std::sqrt(x * x + y * y);
+    }
+
+    void normalize() {
+        *this = *this / length();
+    }
+
+    static T distance_squared(const vec<T>& a, const vec<T>& b) {
+        return (a.x - b.x) * (a.x - b.x)
+               + (a.y - b.y) * (a.y - b.y);
+    }
+
     // Object interface
 public:
     virtual std::stringstream to_stream() const override {
@@ -91,5 +104,15 @@ public:
     virtual bool operator==(const Object&) const override { return false; }
     virtual bool operator!=(const Object&) const override { return true; }
 };
+
+template<typename T>
+vec<T> operator*(T val, const vec<T>& vec) {
+    return vec * val;
+}
+
+template<typename T>
+vec<T> operator+(T val, const vec<T>& vec) {
+    return vec + val;
+}
 
 #endif // VEC_H

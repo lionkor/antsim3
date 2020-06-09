@@ -14,36 +14,35 @@ class Entity final
 {
     OBJECT(Entity)
 private:
-    std::vector<Managed<Component>> m_comps;
-    TransformComponent& m_transform;
+    std::vector<std::shared_ptr<Component>> m_comps;
+    TransformComponent&                     m_transform;
 
 public:
     Entity(const vec<double>& pos = { 0, 0 });
-    
+
     template<class DerivedComponentT>
     requires std::derived_from<DerivedComponentT, Component> bool has_component() const {
         const std::string name = DerivedComponentT().class_name();
         auto              iter = std::find_if(m_comps.begin(), m_comps.end(), [&](const auto& comp) {
-            return comp->class_name() == name;
+            return comp.class_name() == name;
         });
         return iter != m_comps.end();
     }
 
-    template<class DerivedComponentT, typename... Args>
-    requires std::derived_from<DerivedComponentT, Component> DerivedComponentT& add_component(DerivedComponentT*&& ptr) {
-        m_comps.push_back(std::move(ptr));
-        ptr = nullptr;
+    template<class DerivedComponentT>
+    requires(std::derived_from<DerivedComponentT, Component> && !std::is_same_v<DerivedComponentT, Component>) DerivedComponentT& add_component(DerivedComponentT*&& comp) {
+        m_comps.push_back(std::shared_ptr<DerivedComponentT>(std::move(comp)));
         auto& ref = *m_comps.back();
         // set parent
         ref.m_parent = this;
         report("Added component: {}", ref);
         return dynamic_cast<DerivedComponentT&>(ref);
     }
-    
+
     void on_update();
     void on_draw(DrawSurface&);
-    
-    TransformComponent& transform() { return m_transform; }
+
+    TransformComponent&       transform() { return m_transform; }
     const TransformComponent& transform() const { return m_transform; }
 };
 

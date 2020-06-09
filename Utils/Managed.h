@@ -3,6 +3,14 @@
 
 #include <utility>
 
+#include <memory>
+
+template<typename... Args>
+using Managed = std::unique_ptr<Args...>;
+
+#define make_managed std::make_unique;
+
+/*
 /// Owns a pointer and deletes it upon destruction
 template<class T>
 class Managed
@@ -49,5 +57,6 @@ public:
     T*       get() { return m_ptr; }
     const T* get() const { return m_ptr; }
 };
+*/
 
 #endif // MANAGED_H
