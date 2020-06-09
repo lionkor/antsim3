@@ -23,8 +23,8 @@ public:
 
     bool has_parent() const noexcept { return static_cast<bool>(m_parent); }
 
-    virtual void on_update() {  }
-    virtual void on_draw(DrawSurface&) {  }
+    virtual void on_update() { }
+    virtual void on_draw(DrawSurface&) { }
 
     Entity*       parent() noexcept { return m_parent; }
     const Entity* parent() const noexcept { return m_parent; }
