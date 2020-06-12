@@ -58,6 +58,10 @@ public:
     auto end() { return m_entities.end(); }
     /// End of the container holding all objects.
     auto end() const { return m_entities.end(); }
+    /// End of the container holding all objects.
+    auto rend() { return m_entities.rend(); }
+    /// End of the container holding all objects.
+    auto rend() const { return m_entities.rend(); }
 
     void set_update_interval(std::size_t ms) {
         m_update_interval_ms = ms;

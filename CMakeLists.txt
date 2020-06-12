@@ -84,6 +84,7 @@ project(tests)
 
 add_executable(tests 
     Tests/test_main.cpp
+    Tests/test_core.cpp
 )
 
 target_link_libraries(tests Engine)

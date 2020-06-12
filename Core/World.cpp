@@ -36,7 +36,8 @@ World::World() {
 WeakPtr<Entity> World::add_entity(Entity*&& obj) {
     ASSERT(obj != nullptr);
     m_entities_to_add.push_back(SharedPtr<Entity>(std::move(obj)));
-    auto entity = WeakPtr<Entity>(m_entities_to_add.back());
+    obj = nullptr;
+    auto entity            = WeakPtr<Entity>(m_entities_to_add.back());
     entity.lock()->m_world = this;
     return entity;
 }
@@ -54,6 +55,9 @@ RayHit World::try_hit(const vec<double>& pos) {
 }
 
 void World::update(GameWindow& window) {
+    if (!m_application)
+        throw std::runtime_error("no application set, this can't be right!");
+    
     add_new_entities();
 
     window.clear();
