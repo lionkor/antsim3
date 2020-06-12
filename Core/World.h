@@ -27,11 +27,15 @@ class World
 {
     OBJECT(World)
 
+    friend class Application;
+
 private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
     std::vector<SharedPtr<Entity>> m_entities;
     std::vector<SharedPtr<Entity>> m_entities_to_add;
     std::size_t                    m_update_interval_ms;
+
+    class Application* m_application { nullptr };
 
     sf::Clock m_update_timer;
 
@@ -57,6 +61,15 @@ public:
 
     void set_update_interval(std::size_t ms) {
         m_update_interval_ms = ms;
+    }
+
+    /// When fn returns false, the loop breaks. 
+    void for_each_entity(std::function<bool(SharedPtr<Entity>&)> fn) {
+        for (auto& entity_ptr : m_entities) {
+            if (!fn(entity_ptr)) {
+                break;
+            }
+        }
     }
 
     /// Updates the world and calls into the window to update, too.

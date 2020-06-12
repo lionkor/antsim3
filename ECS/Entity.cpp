@@ -13,8 +13,8 @@ WeakPtr<Entity> Entity::add_child(Entity*&& entity) {
     // if the entity already has a parent then something is wack
     auto ptr = weak_ptr.lock();
     ASSERT(!ptr->m_parent);
-    ptr->m_parent = this;
-    ptr->m_transform.m_relative_to = &m_transform;
+    ptr->m_parent                       = this;
+    ptr->m_transform.m_parent_transform = &m_transform;
     m_children.push_back(ptr.get());
     return weak_ptr;
 }
@@ -31,9 +31,6 @@ Entity::Entity(const vec<double>& pos)
 
 
 void Entity::on_update() {
-    for (auto& child : m_children) {
-        report("{}", child->transform());
-    }
     for (auto& comp : m_comps) {
         comp->on_update();
     }
@@ -42,6 +39,27 @@ void Entity::on_update() {
 void Entity::on_draw(DrawSurface& surface) {
     for (auto& comp : m_comps) {
         comp->on_draw(surface);
+    }
+}
+
+void Entity::on_mouse_down(GameWindow& window, const HID::MouseAction& action) {
+    for (auto& comp : m_comps) {
+        if (comp->on_mouse_down)
+            comp->on_mouse_down(window, action);
+    }
+}
+
+void Entity::on_mouse_up(GameWindow& window, const HID::MouseAction& action) {
+    for (auto& comp : m_comps) {
+        if (comp->on_mouse_up)
+            comp->on_mouse_up(window, action);
+    }
+}
+
+void Entity::on_mouse_move(GameWindow& window, const HID::MouseAction& action) {
+    for (auto& comp : m_comps) {
+        if (comp->on_mouse_up)
+            comp->on_mouse_up(window, action);
     }
 }
 

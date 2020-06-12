@@ -57,6 +57,9 @@ public:
 
     void         on_update();
     void         on_draw(DrawSurface&);
+    void         on_mouse_down(GameWindow&, const HID::MouseAction&);
+    void         on_mouse_up(GameWindow&, const HID::MouseAction&);
+    void         on_mouse_move(GameWindow&, const HID::MouseAction&);
     bool         has_world() const { return static_cast<bool>(m_world); }
     bool         has_parent() const { return static_cast<bool>(m_parent); }
     virtual void destroy() final;

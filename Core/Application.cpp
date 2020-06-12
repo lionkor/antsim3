@@ -3,6 +3,8 @@
 Application::Application(GameWindow*&& window, World*&& world)
     : m_window(std::move(window))
     , m_world(std::move(world)) {
+    m_window->m_application = this;
+    m_world->m_application = this;
 }
 
 int Application::run() {

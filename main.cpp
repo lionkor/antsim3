@@ -19,6 +19,12 @@ class SimpleMovementComponent
     OBJECT(SimpleMovementComponent)
 
 public:
+    SimpleMovementComponent() {
+        on_mouse_down = [](GameWindow& window, const HID::MouseAction& action) {
+            report("button {} was pressed at {}, which is {} in world coords!", action.button, action.screen_position, action.world_position(window));
+        };
+    }
+
     virtual void on_update() override {
         auto& transform = parent()->transform();
         transform.move_by({ 0.05, 0 });

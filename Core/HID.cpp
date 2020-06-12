@@ -2,17 +2,8 @@
 
 
 static inline HID::MouseButton from_sf_mouse_button(sf::Mouse::Button button) {
-    switch (button) {
-    case sf::Mouse::Left:
-        return HID::MouseButton::Left;
-    case sf::Mouse::Right:
-        return HID::MouseButton::Right;
-    case sf::Mouse::Middle:
-        return HID::MouseButton::Middle;
-    default:
-        ASSERT_NOT_REACHABLE();
-    }
-    return HID::MouseButton::Left; // never happens
+    // just cast
+    return HID::MouseButton(button);
 }
 
 HID::MouseAction HID::from_sf_mouse_action(sf::Event event) {
@@ -33,6 +24,6 @@ HID::MouseAction HID::from_sf_mouse_action(sf::Event event) {
     return action;
 }
 
-vec<double> HID::MouseAction::world_position(GameWindow& window) {
+vec<double> HID::MouseAction::world_position(GameWindow& window) const {
     return window.mapPixelToCoords(sf::Vector2i { screen_position.x, screen_position.y });
 }

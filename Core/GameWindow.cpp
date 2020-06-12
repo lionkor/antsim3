@@ -1,5 +1,7 @@
 #include "GameWindow.h"
 #include "Utils/DebugTools.h"
+#include "HID.h"
+#include "Application.h"
 
 GameWindow::GameWindow(const std::string& title, sf::Vector2u size)
     : sf::RenderWindow(sf::VideoMode(size.x, size.y), title, sf::Style::Default, sf::ContextSettings(0, 0, 8))
@@ -45,6 +47,11 @@ void GameWindow::handle_events() {
                 setView(view);
             }
             m_mouse_pos = sf::Mouse::getPosition(*this);
+            HID::MouseAction action = HID::from_sf_mouse_action(m_event);
+            m_application->world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+                entity_ptr->on_mouse_move(*this, action);
+                return true;
+            });
             break;
         }
         case sf::Event::MouseWheelScrolled: {
@@ -63,20 +70,23 @@ void GameWindow::handle_events() {
 void GameWindow::handle_mouse_button_press() {
     if (m_event.mouseButton.button == sf::Mouse::Middle) {
         m_mmb_pressed = true;
-    } else if (m_event.mouseButton.button == sf::Mouse::Left) {
-        vec<int>    screen_pos(m_event.mouseButton);
-        vec<double> world_pos = mapPixelToCoords({ screen_pos.x, screen_pos.y });
-        if (on_left_click)
-            on_left_click(world_pos);
-        Event e;
-        dispatch(e);
-    }
+    } 
+    HID::MouseAction action = HID::from_sf_mouse_action(m_event);
+    m_application->world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+        entity_ptr->on_mouse_down(*this, action);
+        return true;
+    });
 }
 
 void GameWindow::handle_mouse_button_release() {
     if (m_event.mouseButton.button == sf::Mouse::Middle) {
         m_mmb_pressed = false;
     }
+    HID::MouseAction action = HID::from_sf_mouse_action(m_event);
+    m_application->world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+        entity_ptr->on_mouse_up(*this, action);
+        return true;
+    });
 }
 
 void GameWindow::handle_key_press() {

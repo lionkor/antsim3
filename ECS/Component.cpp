@@ -19,9 +19,8 @@ std::stringstream TransformComponent::to_stream() const {
     return ss;
 }
 
-
-SpriteComponent::SpriteComponent(const vec<double>& relative_position, const vec<double>& sprite_size)
-    : m_sprite_pos(relative_position)
+SpriteComponent::SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size)
+    : m_sprite_pos(parent_position)
     , m_sprite_size(sprite_size) {
 }
 

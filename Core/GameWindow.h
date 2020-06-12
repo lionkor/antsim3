@@ -39,6 +39,8 @@ class GameWindow
       public EventDispatcher
 {
     OBJECT(GameWindow)
+    
+    friend class Application;
 protected:
     sf::Event    m_event;
     sf::Vector2i m_mouse_pos;
@@ -47,6 +49,9 @@ protected:
     FpsLogger    m_fps_logger;
     sf::Clock    m_fps_clock;
     std::string  m_title;
+
+    // FIXME: We should check somewhere if this is not nullptr anymore
+    class Application* m_application { nullptr };
 
     /// Zooms the current camera's view by zoom, moving relative to the specified
     /// pixel.
@@ -73,7 +78,7 @@ public:
 
     template<typename T>
     T width() const { return static_cast<T>(getSize().x); }
-    
+
     template<typename T>
     T height() const { return static_cast<T>(getSize().y); }
 

@@ -18,6 +18,7 @@ add_library(Engine SHARED
     Core/Application.cpp
     Core/GameWindow.cpp
     Core/World.cpp
+    Core/HID.cpp
     ECS/Component.cpp
     ECS/Entity.cpp
     Events/Event.cpp

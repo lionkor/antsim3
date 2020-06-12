@@ -46,7 +46,6 @@ void DrawSurface::finalize() {
     // if it takes too long, we could update until a certain amount of time has passed,
     // or just do this in a seperate thread
     if (m_changed_indices.size() != 0) {
-        report("{} indices to update", m_changed_indices.size());
         m_vertices.clear();
         for (const auto& rect : m_rects) {
             const sf::Vertex* verts = rect.vertices;

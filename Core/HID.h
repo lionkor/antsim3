@@ -12,17 +12,19 @@
 
 namespace HID {
 
-enum MouseButton : char
+enum MouseButton
 {
     Left,
     Right,
-    Middle // FIXME: Add more ( 5 button mice at least )
+    Middle, 
+    Extra1,
+    Extra2
 };
 
 struct MouseAction {
     HID::MouseButton button;
     vec<int>         screen_position;
-    vec<double>      world_position(GameWindow&);
+    vec<double>      world_position(GameWindow&) const;
 };
 
 MouseAction from_sf_mouse_action(sf::Event);

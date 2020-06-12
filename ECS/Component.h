@@ -5,6 +5,7 @@
 #include "Physics/vec.h"
 #include "Rendering/Draw.h"
 #include "Rendering/SimpleDrawable.h"
+#include "Core/HID.h"
 
 class Entity;
 
@@ -23,7 +24,11 @@ protected:
     /// surface.
     virtual void on_cleanup(DrawSurface&) { }
 
+    std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_down { nullptr };
+    std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_up { nullptr };
+    std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_move { nullptr };
 public:
+
     Component()                   = default;
     virtual ~Component() noexcept = default;
 
