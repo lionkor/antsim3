@@ -40,7 +40,7 @@ public:
     requires std::derived_from<DerivedComponentT, Component> bool has_component() const {
         const std::string name = DerivedComponentT().class_name();
         auto              iter = std::find_if(m_comps.begin(), m_comps.end(), [&](const auto& comp) {
-            return comp.class_name() == name;
+            return comp->class_name() == name;
         });
         return iter != m_comps.end();
     }
@@ -66,11 +66,13 @@ public:
     virtual bool is_marked_destroyed() const final { return m_destroyed; }
 
     World& world() {
-        ASSERT(m_world);
+        if (!m_world)
+            throw std::runtime_error("no world attached, this can't be right!");
         return *m_world;
     }
     const World& world() const {
-        ASSERT(m_world);
+        if (!m_world)
+            throw std::runtime_error("no world attached, this can't be right!");
         return *m_world;
     }
 
