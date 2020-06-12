@@ -17,6 +17,12 @@ class Component
 private:
     Entity* m_parent;
 
+protected:
+    /// Called just before the component is destructed, is passed the draw 
+    /// surface to enable drawing components to unregister with the draw
+    /// surface.
+    virtual void on_cleanup(DrawSurface&) { }
+
 public:
     Component()                   = default;
     virtual ~Component() noexcept = default;
@@ -92,6 +98,10 @@ public:
     // Object interface
 public:
     virtual std::stringstream to_stream() const override;
+    
+    // Component interface
+protected:
+    virtual void on_cleanup(DrawSurface&) override;
 };
 
 #endif // COMPONENT_H

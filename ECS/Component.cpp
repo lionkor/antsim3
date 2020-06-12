@@ -42,7 +42,7 @@ void SpriteComponent::on_draw(DrawSurface& surface) {
     if (!m_initialized) {
         const vec<double>& pos = parent()->transform().position();
         m_render_id            = surface.draw_new_rectangle(Rectangle(pos + m_sprite_pos, m_sprite_size));
-        m_initialized = true;
+        m_initialized          = true;
         //m_changed     = true;
     }
     if (m_changed) {
@@ -69,4 +69,8 @@ std::stringstream SpriteComponent::to_stream() const {
        << "render_id=" << m_render_id << ";"
        << "cached_pos=" << m_cached_pos << ";";
     return ss;
+}
+
+void SpriteComponent::on_cleanup(DrawSurface& surface) {
+    surface.remove_rectangle(m_render_id);
 }

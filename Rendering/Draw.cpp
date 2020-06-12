@@ -28,6 +28,11 @@ std::size_t DrawSurface::draw_new_rectangle(const Rectangle& rect, const Color& 
     return index;
 }
 
+void DrawSurface::remove_rectangle(size_t index) {
+    m_rects.erase(m_rects.begin() + index);
+     m_changed_indices.push_back(index);
+}
+
 std::size_t DrawSurface::submit_custom_varray(const sf::VertexArray& varray) {
     m_custom_varrays.push_back(varray);
     return m_custom_varrays.size() - 1;

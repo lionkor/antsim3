@@ -1,3 +1,7 @@
+/**
+ * A minimal simulator for orbital phyics
+ */
+
 #include "Engine.h"
 
 static inline double s_sun_mass = 50000.0;

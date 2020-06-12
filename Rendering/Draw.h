@@ -50,19 +50,20 @@ class DrawSurface
     GameWindow&                             m_window;
     boost::container::vector<DrawRectangle> m_rects;
     boost::container::vector<std::size_t>   m_changed_indices;
-    
+
     std::vector<sf::VertexArray> m_custom_varrays;
-    std::vector<sf::Vertex> m_vertices;
+    std::vector<sf::Vertex>      m_vertices;
 
 public:
     DrawSurface(GameWindow& window);
 
-    void                      update_rectangle(std::size_t index, const Rectangle& rect, const Color& fill_color = Color::Green, const Color& border_color = Color::White);
+    void                      update_rectangle(size_t index, const Rectangle& rect, const Color& fill_color = Color::Green, const Color& border_color = Color::White);
     [[nodiscard]] std::size_t draw_new_rectangle(const Rectangle& rect, const Color& fill_color = Color::Green, const Color& border_color = Color::White);
+    void                      remove_rectangle(size_t index);
 
     std::size_t submit_custom_varray(const sf::VertexArray& varray);
-    void update_custom_varray(std::size_t index, const sf::VertexArray& varray);
-    
+    void        update_custom_varray(size_t index, const sf::VertexArray& varray);
+
     void finalize();
 };
 

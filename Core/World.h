@@ -16,6 +16,8 @@
 #include "ECS/Entity.h"
 #include "Core/GameWindow.h"
 
+#include <deque>
+
 class RayHit;
 
 
@@ -28,9 +30,13 @@ class World
 private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
     std::vector<Managed<Entity>> m_entities;
+    std::vector<Managed<Entity>> m_entities_to_add;
     std::size_t                  m_update_interval_ms;
 
     sf::Clock m_update_timer;
+
+    void cleanup_destroyed(DrawSurface&);
+    void add_new_entities();
 
 public:
     World();

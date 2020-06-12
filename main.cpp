@@ -1,4 +1,8 @@
-﻿#include <iostream>
+﻿/**
+ * Main program, where the actual antsim will go
+ */
+
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/smart_ptr.hpp>
@@ -18,6 +22,8 @@ int main(int, char**) {
 
     auto& entity = world.add_entity(new Entity({ 100, 200 }));
     entity.add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }));
+    
+    entity.destroy();
 
     return app.run();
 }

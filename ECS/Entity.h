@@ -13,9 +13,15 @@ class Entity final
     : public Object
 {
     OBJECT(Entity)
+
+    friend class World;
+
 private:
     std::vector<std::shared_ptr<Component>> m_comps;
     TransformComponent&                     m_transform;
+    bool                                    m_destroyed { false };
+
+    void on_cleanup(DrawSurface&);
 
 public:
     Entity(const vec<double>& pos = { 0, 0 });
@@ -39,8 +45,10 @@ public:
         return dynamic_cast<DerivedComponentT&>(ref);
     }
 
-    void on_update();
-    void on_draw(DrawSurface&);
+    void         on_update();
+    void         on_draw(DrawSurface&);
+    virtual void destroy() final;
+    virtual bool marked_destroyed() const final { return m_destroyed; }
 
     TransformComponent&       transform() { return m_transform; }
     const TransformComponent& transform() const { return m_transform; }
