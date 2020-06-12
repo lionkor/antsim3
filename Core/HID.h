@@ -7,6 +7,10 @@
  */
 
 #include "Physics/vec.h"
+#include "Core/GameWindow.h"
+#include <SFML/Graphics.hpp>
+
+namespace HID {
 
 enum MouseButton : char
 {
@@ -15,10 +19,13 @@ enum MouseButton : char
     Middle // FIXME: Add more ( 5 button mice at least )
 };
 
-struct MouseClick {
-    MouseButton   button;
-    vec<unsigned> screen_position;
-    vec<double>   world_position;
+struct MouseAction {
+    HID::MouseButton button;
+    vec<int>         screen_position;
+    vec<double>      world_position(GameWindow&);
 };
 
+MouseAction from_sf_mouse_action(sf::Event);
+
+}
 #endif // HID_H
