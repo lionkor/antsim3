@@ -44,17 +44,15 @@ class TransformComponent
     : public Component
 {
     OBJECT(TransformComponent)
-    
+
     friend class Entity;
+
 protected:
     vec<double> m_position;
     double      m_rotation;
 
     /// Transform of the parent, set by the parent when assigned as a child
-    TransformComponent* m_relative_to { nullptr };
-
-    vec<double> relative_position() const { return m_relative_to ? m_relative_to->position() : vec<double>(0, 0); }
-    double      relative_rotation() const { return m_relative_to ? m_relative_to->rotation() : 0; }
+    TransformComponent* m_parent_transform { nullptr };
 
 public:
     TransformComponent(const vec<double>& pos = { 0.0, 0.0 }, double rot = 0)
@@ -67,8 +65,20 @@ public:
     TransformComponent& operator=(const TransformComponent&) = default;
     TransformComponent& operator=(TransformComponent&&) = default;
 
-    vec<double> position() const { return m_position + relative_position(); }
-    double      rotation() const { return m_rotation + relative_rotation(); }
+    /// Returns {0,0} if no parent
+    vec<double> parent_position() const { return m_parent_transform ? m_parent_transform->position() : vec<double>(0, 0); }
+    /// Returns 0 if no parent
+    double parent_rotation() const { return m_parent_transform ? m_parent_transform->rotation() : 0; }
+
+    /// Absolute position
+    vec<double> position() const { return m_position + parent_position(); }
+    /// Absolute rotation
+    double rotation() const { return m_rotation + parent_rotation(); }
+
+    /// Position relative to parent
+    const vec<double>& relative_position() const { return m_position; }
+    /// Rotation relative to parent
+    double relative_rotation() const { return m_rotation; }
 
     // FIXME: These setters are not safe since we work with relative positons and rotations
     void set_position(const vec<double>& pos) { m_position = pos; }
@@ -97,7 +107,7 @@ private:
     // TODO sprite / texture
 
 public:
-    SpriteComponent(const vec<double>& relative_position, const vec<double>& sprite_size);
+    SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size);
 
     // Component interface
 public:
