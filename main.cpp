@@ -13,6 +13,18 @@
 #include "Utils.h"
 #include "ECS/Entity.h"
 
+class SimpleMovementComponent
+    : public Component
+{
+    OBJECT(SimpleMovementComponent)
+
+public:
+    virtual void on_update() override {
+        auto& transform = parent()->transform();
+        transform.move_by({ 0.05, 0 });
+    }
+};
+
 int main(int, char**) {
     Application app(new GameWindow("AntSim3", { 1280, 720 }), new World);
 
@@ -20,10 +32,17 @@ int main(int, char**) {
     auto& window = app.window();
     static_cast<void>(window);
 
-    auto& entity = world.add_entity(new Entity({ 100, 200 }));
-    entity.add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }));
-    
-    entity.destroy();
+    auto entity        = world.add_entity(new Entity({ 100, 200 }));
+    auto shared_entity = entity.lock();
+    shared_entity->add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }));
+    shared_entity->add_component(new SimpleMovementComponent);
+
+    auto child = shared_entity->add_child(new Entity());
+    child.lock()->add_component(new SpriteComponent({ 120, 0 }, { 90, 90 }));
+
+    world.update(window);
+    world.update(window);
+    world.update(window);
 
     return app.run();
 }

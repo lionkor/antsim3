@@ -3,7 +3,7 @@
 
 std::stringstream Component::to_stream() const {
     auto ss = Object::to_stream();
-    ss << "parent=0x" << std::hex << m_parent << ";";
+    ss << "parent=" << std::hex << m_parent << ";";
     return ss;
 }
 

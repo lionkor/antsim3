@@ -10,6 +10,14 @@ using Managed = std::unique_ptr<Args...>;
 
 #define make_managed std::make_unique;
 
+template<typename... Args>
+using SharedPtr = std::shared_ptr<Args...>;
+
+using std::make_shared;
+
+template<typename... Args>
+using WeakPtr = std::weak_ptr<Args...>;
+
 /*
 /// Owns a pointer and deletes it upon destruction
 template<class T>

@@ -18,7 +18,7 @@ private:
     Entity* m_parent;
 
 protected:
-    /// Called just before the component is destructed, is passed the draw 
+    /// Called just before the component is destructed, is passed the draw
     /// surface to enable drawing components to unregister with the draw
     /// surface.
     virtual void on_cleanup(DrawSurface&) { }
@@ -44,9 +44,17 @@ class TransformComponent
     : public Component
 {
     OBJECT(TransformComponent)
+    
+    friend class Entity;
 protected:
     vec<double> m_position;
     double      m_rotation;
+
+    /// Transform of the parent, set by the parent when assigned as a child
+    TransformComponent* m_relative_to { nullptr };
+
+    vec<double> relative_position() const { return m_relative_to ? m_relative_to->position() : vec<double>(0, 0); }
+    double      relative_rotation() const { return m_relative_to ? m_relative_to->rotation() : 0; }
 
 public:
     TransformComponent(const vec<double>& pos = { 0.0, 0.0 }, double rot = 0)
@@ -59,9 +67,10 @@ public:
     TransformComponent& operator=(const TransformComponent&) = default;
     TransformComponent& operator=(TransformComponent&&) = default;
 
-    const vec<double>& position() const { return m_position; }
-    const double&      rotation() const { return m_rotation; }
+    vec<double> position() const { return m_position + relative_position(); }
+    double      rotation() const { return m_rotation + relative_rotation(); }
 
+    // FIXME: These setters are not safe since we work with relative positons and rotations
     void set_position(const vec<double>& pos) { m_position = pos; }
     void set_position(vec<double>&& pos) { m_position = std::move(pos); }
     void set_rotation(double rot) { m_rotation = rot; }
@@ -98,7 +107,7 @@ public:
     // Object interface
 public:
     virtual std::stringstream to_stream() const override;
-    
+
     // Component interface
 protected:
     virtual void on_cleanup(DrawSurface&) override;

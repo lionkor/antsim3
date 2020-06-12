@@ -29,9 +29,9 @@ class World
 
 private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
-    std::vector<Managed<Entity>> m_entities;
-    std::vector<Managed<Entity>> m_entities_to_add;
-    std::size_t                  m_update_interval_ms;
+    std::vector<SharedPtr<Entity>> m_entities;
+    std::vector<SharedPtr<Entity>> m_entities_to_add;
+    std::size_t                    m_update_interval_ms;
 
     sf::Clock m_update_timer;
 
@@ -43,7 +43,7 @@ public:
     virtual ~World() { }
 
     /// Takes ownership of the passed (new-allocated) pointer `obj`.
-    Entity& add_entity(Entity*&& obj);
+    WeakPtr<Entity> add_entity(Entity*&& obj);
     /// Generates a Ray at the position, returns the RayHit describing what was hit.
     RayHit try_hit(const vec<double>& pos);
     /// Begin of the container holding all objects.

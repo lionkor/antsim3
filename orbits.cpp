@@ -63,12 +63,12 @@ static void init(Application& app) {
 
     window.set_framerate_limit(60);
 
-    auto& sun = world.add_entity(new Entity({ window.width<double>() / 2, window.height<double>() / 2 }));
-    sun.add_component(new PlanetComponent(s_sun_mass));
+    auto sun = world.add_entity(new Entity({ window.width<double>() / 2, window.height<double>() / 2 }));
+    sun.lock()->add_component(new PlanetComponent(s_sun_mass));
 
     for (int i = 0; i < 200; ++i) {
-        world.add_entity(new Entity({ window.width<double>() / 2 + Random::random(-6000, 6000), window.height<double>() / 2 + Random::random(-6000, 6000) }))
-            .add_component(new PlanetComponent(Random::random(5, 1000)));
+        auto e = world.add_entity(new Entity({ window.width<double>() / 2 + Random::random(-6000, 6000), window.height<double>() / 2 + Random::random(-6000, 6000) }));
+        e.lock()->add_component(new PlanetComponent(Random::random(5, 1000)));
     }
 }
 

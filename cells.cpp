@@ -149,8 +149,8 @@ int main(int, char**) {
 
     world.set_update_interval(200);
 
-    Entity& grid = world.add_entity(new Entity);
-    grid.add_component(new GridComponent(320 * 5, 180 * 5));
+    auto grid = world.add_entity(new Entity);
+    grid.lock()->add_component(new GridComponent(320 * 5, 180 * 5));
 
     auto ret = app.run();
     report("---  END  ---");

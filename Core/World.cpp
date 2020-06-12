@@ -9,8 +9,8 @@ void World::cleanup_destroyed(DrawSurface& surface) {
     decltype(m_entities)::iterator iter_to_erase;
     do {
         iter_to_erase = std::find_if(m_entities.begin(), m_entities.end(),
-            [](Managed<Entity>& entity_ptr) -> bool {
-                return entity_ptr->marked_destroyed();
+            [](SharedPtr<Entity>& entity_ptr) -> bool {
+                return entity_ptr->is_marked_destroyed();
             });
         if (iter_to_erase != m_entities.end()) {
             (*iter_to_erase)->on_cleanup(surface);
@@ -33,10 +33,12 @@ World::World() {
     m_entities.reserve(1000);
 }
 
-Entity& World::add_entity(Entity*&& obj) {
+WeakPtr<Entity> World::add_entity(Entity*&& obj) {
     ASSERT(obj != nullptr);
-    m_entities_to_add.push_back(Managed<Entity>(std::move(obj)));
-    return *m_entities_to_add.back();
+    m_entities_to_add.push_back(SharedPtr<Entity>(std::move(obj)));
+    auto entity = WeakPtr<Entity>(m_entities_to_add.back());
+    entity.lock()->m_world = this;
+    return entity;
 }
 
 RayHit World::try_hit(const vec<double>& pos) {
