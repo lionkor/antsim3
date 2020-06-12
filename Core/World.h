@@ -67,7 +67,10 @@ public:
         m_update_interval_ms = ms;
     }
 
-    /// When fn returns false, the loop breaks. 
+    std::vector<SharedPtr<Entity>>&       entities() { return m_entities; }
+    const std::vector<SharedPtr<Entity>>& entities() const { return m_entities; }
+
+    /// When fn returns false, the loop breaks.
     void for_each_entity(std::function<bool(SharedPtr<Entity>&)> fn) {
         for (auto& entity_ptr : m_entities) {
             if (!fn(entity_ptr)) {

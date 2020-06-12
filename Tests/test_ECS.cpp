@@ -41,9 +41,9 @@ TEST_CASE("Entity::destroy without a World") {
 
 TEST_CASE("Entity::destroy with a world") {
     Application app(new GameWindow("", { 10, 10 }), new World);
-    World&      world    = app.world();
-    Entity*     e        = new Entity;
-    auto        ret_e    = world.add_entity(std::move(e));
+    World&      world = app.world();
+    Entity*     e     = new Entity;
+    auto        ret_e = world.add_entity(std::move(e));
     world.update(app.window());
     REQUIRE(ret_e.expired() == false);
     {
@@ -57,4 +57,50 @@ TEST_CASE("Entity::destroy with a world") {
     // check if this happened
     CHECK(ret_e.expired() == true);
     CHECK(world.end() - world.begin() == 0);
+}
+
+TEST_CASE("Entity hierarchy") {
+    Application app(new GameWindow("", { 10, 10 }), new World);
+    World&      world  = app.world();
+    GameWindow& window = app.window();
+    SUBCASE("add child") {
+        auto    entity_ptr = world.add_entity(new Entity);
+        Entity* entity     = new Entity;
+        auto    uuid       = entity->uuid();
+        auto    child_ptr  = entity_ptr.lock()->add_child(std::move(entity));
+        CHECK(entity_ptr.lock()->children().size() == 1);
+        CHECK(entity_ptr.lock()->children().front()->uuid() == uuid);
+        CHECK(child_ptr.lock()->has_parent() == true);
+        CHECK(child_ptr.lock()->has_world() == true);
+        CHECK(child_ptr.lock()->has_component<TransformComponent>() == true);
+        world.update(window);
+        auto& entities = world.entities();
+        CHECK(std::find_if(entities.begin(), entities.end(), [&](auto& ptr) -> bool {
+            return child_ptr.lock().get() == ptr.get();
+        }) != entities.end());
+    }
+    SUBCASE("destroy child") {
+        CHECK(world.entities().empty());
+        auto entity_ptr = world.add_entity(new Entity).lock();
+        CHECK(entity_ptr->children().empty());
+        auto child_ptr = entity_ptr->add_child(new Entity).lock();
+        CHECK(entity_ptr->children().empty() == false);
+        world.update(window);
+        CHECK(entity_ptr->children().size() == 1);
+        CHECK(world.entities().size() == 2);
+        child_ptr->destroy();
+        CHECK(entity_ptr->children().empty());
+        world.update(window);
+        CHECK(entity_ptr->children().empty());
+        CHECK(world.entities().size() == 1);
+        CHECK(*world.entities().front() == *entity_ptr);
+    }
+    SUBCASE("destroy parent") {
+        auto entity_ptr = world.add_entity(new Entity).lock();
+        auto child_ptr = entity_ptr->add_child(new Entity).lock();
+        world.update(window);
+        entity_ptr->destroy();
+        world.update(window);
+        CHECK(world.entities().empty());
+    }
 }
