@@ -11,6 +11,7 @@ project(Engine)
 include_directories(Engine
     "."
     "./fmt/include"
+    "./doctest/doctest"
 )
 
 add_library(Engine SHARED
@@ -77,3 +78,12 @@ project(orbits)
 add_executable(orbits orbits.cpp)
 
 target_link_libraries(orbits Engine)
+
+
+project(tests) 
+
+add_executable(tests 
+    Tests/test_main.cpp
+)
+
+target_link_libraries(tests Engine)
