@@ -56,7 +56,6 @@ void DrawSurface::finalize() {
     m_window.draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Quads);
     // FIXME: This sucks but we need something like this.
     for (auto& varray : m_custom_varrays) {
-        report("texture size: {} {}", varray.texture->getSize().x, varray.texture->getSize().y);
         m_window.draw(varray.varray, sf::RenderStates(varray.texture));
     }
 }

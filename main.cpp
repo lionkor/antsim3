@@ -44,8 +44,8 @@ int main(int, char**) {
     report("has SpriteComponent? {}", shared_entity->has_component<SpriteComponent>());
     shared_entity->add_component(new SimpleMovementComponent);
 
-    //auto child = shared_entity->add_child(new Entity());
-    //child.lock()->add_component(new SpriteComponent({ 120, 0 }, { 90, 90 }, "sprite1.png", Color::Red));
+    auto child = shared_entity->add_child(new Entity());
+    child.lock()->add_component(new SpriteComponent({ 120, 0 }, { 90, 90 }, Color::Red, "sprite1.png"));
 
     world.update(window);
 

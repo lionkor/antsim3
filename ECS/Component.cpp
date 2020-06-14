@@ -64,7 +64,6 @@ void SpriteComponent::on_update() {
 
 void SpriteComponent::on_draw(DrawSurface& surface) {
     if (!m_initialized) {
-        report("initializing!");
         const vec<double>& pos = parent()->transform().position();
         Rectangle          rect(pos + m_sprite_pos, m_sprite_size);
         if (!m_texture_name.empty()) {
@@ -86,7 +85,6 @@ void SpriteComponent::on_draw(DrawSurface& surface) {
         m_drawable.set_changed();
     }
     if (m_drawable.has_changed()) {
-        report("updating!");
         const vec<double>& pos = parent()->transform().position();
         Rectangle          rect(pos + m_sprite_pos, m_sprite_size);
         if (!m_texture_name.empty()) {

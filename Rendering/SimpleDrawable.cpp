@@ -15,7 +15,6 @@ void SimpleDrawable::clear() {
 }
 
 void SimpleDrawable::draw(DrawSurface& surface) const {
-    report("texture: {}", (void*)m_texture);
     if (!m_initialized) {
         m_index       = surface.submit_custom_varray(m_varray, m_texture);
         m_initialized = true;
