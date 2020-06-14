@@ -27,6 +27,8 @@ private:
 
 public:
     LazyFile(const std::filesystem::path&);
+    LazyFile(LazyFile&&) = default;
+    LazyFile& operator=(LazyFile&&) = default;
 
     LazyFile(const LazyFile&) = delete;
     LazyFile& operator=(const LazyFile&) = delete;

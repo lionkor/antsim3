@@ -4,6 +4,7 @@
 
 void LazyFile::reset() {
     m_data.clear();
+    m_data.shrink_to_fit();
     m_loaded = false;
 }
 

@@ -47,8 +47,6 @@ int main(int, char**) {
     child.lock()->add_component(new SpriteComponent({ 120, 0 }, { 90, 90 }));
 
     world.update(window);
-    world.update(window);
-    world.update(window);
 
     return app.run();
 }

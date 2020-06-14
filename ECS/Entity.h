@@ -51,7 +51,7 @@ public:
         auto& ref = *m_comps.back();
         // set parent
         ref.m_parent = this;
-        report("Added component: {}", ref);
+        //report("Added component: {}", ref);
         return dynamic_cast<DerivedComponentT&>(ref);
     }
 

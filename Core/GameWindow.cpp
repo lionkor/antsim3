@@ -117,8 +117,8 @@ void GameWindow::set_title(const std::string& title) {
     setTitle(title);
 }
 
-void GameWindow::set_framerate_limit(std::size_t limit) {
-    setFramerateLimit(limit);
+void GameWindow::set_framerate_limit(size_t limit) {
+    setFramerateLimit(static_cast<unsigned int>(limit));
 }
 
 std::stringstream GameWindow::to_stream() const {
