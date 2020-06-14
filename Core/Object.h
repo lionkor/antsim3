@@ -80,8 +80,11 @@ inline std::ostream& operator<<(std::ostream& os, const Object& obj) {
 
 #define OBJECT(classname)                             \
 public:                                               \
-    virtual std::string class_name() const override { \
+    static std::string class_name_static() {          \
         return std::string(#classname);               \
+    }                                                 \
+    virtual std::string class_name() const override { \
+        return classname::class_name_static();        \
     }
 
 
