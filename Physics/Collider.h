@@ -9,7 +9,7 @@
 class Collider
     : public Object
 {
-    OBJECT(Collider)
+    OBJNAME(Collider)
 
 public:
     enum class Shape

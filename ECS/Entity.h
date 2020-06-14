@@ -1,5 +1,5 @@
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
+#ifndef GAMEOBJNAME_H
+#define GAMEOBJNAME_H
 
 #include <vector>
 
@@ -12,7 +12,7 @@
 class Entity final
     : public Object
 {
-    OBJECT(Entity)
+    OBJNAME(Entity)
 
     friend class World;
 
@@ -88,4 +88,4 @@ public:
     virtual std::stringstream to_stream() const override;
 };
 
-#endif // GAMEOBJECT_H
+#endif // GAMEOBJNAME_H

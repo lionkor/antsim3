@@ -25,7 +25,7 @@ class RayHit;
 class World
     : public Object
 {
-    OBJECT(World)
+    OBJNAME(World)
 
     friend class Application;
 

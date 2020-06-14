@@ -1,5 +1,5 @@
-#ifndef PHYSICSOBJECT_H
-#define PHYSICSOBJECT_H
+#ifndef PHYSICSOBJNAME_H
+#define PHYSICSOBJNAME_H
 
 #include "Utils/DebugTools.h"
 #include "PhysicalObject.h"
@@ -9,7 +9,7 @@
 class PhysicsObject
     : public PhysicalObject
 {
-    OBJECT(PhysicsObject)
+    OBJNAME(PhysicsObject)
 
 protected:
     vec<double> m_vel { 0.0, 0.0 };
@@ -27,4 +27,4 @@ protected:
     virtual void update() override;
 };
 
-#endif // PHYSICSOBJECT_H
+#endif // PHYSICSOBJNAME_H

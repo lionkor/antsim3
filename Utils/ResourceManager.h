@@ -9,7 +9,7 @@
 class ResourceManager
     : Object
 {
-    OBJECT(ResourceManager)
+    OBJNAME(ResourceManager)
 private:
     /// File holding a list of all resources
     LazyFile m_res_file;

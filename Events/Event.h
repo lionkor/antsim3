@@ -6,7 +6,7 @@
 
 class Event : public Object
 {
-    OBJECT(Event)
+    OBJNAME(Event)
 
 private:
     boost::atomic<bool> m_accepted { false };

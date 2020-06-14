@@ -9,7 +9,7 @@ static inline double s_sun_mass = 50000.0;
 class PlanetComponent
     : public Component
 {
-    OBJECT(PlanetComponent)
+    OBJNAME(PlanetComponent)
 private:
     static inline std::vector<PlanetComponent*> s_planets {};
 

@@ -6,7 +6,7 @@
 class SimpleDrawable
     : public Object
 {
-    OBJECT(SimpleDrawable)
+    OBJNAME(SimpleDrawable)
 private:
     mutable bool    m_initialized { false };
     mutable size_t  m_index {};

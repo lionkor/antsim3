@@ -16,7 +16,7 @@
 class SimpleMovementComponent
     : public Component
 {
-    OBJECT(SimpleMovementComponent)
+    OBJNAME(SimpleMovementComponent)
 
 public:
     SimpleMovementComponent() {

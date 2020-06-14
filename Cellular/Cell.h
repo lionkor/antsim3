@@ -9,7 +9,7 @@ class World;
 class Cell
     : public Object
 {
-    OBJECT(Cell)
+    OBJNAME(Cell)
 
     // Object interface
 public:

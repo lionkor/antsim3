@@ -10,7 +10,7 @@
 #include "Physics/vec.h"
 
 struct Rectangle : public Object {
-    OBJECT(Rectangle)
+    OBJNAME(Rectangle)
 
     Rectangle(float x, float y, float w, float h)
         : pos(x, y), size(w, h) { }

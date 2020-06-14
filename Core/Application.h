@@ -13,7 +13,7 @@
 
 class Application : public Object
 {
-    OBJECT(Application)
+    OBJNAME(Application)
 
 private:
     Managed<GameWindow> m_window;

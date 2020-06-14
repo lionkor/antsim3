@@ -12,7 +12,7 @@ class Entity;
 class Component
     : public Object
 {
-    OBJECT(Component)
+    OBJNAME(Component)
     friend class Entity;
 
 private:
@@ -48,7 +48,7 @@ public:
 class TransformComponent
     : public Component
 {
-    OBJECT(TransformComponent)
+    OBJNAME(TransformComponent)
 
     friend class Entity;
 
@@ -101,7 +101,7 @@ public:
 class SpriteComponent
     : public Component
 {
-    OBJECT(SpriteComponent)
+    OBJNAME(SpriteComponent)
 private:
     vec<double> m_sprite_pos;
     vec<double> m_sprite_size;

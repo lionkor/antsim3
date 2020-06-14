@@ -16,7 +16,7 @@ struct Cell {
 
 class GridComponent : public Component
 {
-    OBJECT(GridComponent)
+    OBJNAME(GridComponent)
 private:
     std::vector<Cell>   m_cells;
     const vec<unsigned> m_size;

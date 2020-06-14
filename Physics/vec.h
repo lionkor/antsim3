@@ -10,7 +10,7 @@
 /// Minimal 2D-vector struct.
 template<typename T>
 struct vec : public Object {
-    OBJECT(vec)
+    OBJNAME(vec)
 
     T x;
     T y;

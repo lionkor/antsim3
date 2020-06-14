@@ -13,7 +13,7 @@ class PhysicalObject;
 /// Describes what has been hit, in what order.
 class RayHit : public Object
 {
-    OBJECT(RayHit);
+    OBJNAME(RayHit);
 
     boost::container::vector<IHittable*> m_hits_in_order;
 
@@ -36,7 +36,7 @@ public:
 /// Helper class for calculating raycasts used for hit detection.
 class Ray : public Object
 {
-    OBJECT(Ray)
+    OBJNAME(Ray)
     vec<double> m_pos;
     RayHit      m_hit;
 

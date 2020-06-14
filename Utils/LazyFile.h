@@ -13,7 +13,7 @@
 class LazyFile
     : public Object
 {
-    OBJECT(LazyFile)
+    OBJNAME(LazyFile)
 
 private:
     Result<bool>              m_validation_result;

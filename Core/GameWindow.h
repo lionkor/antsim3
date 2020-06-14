@@ -38,7 +38,7 @@ class GameWindow
       public sf::RenderWindow,
       public EventDispatcher
 {
-    OBJECT(GameWindow)
+    OBJNAME(GameWindow)
     
     friend class Application;
 protected:

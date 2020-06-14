@@ -1,5 +1,5 @@
-#ifndef PHYSICAL_OBJECT_H
-#define PHYSICAL_OBJECT_H
+#ifndef PHYSICAL_OBJNAME_H
+#define PHYSICAL_OBJNAME_H
 
 #include "Core/Object.h"
 #include "IHittable.h"
@@ -14,7 +14,7 @@ class PhysicalObject
     : public Object,
       public IHittable
 {
-    OBJECT(PhysicalObject)
+    OBJNAME(PhysicalObject)
 
 private:
     bool m_is_destroyed { false };
@@ -76,5 +76,5 @@ public:
     virtual std::stringstream to_stream() const override;
 };
 
-#endif // PHYSICAL_OBJECT_H
+#endif // PHYSICAL_OBJNAME_H
 

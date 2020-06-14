@@ -1,5 +1,5 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef OBJNAME_H
+#define OBJNAME_H
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -61,7 +61,7 @@ public:
     virtual bool operator!=(const Object& other) const { return !(*this == other); }
 
     // to be defined by the inheritor
-    // use the OBJECT(...) macro for this!
+    // use the OBJNAME(...) macro for this!
     virtual std::string       class_name() const = 0;
     virtual std::stringstream to_stream() const {
         std::stringstream ss;
@@ -78,7 +78,7 @@ inline std::ostream& operator<<(std::ostream& os, const Object& obj) {
     return os << "[" << (&obj)->class_name() << "]:{" << obj.to_stream().str() << "}";
 }
 
-#define OBJECT(classname)                             \
+#define OBJNAME(classname)                             \
 public:                                               \
     static std::string class_name_static() {          \
         return std::string(#classname);               \
@@ -88,4 +88,4 @@ public:                                               \
     }
 
 
-#endif // OBJECT_H
+#endif // OBJNAME_H
