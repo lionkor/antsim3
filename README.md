@@ -12,7 +12,8 @@ Building a simple modern 2D engine for simulation projects like simulating ants 
 
 Requirements
 
-* `fmt`, included as a submodule
+* `fmt`, included
+* `doctest`, included
 * `sfml`, currently not included, which will change (probably)
 
 All it will be is a simple lightweight hobby project engine.
