@@ -1,4 +1,6 @@
 #include "Component.h"
+#include "Core/World.h"
+#include "Core/Application.h"
 #include "Entity.h"
 
 std::stringstream Component::to_stream() const {
@@ -19,37 +21,89 @@ std::stringstream TransformComponent::to_stream() const {
     return ss;
 }
 
-SpriteComponent::SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color)
+SpriteComponent::SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color, const std::string& name)
     : m_sprite_pos(parent_position)
     , m_sprite_size(sprite_size)
-    , m_sprite_background_color(color) {
+    , m_sprite_background_color(color)
+    , m_texture_name(name)
+    , m_drawable(SimpleDrawable::PrimitiveType::Quads, 4) {
 }
 
 void SpriteComponent::on_update() {
     if (!has_parent())
         report_error("no parent set for {}", *this);
-    if (!m_initialized) {
+    if (!m_initialized && !m_texture_name.empty()) {
+        report("loading texture {}", m_texture_name);
+        auto& resman = parent()->world().application().resource_manager();
+        auto  result = resman.get_resource_by_name(m_texture_name);
+        if (result.error()) {
+            report_error("error getting texture \"{}\": {}", m_texture_name, result.message());
+        } else {
+            LazyFile& file_ref = result.value().get();
+            auto      result   = file_ref.get();
+            if (result.error()) {
+                report_error("error loading file: {}", result.message());
+            } else {
+                auto& data = result.value().get();
+                bool  rt   = m_texture.loadFromMemory(data.data(), data.size());
+                if (!rt) {
+                    report_error("texture not loaded properly");
+                } else {
+                    report("texture loaded!");
+                    m_texture_loaded = true;
+                }
+            }
+        }
         m_cached_pos = parent()->transform().position();
-        // m_initialized is set to true in on_draw
     }
     if (m_cached_pos != parent()->transform().position()) {
         m_cached_pos = parent()->transform().position();
-        m_changed    = true;
+        m_drawable.set_changed();
     }
 }
 
 void SpriteComponent::on_draw(DrawSurface& surface) {
     if (!m_initialized) {
+        report("initializing!");
         const vec<double>& pos = parent()->transform().position();
-        m_render_id            = surface.draw_new_rectangle(Rectangle(pos + m_sprite_pos, m_sprite_size), m_sprite_background_color);
-        m_initialized          = true;
-        //m_changed     = true;
+        Rectangle          rect(pos + m_sprite_pos, m_sprite_size);
+        if (!m_texture_name.empty()) {
+            SimpleDrawable::Vector2f tex_size = SimpleDrawable::Vector2f(m_texture.getSize().x, m_texture.getSize().y);
+
+            m_drawable[0] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x, rect.pos.y), SimpleDrawable::Vector2f(0, 0));
+            m_drawable[1] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x + rect.size.x, rect.pos.y), SimpleDrawable::Vector2f(tex_size.x, 0));
+            m_drawable[2] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x + rect.size.x, rect.pos.y + rect.size.y), tex_size);
+            m_drawable[3] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x, rect.pos.y + rect.size.y), SimpleDrawable::Vector2f(0, tex_size.y));
+        } else {
+            m_drawable[0] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x, rect.pos.y), m_sprite_background_color);
+            m_drawable[1] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x + rect.size.x, rect.pos.y), m_sprite_background_color);
+            m_drawable[2] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x + rect.size.x, rect.pos.y + rect.size.y), m_sprite_background_color);
+            m_drawable[3] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x, rect.pos.y + rect.size.y), m_sprite_background_color);
+        }
+        m_initialized = true;
+        if (m_texture_loaded)
+            m_drawable.set_texture(&m_texture);
+        m_drawable.set_changed();
     }
-    if (m_changed) {
+    if (m_drawable.has_changed()) {
+        report("updating!");
         const vec<double>& pos = parent()->transform().position();
-        surface.update_rectangle(m_render_id, Rectangle(pos + m_sprite_pos, m_sprite_size), m_sprite_background_color);
-        m_changed = false;
+        Rectangle          rect(pos + m_sprite_pos, m_sprite_size);
+        if (!m_texture_name.empty()) {
+            SimpleDrawable::Vector2f tex_size = SimpleDrawable::Vector2f(m_texture.getSize().x, m_texture.getSize().y);
+
+            m_drawable[0] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x, rect.pos.y), SimpleDrawable::Vector2f(0, 0));
+            m_drawable[1] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x + rect.size.x, rect.pos.y), SimpleDrawable::Vector2f(tex_size.x, 0));
+            m_drawable[2] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x + rect.size.x, rect.pos.y + rect.size.y), tex_size);
+            m_drawable[3] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x, rect.pos.y + rect.size.y), SimpleDrawable::Vector2f(0, tex_size.y));
+        } else {
+            m_drawable[0] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x, rect.pos.y), m_sprite_background_color);
+            m_drawable[1] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x + rect.size.x, rect.pos.y), m_sprite_background_color);
+            m_drawable[2] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x + rect.size.x, rect.pos.y + rect.size.y), m_sprite_background_color);
+            m_drawable[3] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(rect.pos.x, rect.pos.y + rect.size.y), m_sprite_background_color);
+        }
     }
+    m_drawable.draw(surface);
 }
 
 std::stringstream SpriteComponent::to_stream() const {
@@ -64,13 +118,12 @@ std::stringstream SpriteComponent::to_stream() const {
     auto ss = Component::to_stream();
     ss << "sprite_pos=" << m_sprite_pos << ";"
        << "sprite_size=" << m_sprite_size << ";"
-       << "changed=" << m_changed << ";"
        << "initialized=" << m_initialized << ";"
-       << "render_id=" << m_render_id << ";"
-       << "cached_pos=" << m_cached_pos << ";";
+       << "cached_pos=" << m_cached_pos << ";"
+       << "drawable=" << m_drawable << ";";
     return ss;
 }
 
 void SpriteComponent::on_cleanup(DrawSurface& surface) {
-    surface.remove_rectangle(m_render_id);
+    // TODO TODO
 }

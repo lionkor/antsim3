@@ -52,3 +52,13 @@ void ResourceManager::reload_resfile() {
     // unload as not to waste space (this is what i made LazyFile for, come on!)
     m_res_file.force_unload();
 }
+
+Result<Ref<LazyFile>> ResourceManager::get_resource_by_name(const std::string& name) {
+    Result<Ref<LazyFile>> result;
+    if (m_resources.find(name) == m_resources.end()) {
+        result.set_error(fmt::format("resource \"{}\" not found", name));
+        return result;
+    }
+    result.set_value(m_resources.at(name));
+    return result;
+}

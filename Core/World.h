@@ -67,6 +67,9 @@ public:
         m_update_interval_ms = ms;
     }
 
+    Application&       application() { return *m_application; }
+    const Application& application() const { return *m_application; }
+
     std::vector<SharedPtr<Entity>>&       entities() { return m_entities; }
     const std::vector<SharedPtr<Entity>>& entities() const { return m_entities; }
 

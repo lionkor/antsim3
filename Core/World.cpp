@@ -60,7 +60,7 @@ void World::update(GameWindow& window) {
     
     add_new_entities();
 
-    window.clear();
+    window.clear(sf::Color::Green);
     window.internal_draw();
 
     // FIXME: This might be slow

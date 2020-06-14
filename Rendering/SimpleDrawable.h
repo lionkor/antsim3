@@ -12,6 +12,7 @@ private:
     mutable size_t  m_index {};
     mutable bool    m_changed { true };
     sf::VertexArray m_varray {};
+    sf::Texture*    m_texture { nullptr };
 
 public:
     typedef sf::PrimitiveType PrimitiveType;
@@ -22,6 +23,7 @@ public:
     SimpleDrawable(PrimitiveType primitive, size_t size)
         : m_varray(primitive, size) { }
 
+    void          set_texture(sf::Texture* texture);
     Vertex&       operator[](size_t index) { return m_varray[index]; }
     const Vertex& operator[](size_t index) const { return m_varray[index]; }
     void          resize(size_t size);
@@ -29,6 +31,7 @@ public:
     void          draw(DrawSurface& surface) const;
     size_t        size() const { return m_varray.getVertexCount(); }
     void          set_changed() { m_changed = true; }
+    bool          has_changed() const { return m_changed; }
 };
 
 #endif // SIMPLEDRAWABLE_H

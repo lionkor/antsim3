@@ -103,22 +103,26 @@ class SpriteComponent
 {
     OBJNAME(SpriteComponent)
 private:
-    vec<double> m_sprite_pos;
-    vec<double> m_sprite_size;
-    Color       m_sprite_background_color;
-    bool        m_changed { false };
-    bool        m_initialized { false };
-    std::size_t m_render_id;
-    vec<double> m_cached_pos { 0, 0 };
+    vec<double>    m_sprite_pos;
+    vec<double>    m_sprite_size;
+    Color          m_sprite_background_color;
+    std::string    m_texture_name;
+    sf::Texture    m_texture;
+    bool           m_texture_loaded { false };
+    bool           m_initialized { false };
+    vec<double>    m_cached_pos;
+    SimpleDrawable m_drawable;
     // TODO sprite / texture
 
 public:
-    SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color = Color::Green);
+    SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color = Color::Green, const std::string& texture_name = "");
 
     // Component interface
 public:
     virtual void on_update() override;
     virtual void on_draw(DrawSurface&) override;
+
+    std::string texture_name() const { return m_texture_name; }
 
     // Object interface
 public:

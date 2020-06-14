@@ -51,7 +51,12 @@ class DrawSurface
     boost::container::vector<DrawRectangle> m_rects;
     boost::container::vector<std::size_t>   m_changed_indices;
 
-    std::vector<sf::VertexArray> m_custom_varrays;
+    struct CustomVArray {
+        sf::VertexArray varray;
+        sf::Texture*    texture;
+    };
+
+    std::vector<CustomVArray> m_custom_varrays;
     std::vector<sf::Vertex>      m_vertices;
 
 public:
@@ -61,8 +66,8 @@ public:
     [[nodiscard]] std::size_t draw_new_rectangle(const Rectangle& rect, const Color& fill_color = Color::Green, const Color& border_color = Color::White);
     void                      remove_rectangle(size_t index);
 
-    std::size_t submit_custom_varray(const sf::VertexArray& varray);
-    void        update_custom_varray(size_t index, const sf::VertexArray& varray);
+    std::size_t submit_custom_varray(const sf::VertexArray& varray, sf::Texture* texture = nullptr);
+    void        update_custom_varray(size_t index, const sf::VertexArray& varray, sf::Texture* texture = nullptr);
 
     void finalize();
 };

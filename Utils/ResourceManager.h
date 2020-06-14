@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "DebugTools.h"
 #include "LazyFile.h"
+#include "Common.h"
 #include <map>
 
 class ResourceManager
@@ -22,6 +23,8 @@ public:
     ResourceManager(const std::filesystem::path& res_file_path);
 
     void reload_resfile();
+
+    Result<Ref<LazyFile>> get_resource_by_name(const std::string& name);
 
     void operator()() {
     }

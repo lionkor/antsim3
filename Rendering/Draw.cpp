@@ -33,13 +33,13 @@ void DrawSurface::remove_rectangle(size_t index) {
      m_changed_indices.push_back(index);
 }
 
-std::size_t DrawSurface::submit_custom_varray(const sf::VertexArray& varray) {
-    m_custom_varrays.push_back(varray);
+std::size_t DrawSurface::submit_custom_varray(const sf::VertexArray& varray, sf::Texture* texture) {
+    m_custom_varrays.push_back({ varray, texture });
     return m_custom_varrays.size() - 1;
 }
 
-void DrawSurface::update_custom_varray(std::size_t index, const sf::VertexArray& varray) {
-    m_custom_varrays.at(index) = varray;
+void DrawSurface::update_custom_varray(std::size_t index, const sf::VertexArray& varray, sf::Texture* texture) {
+    m_custom_varrays.at(index) = { varray, texture };
 }
 
 void DrawSurface::finalize() {
@@ -56,6 +56,7 @@ void DrawSurface::finalize() {
     m_window.draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Quads);
     // FIXME: This sucks but we need something like this.
     for (auto& varray : m_custom_varrays) {
-        m_window.draw(varray);
+        report("texture size: {} {}", varray.texture->getSize().x, varray.texture->getSize().y);
+        m_window.draw(varray.varray, sf::RenderStates(varray.texture));
     }
 }
