@@ -27,8 +27,8 @@ protected:
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_down { nullptr };
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_up { nullptr };
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_move { nullptr };
-public:
 
+public:
     Component()                   = default;
     virtual ~Component() noexcept = default;
 
@@ -105,6 +105,7 @@ class SpriteComponent
 private:
     vec<double> m_sprite_pos;
     vec<double> m_sprite_size;
+    Color       m_sprite_background_color;
     bool        m_changed { false };
     bool        m_initialized { false };
     std::size_t m_render_id;
@@ -112,7 +113,7 @@ private:
     // TODO sprite / texture
 
 public:
-    SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size);
+    SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color = Color::Green);
 
     // Component interface
 public:

@@ -40,11 +40,11 @@ int main(int, char**) {
 
     auto entity        = world.add_entity(new Entity({ 100, 200 }));
     auto shared_entity = entity.lock();
-    shared_entity->add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }));
+    shared_entity->add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }, Color::Blue));
     shared_entity->add_component(new SimpleMovementComponent);
 
     auto child = shared_entity->add_child(new Entity());
-    child.lock()->add_component(new SpriteComponent({ 120, 0 }, { 90, 90 }));
+    child.lock()->add_component(new SpriteComponent({ 120, 0 }, { 90, 90 }, Color::Red));
 
     world.update(window);
 

@@ -19,9 +19,10 @@ std::stringstream TransformComponent::to_stream() const {
     return ss;
 }
 
-SpriteComponent::SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size)
+SpriteComponent::SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color)
     : m_sprite_pos(parent_position)
-    , m_sprite_size(sprite_size) {
+    , m_sprite_size(sprite_size)
+    , m_sprite_background_color(color) {
 }
 
 void SpriteComponent::on_update() {
@@ -40,13 +41,13 @@ void SpriteComponent::on_update() {
 void SpriteComponent::on_draw(DrawSurface& surface) {
     if (!m_initialized) {
         const vec<double>& pos = parent()->transform().position();
-        m_render_id            = surface.draw_new_rectangle(Rectangle(pos + m_sprite_pos, m_sprite_size));
+        m_render_id            = surface.draw_new_rectangle(Rectangle(pos + m_sprite_pos, m_sprite_size), m_sprite_background_color);
         m_initialized          = true;
         //m_changed     = true;
     }
     if (m_changed) {
         const vec<double>& pos = parent()->transform().position();
-        surface.update_rectangle(m_render_id, Rectangle(pos + m_sprite_pos, m_sprite_size));
+        surface.update_rectangle(m_render_id, Rectangle(pos + m_sprite_pos, m_sprite_size), m_sprite_background_color);
         m_changed = false;
     }
 }
