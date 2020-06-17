@@ -4,3 +4,6 @@
 [submodule "doctest"]
 	path = doctest
 	url = https://github.com/onqtam/doctest
+[submodule "bitops"]
+	path = bitops
+	url = https://github.com/lionkor/bitops
