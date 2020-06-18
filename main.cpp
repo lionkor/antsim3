@@ -20,9 +20,6 @@ class SimpleMovementComponent
 
 public:
     SimpleMovementComponent() {
-        report_warning("{}", is_flag_set(Component::Flags::Unique));
-        set_flag(Component::Flags::Unique);
-        report_warning("{}", is_flag_set(Component::Flags::Unique));
         on_mouse_down = [](GameWindow& window, const HID::MouseAction& action) {
             report("button {} was pressed at {}, which is {} in world coords!", action.button, action.screen_position, action.world_position(window));
         };
@@ -44,6 +41,7 @@ int main(int, char**) {
     auto entity        = world.add_entity(new Entity({ 100, 200 }));
     auto shared_entity = entity.lock();
     shared_entity->add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }, Color::Blue, "sprite1.png"));
+    shared_entity->add_component(new SpriteComponent({ 50, 50 }, { 50, 50 }, Color::Blue, "sprite1.png"));
     report("has SpriteComponent? {}", shared_entity->has_component<SpriteComponent>());
     shared_entity->add_component(new SimpleMovementComponent);
 

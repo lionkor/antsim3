@@ -97,10 +97,35 @@ TEST_CASE("Entity hierarchy") {
     }
     SUBCASE("destroy parent") {
         auto entity_ptr = world.add_entity(new Entity).lock();
-        auto child_ptr = entity_ptr->add_child(new Entity).lock();
+        auto child_ptr  = entity_ptr->add_child(new Entity).lock();
         world.update(window);
         entity_ptr->destroy();
         world.update(window);
         CHECK(world.entities().empty());
     }
+}
+
+TEST_CASE("Components Unique flag") {
+    class UniqueComponent : public Component
+    {
+        OBJNAME(UniqueComponent)
+    public:
+        virtual bool is_unique() const override { return true; }
+    };
+
+    class NonUniqueComponent : public Component
+    {
+        OBJNAME(NonUniqueComponent)
+    public:
+        virtual bool is_unique() const override { return false; }
+    };
+
+    Application app(new GameWindow("", { 10, 10 }), new World);
+    World&      world = app.world();
+    auto        e     = world.add_entity(new Entity).lock();
+    CHECK_NOTHROW(e->add_component(new UniqueComponent));
+    CHECK_THROWS(e->add_component(new UniqueComponent));
+
+    CHECK_NOTHROW(e->add_component(new NonUniqueComponent));
+    CHECK_NOTHROW(e->add_component(new NonUniqueComponent));
 }

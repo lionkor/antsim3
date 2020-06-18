@@ -8,7 +8,7 @@
 #include <sstream>
 #include <functional>
 
-#define SHOW_UUID 1
+#define SHOW_UUID 0
 
 #include "Utils/DebugTools.h"
 

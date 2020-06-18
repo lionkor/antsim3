@@ -2,20 +2,6 @@
 #include "Core/World.h"
 #include "Core/Application.h"
 #include "Entity.h"
-#include "bitops/bitops.h"
-
-void Component::set_flag(Component::flag_t flag) {
-    bitops::bit_set_mask(m_flags, flag);
-}
-
-void Component::unset_flag(Component::flag_t flag) {
-    // TODO
-    bitops::bit_set_mask<Component::flag_t>(m_flags, flag ^ std::numeric_limits<Component::flag_t>::max());
-}
-
-bool Component::is_flag_set(Component::flag_t flag) const {
-    return bitops::is_bitmask_set(m_flags, flag);
-}
 
 std::stringstream Component::to_stream() const {
     TS_BEGIN(Object);

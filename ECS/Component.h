@@ -16,18 +16,8 @@ class Component
     OBJNAME(Component)
     friend class Entity;
 
-public:
-    using flag_t = std::uint16_t;
-
-    enum Flags : flag_t
-    {
-        Unique = 1
-    };
-
 private:
     Entity* m_parent;
-
-    flag_t m_flags { Flags::Unique };
 
 protected:
     /// Called just before the component is destructed, is passed the draw
@@ -39,15 +29,11 @@ protected:
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_up { nullptr };
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_move { nullptr };
 
-    void set_flag(flag_t flag);
-    void unset_flag(flag_t flag);
-
 public:
     Component()                   = default;
     virtual ~Component() noexcept = default;
 
-    flag_t flags() const { return m_flags; }
-    bool   is_flag_set(flag_t flag) const;
+    virtual bool is_unique() const { return true; }
 
     bool has_parent() const noexcept { return static_cast<bool>(m_parent); }
 
@@ -134,20 +120,21 @@ private:
 public:
     SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color = Color::Green, const std::string& texture_name = "");
 
+    std::string texture_name() const { return m_texture_name; }
+
     // Component interface
 public:
     virtual void on_update() override;
     virtual void on_draw(DrawSurface&) override;
 
-    std::string texture_name() const { return m_texture_name; }
+    virtual bool is_unique() const override { return false; }
+
+protected:
+    virtual void on_cleanup(DrawSurface&) override;
 
     // Object interface
 public:
     virtual std::stringstream to_stream() const override;
-
-    // Component interface
-protected:
-    virtual void on_cleanup(DrawSurface&) override;
 };
 
 #endif // COMPONENT_H

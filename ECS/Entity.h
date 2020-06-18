@@ -46,7 +46,12 @@ public:
     }
 
     template<class DerivedComponentT>
-    requires(std::derived_from<DerivedComponentT, Component> && !std::is_same_v<DerivedComponentT, Component>) DerivedComponentT& add_component(DerivedComponentT*&& comp) {
+    requires(std::derived_from<DerivedComponentT, Component> && !std::is_same_v<DerivedComponentT, Component>)
+        DerivedComponentT& add_component(DerivedComponentT*&& comp) {
+        if (comp->is_unique() && has_component<DerivedComponentT>()) {
+            report_error("Attempted to add Unique component with uuid {} to entity uuid {}, but another component of this type ({}) exists already, this is considered a fatal error", comp->uuid(), this->uuid(), comp->class_name());
+            throw std::runtime_error("Attempt to add component that already exists and has the Unique flag");
+        }
         m_comps.push_back(std::shared_ptr<DerivedComponentT>(std::move(comp)));
         auto& ref = *m_comps.back();
         // set parent
