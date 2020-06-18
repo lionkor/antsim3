@@ -31,6 +31,10 @@ public:
     const ResourceManager& resource_manager() const { return m_resource_manager; }
 
     [[nodiscard]] int run();
+    
+    // Object interface
+public:
+    virtual std::stringstream to_stream() const override;
 };
 
 #endif // APPLICATION_H
