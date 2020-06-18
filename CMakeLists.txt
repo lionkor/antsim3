@@ -8,10 +8,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -fconcepts")
 
 project(Engine)
 
+add_subdirectory("SFML" "SFML")
+
 include_directories(Engine
     "."
     "./fmt/include"
     "./doctest/doctest"
+    "./SFML/include"
 )
 
 add_library(Engine SHARED

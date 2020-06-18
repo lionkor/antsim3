@@ -22,6 +22,6 @@ Take a look at the [project(s)](https://github.com/lionkor/antsim3/projects)
 
 * `fmt`, included
 * `doctest`, included
-* `sfml`, currently not included, which will change (probably)
+* `sfml`, included
 
 All it will be is a simple lightweight hobby project engine.
