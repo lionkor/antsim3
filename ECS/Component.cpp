@@ -2,23 +2,36 @@
 #include "Core/World.h"
 #include "Core/Application.h"
 #include "Entity.h"
+#include "bitops/bitops.h"
 
-std::stringstream Component::to_stream() const {
-    auto ss = Object::to_stream();
-    ss << "parent=" << std::hex << m_parent << ";";
-    return ss;
+void Component::set_flag(Component::flag_t flag) {
+    bitops::bit_set_mask(m_flags, flag);
 }
 
+void Component::unset_flag(Component::flag_t flag) {
+    // TODO
+    bitops::bit_set_mask<Component::flag_t>(m_flags, flag ^ std::numeric_limits<Component::flag_t>::max());
+}
+
+bool Component::is_flag_set(Component::flag_t flag) const {
+    return bitops::is_bitmask_set(m_flags, flag);
+}
+
+std::stringstream Component::to_stream() const {
+    TS_BEGIN(Object);
+    TS_PROP_M(m_parent->uuid());
+    TS_END();
+}
 
 void TransformComponent::move_by(const vec<double>& delta) {
     m_position += delta;
 }
 
 std::stringstream TransformComponent::to_stream() const {
-    auto ss = Component::to_stream();
-    ss << "position=" << m_position << ";"
-       << "rotation=" << m_rotation << ";";
-    return ss;
+    TS_BEGIN(Component);
+    TS_PROP_M(m_position);
+    TS_PROP_M(m_rotation);
+    TS_END();
 }
 
 SpriteComponent::SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color, const std::string& name)
@@ -113,13 +126,13 @@ std::stringstream SpriteComponent::to_stream() const {
     m_render_id;
     m_cached_pos { 0, 0 };
     */
-    auto ss = Component::to_stream();
-    ss << "sprite_pos=" << m_sprite_pos << ";"
-       << "sprite_size=" << m_sprite_size << ";"
-       << "initialized=" << m_initialized << ";"
-       << "cached_pos=" << m_cached_pos << ";"
-       << "drawable=" << m_drawable << ";";
-    return ss;
+    TS_BEGIN(Component);
+    TS_PROP_M(m_sprite_pos);
+    TS_PROP_M(m_sprite_size);
+    TS_PROP_M(m_initialized);
+    TS_PROP_M(m_cached_pos);
+    TS_PROP_M(m_drawable);
+    TS_END();
 }
 
 void SpriteComponent::on_cleanup(DrawSurface& surface) {

@@ -8,7 +8,7 @@
 #include <sstream>
 #include <functional>
 
-#define SHOW_UUID 0
+#define SHOW_UUID 1
 
 #include "Utils/DebugTools.h"
 
@@ -78,7 +78,7 @@ inline std::ostream& operator<<(std::ostream& os, const Object& obj) {
     return os << "[" << (&obj)->class_name() << "]:{" << obj.to_stream().str() << "}";
 }
 
-#define OBJNAME(classname)                             \
+#define OBJNAME(classname)                            \
 public:                                               \
     static std::string class_name_static() {          \
         return std::string(#classname);               \
@@ -87,5 +87,22 @@ public:                                               \
         return classname::class_name_static();        \
     }
 
+#define TS_BEGIN(base_class) auto ss = base_class::to_stream()
+#define TS_PROP(property) ss << #property << "=" << property << ";"
+#define TS_PROP_S(name, property) ss << name << "=" << property << ";"
+#define TS_PROP_M(property)                                        \
+    do {                                                           \
+        auto __name = std::string(#property);                      \
+        __name.erase(0, 2);                                        \
+        auto __res = std::find(__name.begin(), __name.end(), '('); \
+        if (__res != __name.end())                                 \
+            __name.erase(__res);                                   \
+        __res = std::find(__name.begin(), __name.end(), ')');      \
+        if (__res != __name.end())                                 \
+            __name.erase(__res);                                   \
+        ss << __name << "=" << property << ";";                    \
+    } while (false)
+
+#define TS_END() return ss
 
 #endif // OBJNAME_H

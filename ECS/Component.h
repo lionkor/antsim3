@@ -9,14 +9,25 @@
 
 class Entity;
 
+
 class Component
     : public Object
 {
     OBJNAME(Component)
     friend class Entity;
 
+public:
+    using flag_t = std::uint16_t;
+
+    enum Flags : flag_t
+    {
+        Unique = 1
+    };
+
 private:
     Entity* m_parent;
+
+    flag_t m_flags { Flags::Unique };
 
 protected:
     /// Called just before the component is destructed, is passed the draw
@@ -28,9 +39,15 @@ protected:
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_up { nullptr };
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_move { nullptr };
 
+    void set_flag(flag_t flag);
+    void unset_flag(flag_t flag);
+
 public:
     Component()                   = default;
     virtual ~Component() noexcept = default;
+
+    flag_t flags() const { return m_flags; }
+    bool   is_flag_set(flag_t flag) const;
 
     bool has_parent() const noexcept { return static_cast<bool>(m_parent); }
 

@@ -163,9 +163,9 @@ bool LazyFile::has_changed_on_disk() const {
 }
 
 std::stringstream LazyFile::to_stream() const {
-    auto ss = Object::to_stream();
-    ss << "valid=" << bool(m_validation_result) << ";"
-       << "path=" << m_path << ";"
-       << "loaded=" << m_loaded << ";";
-    return ss;
+    TS_BEGIN(Object);
+    TS_PROP_M(is_valid());
+    TS_PROP_M(m_path);
+    TS_PROP_M(m_loaded);
+    TS_END();
 }

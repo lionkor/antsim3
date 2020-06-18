@@ -82,13 +82,9 @@ void Entity::destroy() {
 }
 
 std::stringstream Entity::to_stream() const {
-    auto ss = Object::to_stream();
-    if (m_parent) {
-        ss << "parent=" << *m_parent << ";";
-    } else {
-        ss << "parent=None;";
-    }
-    ss << "children_count=" << m_children.size() << ";";
+    TS_BEGIN(Object);
+    TS_PROP_M(m_parent);
+    TS_PROP_M(m_children.size());
     ss << "components={";
     for (auto& comp : m_comps) {
         ss << *comp;
@@ -96,5 +92,5 @@ std::stringstream Entity::to_stream() const {
             ss << ",";
     }
     ss << "};";
-    return ss;
+    TS_END();
 }

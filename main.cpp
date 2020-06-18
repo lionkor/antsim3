@@ -20,6 +20,9 @@ class SimpleMovementComponent
 
 public:
     SimpleMovementComponent() {
+        report_warning("{}", is_flag_set(Component::Flags::Unique));
+        set_flag(Component::Flags::Unique);
+        report_warning("{}", is_flag_set(Component::Flags::Unique));
         on_mouse_down = [](GameWindow& window, const HID::MouseAction& action) {
             report("button {} was pressed at {}, which is {} in world coords!", action.button, action.screen_position, action.world_position(window));
         };
@@ -48,6 +51,8 @@ int main(int, char**) {
     child.lock()->add_component(new SpriteComponent({ 120, 0 }, { 90, 90 }, Color::Red, "sprite1.png"));
 
     world.update(window);
+
+    std::cout << window << std::endl;
 
     return app.run();
 }

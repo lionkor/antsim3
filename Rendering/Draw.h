@@ -30,10 +30,10 @@ public:
     virtual bool              operator==(const Object&) const override { return false; }
     virtual bool              operator!=(const Object&) const override { return true; }
     virtual std::stringstream to_stream() const override {
-        auto ss = Object::to_stream();
-        ss << "pos=" << pos << ";"
-           << "size=" << size << ";";
-        return ss;
+        TS_BEGIN(Object);
+        TS_PROP(pos);
+        TS_PROP(size);
+        TS_END();
     }
 };
 

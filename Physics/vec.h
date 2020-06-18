@@ -96,10 +96,10 @@ struct vec : public Object {
     // Object interface
 public:
     virtual std::stringstream to_stream() const override {
-        auto ss = Object::to_stream();
-        ss << "x=" << x << ";"
-           << "y=" << y << ";";
-        return ss;
+        TS_BEGIN(Object);
+        TS_PROP(x);
+        TS_PROP(y);
+        TS_END();
     }
     virtual bool operator==(const Object&) const override { return false; }
     virtual bool operator!=(const Object&) const override { return true; }

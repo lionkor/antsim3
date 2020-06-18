@@ -122,9 +122,8 @@ void GameWindow::set_framerate_limit(size_t limit) {
 }
 
 std::stringstream GameWindow::to_stream() const {
-    auto ss   = Object::to_stream();
-    auto size = getSize();
-    ss << "width=" << size.x << ";";
-    ss << "height=" << size.y << ";";
-    return ss;
+    TS_BEGIN(Object);
+    TS_PROP_S("width", getSize().x);
+    TS_PROP_S("height", getSize().y);
+    TS_END();
 }
