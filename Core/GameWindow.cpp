@@ -9,6 +9,7 @@ GameWindow::GameWindow(const std::string& title, sf::Vector2u size)
     , m_fps_logger("fps.csv")
     , m_title(title) {
     setFramerateLimit(120);
+    setVerticalSyncEnabled(false);
 }
 
 void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {

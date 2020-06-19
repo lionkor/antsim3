@@ -87,8 +87,14 @@ struct vec : public Object {
     void normalize() {
         *this = *this / length();
     }
+    
+    vec normalized() const {
+        vec v = *this;
+        v.normalize();
+        return v;
+    }
 
-    static T distance_squared(const vec<T>& a, const vec<T>& b) {
+    static constexpr T distance_squared(const vec<T>& a, const vec<T>& b) {
         return (a.x - b.x) * (a.x - b.x)
                + (a.y - b.y) * (a.y - b.y);
     }
