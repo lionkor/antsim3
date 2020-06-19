@@ -9,9 +9,7 @@
 
 /// Minimal 2D-vector struct.
 template<typename T>
-struct vec : public Object {
-    OBJNAME(vec)
-
+struct vec {
     T x;
     T y;
 
@@ -80,36 +78,31 @@ struct vec : public Object {
         return *this *= static_cast<AnyNumberT>(1) / i;
     }
 
-    T length() const {
+    T inline length() const noexcept {
         return std::sqrt(x * x + y * y);
     }
 
-    void normalize() {
+    void inline normalize() noexcept {
         *this = *this / length();
     }
     
-    vec normalized() const {
+    inline vec normalized() const noexcept {
         vec v = *this;
         v.normalize();
         return v;
     }
 
-    static constexpr T distance_squared(const vec<T>& a, const vec<T>& b) {
+    static constexpr T distance_squared(const vec<T>& a, const vec<T>& b) noexcept {
         return (a.x - b.x) * (a.x - b.x)
                + (a.y - b.y) * (a.y - b.y);
     }
 
-    // Object interface
-public:
-    virtual std::stringstream to_stream() const override {
-        TS_BEGIN(Object);
-        TS_PROP(x);
-        TS_PROP(y);
-        TS_END();
-    }
-    virtual bool operator==(const Object&) const override { return false; }
-    virtual bool operator!=(const Object&) const override { return true; }
 };
+
+template<class T>
+std::ostream& operator<<(std::ostream& os, const vec<T>& v) {
+    return os << "(" << v.x << "," << v.y << ")";
+}
 
 template<typename T>
 vec<T> operator*(T val, const vec<T>& vec) {

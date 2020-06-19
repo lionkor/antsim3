@@ -1,12 +1,10 @@
 #ifndef OBJNAME_H
 #define OBJNAME_H
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/uuid_generators.hpp>
 #include <string>
 #include <sstream>
 #include <functional>
+#include <atomic>
 
 #define SHOW_UUID 0
 
@@ -18,9 +16,9 @@
  * An Object is identified uniquely by it's uuid.
  */
 
-using UUID = boost::uuids::uuid;
+using UUID = size_t;
 
-static boost::uuids::random_generator s_uuid_gen;
+static inline std::atomic_size_t s_uuid_counter = 0;
 
 class Object
 {
@@ -28,7 +26,7 @@ private:
     UUID m_uuid;
 
     static inline UUID new_uuid() {
-        return s_uuid_gen();
+        return ++s_uuid_counter;
     }
 
 protected:
@@ -66,7 +64,7 @@ public:
     virtual std::stringstream to_stream() const {
         std::stringstream ss;
 #if SHOW_UUID
-        ss << "uuid=" << boost::uuids::to_string(m_uuid) << ";";
+        ss << "uuid=" << m_uuid << ";";
 #endif // SHOW_UUID
         return ss;
     }

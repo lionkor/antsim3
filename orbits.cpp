@@ -62,7 +62,7 @@ public:
 
 static inline std::atomic_size_t s_id_counter { 0 };
 
-static constexpr double G = 10;
+static constexpr double G = 5;
 
 struct Body {
     Body(const vec<double>& _pos = { 0, 0 }, const vec<double>& _vel = { 0, 0 }, double _mass = 0)
@@ -92,7 +92,7 @@ public:
         ASSERT(count > 0);
         m_bodies.resize(count);
         for (auto& body : m_bodies) {
-            body = Body { random_vector(-20000, 20000), random_vector(-600, 600), Random::random_real<double>(20, 300) };
+            body = Body { random_vector(-120000, 120000), random_vector(-1000, 1000), Random::random_real<double>(140, 800) };
         }
         m_drawable.set_primitive(SimpleDrawable::PrimitiveType::Quads);
         m_drawable.resize(count * 4);
@@ -103,10 +103,10 @@ public:
         // copy all bodies
         m_drawable.resize(m_bodies.size() * 4);
         m_bodies_old = m_bodies;
-        report("{} {}", m_bodies.size(), m_drawable.size());
         for (size_t i = 0; i < m_bodies_old.size(); ++i) {
-            const Body& body_1_old = m_bodies_old[i];
-            Body&       body_1     = m_bodies[i];
+            const Body& body_1_old  = m_bodies_old[i];
+            Body&       body_1      = m_bodies[i];
+            auto        body_1_size = body_1.mass * 100;
             if (body_1.dead)
                 continue;
             for (size_t k = 0; k < m_bodies_old.size(); ++k) {
@@ -117,7 +117,9 @@ public:
                 if (body_2.dead)
                     continue;
                 auto r_squared = vec<double>::distance_squared(body_1.pos, body_2_old.pos);
-                if (r_squared <= body_2_old.mass * 100 + body_1.mass * 100) {
+                if (false && (body_1.mass * body_2_old.mass) / r_squared < body_1.vel.length() / 100.0)
+                    continue;
+                if (r_squared <= body_2_old.mass * 100 + body_1_size) {
                     // collision!
                     report("collision!");
                     body_2.dead = true;
@@ -131,11 +133,15 @@ public:
                 }
             }
             body_1.pos += body_1.vel / body_1.mass;
-            auto offset           = std::sqrt(body_1.mass * 100);
-            m_drawable[i * 4 + 0] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(body_1.pos.x - offset, body_1.pos.y - offset));
-            m_drawable[i * 4 + 1] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(body_1.pos.x + offset, body_1.pos.y - offset));
-            m_drawable[i * 4 + 2] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(body_1.pos.x + offset, body_1.pos.y + offset));
-            m_drawable[i * 4 + 3] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(body_1.pos.x - offset, body_1.pos.y + offset));
+            auto offset           = std::sqrt(body_1_size);
+            m_drawable[i * 4 + 0].position.x = body_1.pos.x - offset;
+            m_drawable[i * 4 + 0].position.y = body_1.pos.y - offset;
+            m_drawable[i * 4 + 1].position.x = body_1.pos.x + offset;
+            m_drawable[i * 4 + 1].position.y = body_1.pos.y - offset;
+            m_drawable[i * 4 + 2].position.x = body_1.pos.x + offset;
+            m_drawable[i * 4 + 2].position.y = body_1.pos.y + offset;
+            m_drawable[i * 4 + 3].position.x = body_1.pos.x - offset;
+            m_drawable[i * 4 + 3].position.y = body_1.pos.y + offset;
             m_drawable.set_changed();
         }
 
@@ -154,7 +160,7 @@ static void init(Application& app) {
     window.set_framerate_limit(400);
 
     auto solar_system = world.add_entity(new Entity).lock();
-    solar_system->add_component(new NBodySystemComponent(400));
+    solar_system->add_component(new NBodySystemComponent(1000));
 }
 
 int main() {
