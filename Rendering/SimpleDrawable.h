@@ -24,6 +24,7 @@ public:
         : m_varray(primitive, size) { }
 
     void          set_texture(sf::Texture* texture);
+    void          set_primitive(PrimitiveType primitive) { m_varray.setPrimitiveType(primitive); }
     Vertex&       operator[](size_t index) { return m_varray[index]; }
     const Vertex& operator[](size_t index) const { return m_varray[index]; }
     void          resize(size_t size);

@@ -59,9 +59,11 @@ void World::update(GameWindow& window) {
     if (!m_application)
         throw std::runtime_error("no application set, this can't be right!");
 
+    auto& surface = window.surface();
+    
     add_new_entities();
 
-    window.clear(sf::Color::Green);
+    window.clear(surface.clear_color());
     window.internal_draw();
 
     // FIXME: This might be slow
@@ -73,7 +75,6 @@ void World::update(GameWindow& window) {
         m_update_timer.restart();
     }
 
-    auto& surface = window.surface();
     for (auto& entity : m_entities) {
         entity->on_draw(surface);
     }

@@ -46,7 +46,7 @@ void GameWindow::handle_events() {
                 view.move(-sf::Vector2f(diff));
                 setView(view);
             }
-            m_mouse_pos = sf::Mouse::getPosition(*this);
+            m_mouse_pos             = sf::Mouse::getPosition(*this);
             HID::MouseAction action = HID::from_sf_mouse_action(m_event);
             m_application->world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
                 entity_ptr->on_mouse_move(*this, action);
@@ -70,7 +70,7 @@ void GameWindow::handle_events() {
 void GameWindow::handle_mouse_button_press() {
     if (m_event.mouseButton.button == sf::Mouse::Middle) {
         m_mmb_pressed = true;
-    } 
+    }
     HID::MouseAction action = HID::from_sf_mouse_action(m_event);
     m_application->world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
         entity_ptr->on_mouse_down(*this, action);
@@ -108,17 +108,9 @@ void GameWindow::internal_draw() {
         m_fps_logger.log_fps(1.0 / time.asSeconds());
 }
 
-const std::string& GameWindow::title() const {
-    return m_title;
-}
-
 void GameWindow::set_title(const std::string& title) {
     m_title = title;
     setTitle(title);
-}
-
-void GameWindow::set_framerate_limit(size_t limit) {
-    setFramerateLimit(static_cast<unsigned int>(limit));
 }
 
 std::stringstream GameWindow::to_stream() const {

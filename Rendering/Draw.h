@@ -57,10 +57,14 @@ class DrawSurface
     };
 
     std::vector<CustomVArray> m_custom_varrays;
-    std::vector<sf::Vertex>      m_vertices;
+    std::vector<sf::Vertex>   m_vertices;
+    sf::Color                 m_clear_color { sf::Color::Black };
 
 public:
     DrawSurface(GameWindow& window);
+
+    void             set_clear_color(sf::Color color) { m_clear_color = color; }
+    const sf::Color& clear_color() const { return m_clear_color; }
 
     void                      update_rectangle(size_t index, const Rectangle& rect, const Color& fill_color = Color::Green, const Color& border_color = Color::White);
     [[nodiscard]] std::size_t draw_new_rectangle(const Rectangle& rect, const Color& fill_color = Color::Green, const Color& border_color = Color::White);

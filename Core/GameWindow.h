@@ -39,8 +39,9 @@ class GameWindow
       public EventDispatcher
 {
     OBJNAME(GameWindow)
-    
+
     friend class Application;
+
 protected:
     sf::Event    m_event;
     sf::Vector2i m_mouse_pos;
@@ -49,6 +50,7 @@ protected:
     FpsLogger    m_fps_logger;
     sf::Clock    m_fps_clock;
     std::string  m_title;
+    sf::Color    m_clear_color;
 
     // FIXME: We should check somewhere if this is not nullptr anymore
     class Application* m_application { nullptr };
@@ -67,14 +69,14 @@ public:
     void internal_draw();
 
     /// Gets the title.
-    const std::string& title() const;
+    const std::string& title() const { return m_title; }
     /// Sets the title property and calls into sfml to change the title.
     void set_title(const std::string& title);
 
     /// Gets the surface to be used for drawing geometry into the window.
     DrawSurface& surface() { return m_surface; }
 
-    void set_framerate_limit(std::size_t limit);
+    void set_framerate_limit(std::size_t limit) { setFramerateLimit(static_cast<unsigned int>(limit)); }
 
     template<typename T>
     T width() const { return static_cast<T>(getSize().x); }
