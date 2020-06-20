@@ -13,13 +13,12 @@
 #include "Core/Object.h"
 #include "Physics/vec.h"
 #include "Physics/IHittable.h"
-#include "ECS/Entity.h"
 #include "Core/GameWindow.h"
 
 #include <deque>
 
 class RayHit;
-
+class Entity;
 
 /// The world manages all physical objects.
 class World
@@ -35,7 +34,7 @@ private:
     std::vector<SharedPtr<Entity>> m_entities_to_add;
     std::size_t                    m_update_interval_ms;
 
-    class Application* m_application { nullptr };
+    class Application& m_application;
 
     sf::Clock m_update_timer;
 
@@ -43,32 +42,21 @@ private:
     void add_new_entities();
 
 public:
-    World();
+    World(Application& app);
     virtual ~World() { }
 
     /// Takes ownership of the passed (new-allocated) pointer `obj`.
-    WeakPtr<Entity> add_entity(Entity*&& obj);
+    WeakPtr<Entity> add_entity(const vecd& pos = {});
+    WeakPtr<Entity> add_entity(const Entity& entity);
     /// Generates a Ray at the position, returns the RayHit describing what was hit.
-    RayHit try_hit(const vec<double>& pos);
-    /// Begin of the container holding all objects.
-    auto begin() { return m_entities.begin(); }
-    /// Begin of the container holding all objects.
-    auto begin() const { return m_entities.begin(); }
-    /// End of the container holding all objects.
-    auto end() { return m_entities.end(); }
-    /// End of the container holding all objects.
-    auto end() const { return m_entities.end(); }
-    /// End of the container holding all objects.
-    auto rend() { return m_entities.rend(); }
-    /// End of the container holding all objects.
-    auto rend() const { return m_entities.rend(); }
+    RayHit try_hit(const vecd& pos);
 
     void set_update_interval(std::size_t ms) {
         m_update_interval_ms = ms;
     }
 
-    Application&       application() { return *m_application; }
-    const Application& application() const { return *m_application; }
+    Application&       application() { return m_application; }
+    const Application& application() const { return m_application; }
 
     std::vector<SharedPtr<Entity>>&       entities() { return m_entities; }
     const std::vector<SharedPtr<Entity>>& entities() const { return m_entities; }

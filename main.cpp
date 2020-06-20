@@ -19,34 +19,35 @@ class SimpleMovementComponent
     OBJNAME(SimpleMovementComponent)
 
 public:
-    SimpleMovementComponent() {
+    SimpleMovementComponent(Entity& e)
+        : Component(e) {
         on_mouse_down = [](GameWindow& window, const HID::MouseAction& action) {
             report("button {} was pressed at {}, which is {} in world coords!", action.button, action.screen_position, action.world_position(window));
         };
     }
 
     virtual void on_update() override {
-        auto& transform = parent()->transform();
+        auto& transform = parent().transform();
         transform.move_by({ 0.05, 0 });
     }
 };
 
 int main(int, char**) {
-    Application app(new GameWindow("AntSim3", { 1280, 720 }), new World);
+    Application app("AntSim3", { 1280, 720 });
 
     auto& world  = app.world();
     auto& window = app.window();
     static_cast<void>(window);
 
-    auto entity        = world.add_entity(new Entity({ 100, 200 }));
+    auto entity        = world.add_entity({ 100, 200 });
     auto shared_entity = entity.lock();
-    shared_entity->add_component(new SpriteComponent({ 10, 10 }, { 100, 100 }, Color::Blue, "sprite1.png"));
-    shared_entity->add_component(new SpriteComponent({ 50, 50 }, { 50, 50 }, Color::Blue, "sprite1.png"));
+    shared_entity->add_component<SpriteComponent>(vecd { 10, 10 }, vecd { 100, 100 }, Color::Blue, "sprite1.png");
+    shared_entity->add_component<SpriteComponent>(vecd { 50, 50 }, vecd { 50, 50 }, Color::Blue, "sprite1.png");
     report("has SpriteComponent? {}", shared_entity->has_component<SpriteComponent>());
-    shared_entity->add_component(new SimpleMovementComponent);
+    shared_entity->add_component<SimpleMovementComponent>();
 
-    auto child = shared_entity->add_child(new Entity());
-    child.lock()->add_component(new SpriteComponent({ 120, 0 }, { 90, 90 }, Color::Red, "sprite1.png"));
+    auto child = shared_entity->add_child();
+    child.lock()->add_component<SpriteComponent>(vecd { 120, 0 }, vecd { 90, 90 }, Color::Red, "sprite1.png");
 
     world.update(window);
 

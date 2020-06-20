@@ -4,7 +4,7 @@ Collider::Collider(const Collider::Shape& shape)
     : m_shape(shape) {
 }
 
-static std::ostream& operator<<(std::ostream& os, const std::vector<vec<double>>& vec) {
+static std::ostream& operator<<(std::ostream& os, const std::vector<vecd>& vec) {
     os << "[";
     for (std::size_t i = 0; i < vec.size(); ++i) {
         os << vec[i];

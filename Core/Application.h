@@ -21,7 +21,7 @@ private:
     ResourceManager     m_resource_manager;
 
 public:
-    Application(GameWindow*&&, World*&&, const std::string& res_file_path = "Data/res.list");
+    Application(const std::string& title, sf::Vector2u size, const std::string& res_file_path = "Data/res.list");
 
     GameWindow&            window() { return *m_window; }
     const GameWindow&      window() const { return *m_window; }

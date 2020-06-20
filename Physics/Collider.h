@@ -19,14 +19,14 @@ public:
     };
 
 private:
-    std::vector<vec<double>> m_points { vec<double> { 0.0 }, vec<double> { 1.0 }, vec<double> { 2.0 } }; // collider vertices in order
+    std::vector<vecd> m_points { vecd { 0.0 }, vecd { 1.0 }, vecd { 2.0 } }; // collider vertices in order
     double                   m_radius { 20 };
     Shape                    m_shape;
 
 public:
     Collider(const Collider::Shape& shape = Shape::Rectangle);
 
-//    OkResult set_points(const std::vector<vec<double>>& points);
+//    OkResult set_points(const std::vector<vecd>& points);
 //    OkResult set_radius(double radius);
 
     // Object interface

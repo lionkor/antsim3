@@ -13,24 +13,22 @@ void ResourceManager::reload_resfile() {
         report_error(error_fmt, result.message());
         ASSERT_NOT_REACHABLE();
     }
-    auto get_result = m_res_file.get();
-    if (get_result.error()) {
-        report_error(error_fmt, get_result.error());
+    auto contents = m_res_file.load();
+    if (!contents) {
         ASSERT_NOT_REACHABLE();
     }
-    auto& contents = get_result.value().get();
     // clear previously loaded resources
     m_resources.clear();
     // parsing one resource per line
 
     // do a line count for debugging
-    report("found {} lines in {}", std::count(contents.begin(), contents.end(), '\n'), m_res_file.filename());
+    report("found {} lines in {}", std::count(contents->begin(), contents->end(), '\n'), m_res_file.filename());
 
     // read all lines
-    auto previous_newline = contents.begin();
+    auto previous_newline = contents->begin();
     for (;;) {
-        auto next_newline = std::find(previous_newline, contents.end(), '\n');
-        if (next_newline == contents.end()) {
+        auto next_newline = std::find(previous_newline, contents->end(), '\n');
+        if (next_newline == contents->end()) {
             report("done");
             break;
         }

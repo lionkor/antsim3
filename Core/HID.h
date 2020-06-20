@@ -24,7 +24,7 @@ enum MouseButton
 struct MouseAction {
     HID::MouseButton button;
     vec<int>         screen_position;
-    vec<double>      world_position(GameWindow&) const;
+    vecd      world_position(GameWindow&) const;
 };
 
 MouseAction from_sf_mouse_action(sf::Event);

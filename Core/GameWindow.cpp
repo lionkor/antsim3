@@ -2,12 +2,14 @@
 #include "Utils/DebugTools.h"
 #include "HID.h"
 #include "Application.h"
+#include "ECS/Entity.h"
 
-GameWindow::GameWindow(const std::string& title, sf::Vector2u size)
+GameWindow::GameWindow(Application& app, const std::string& title, sf::Vector2u size)
     : sf::RenderWindow(sf::VideoMode(size.x, size.y), title, sf::Style::Default, sf::ContextSettings(0, 0, 8))
     , m_surface(*this)
     , m_fps_logger("fps.csv")
-    , m_title(title) {
+    , m_title(title)
+    , m_application(app) {
     setFramerateLimit(120);
     setVerticalSyncEnabled(false);
 }
@@ -49,7 +51,7 @@ void GameWindow::handle_events() {
             }
             m_mouse_pos             = sf::Mouse::getPosition(*this);
             HID::MouseAction action = HID::from_sf_mouse_action(m_event);
-            m_application->world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+            m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
                 entity_ptr->on_mouse_move(*this, action);
                 return true;
             });
@@ -73,7 +75,7 @@ void GameWindow::handle_mouse_button_press() {
         m_mmb_pressed = true;
     }
     HID::MouseAction action = HID::from_sf_mouse_action(m_event);
-    m_application->world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+    m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
         entity_ptr->on_mouse_down(*this, action);
         return true;
     });
@@ -84,7 +86,7 @@ void GameWindow::handle_mouse_button_release() {
         m_mmb_pressed = false;
     }
     HID::MouseAction action = HID::from_sf_mouse_action(m_event);
-    m_application->world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+    m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
         entity_ptr->on_mouse_up(*this, action);
         return true;
     });

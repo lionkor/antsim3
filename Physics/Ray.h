@@ -37,12 +37,12 @@ public:
 class Ray : public Object
 {
     OBJNAME(Ray)
-    vec<double> m_pos;
+    vecd m_pos;
     RayHit      m_hit;
 
 public:
     /// Sets up a new raycast at the position.
-    Ray(const vec<double>& pos)
+    Ray(const vecd& pos)
         : m_pos(pos) { }
 
     /// Fires the Ray at the object. On hit, the hit object will be added 

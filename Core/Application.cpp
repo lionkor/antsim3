@@ -1,11 +1,9 @@
 #include "Application.h"
 
-Application::Application(GameWindow*&& window, World*&& world, const std::string& res_file_path)
-    : m_window(std::move(window))
-    , m_world(std::move(world))
+Application::Application(const std::string& title, sf::Vector2u size, const std::string& res_file_path)
+    : m_window(new GameWindow(*this, title, size))
+    , m_world(new World(*this))
     , m_resource_manager(res_file_path) {
-    m_window->m_application = this;
-    m_world->m_application  = this;
 }
 
 int Application::run() {
@@ -28,4 +26,3 @@ std::stringstream Application::to_stream() const {
     TS_PROP_S("world", *m_world);
     TS_END();
 }
-

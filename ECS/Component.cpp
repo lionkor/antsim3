@@ -3,13 +3,19 @@
 #include "Core/Application.h"
 #include "Entity.h"
 
+Component::Component(Entity& parent)
+    : m_parent(parent)
+    , m_resource_manager(m_parent.world().application().resource_manager()) {
+    report_warning("ctor");
+}
+
 std::stringstream Component::to_stream() const {
     TS_BEGIN(Object);
-    TS_PROP_M(m_parent->uuid());
+    TS_PROP_M(m_parent.uuid());
     TS_END();
 }
 
-void TransformComponent::move_by(const vec<double>& delta) {
+void TransformComponent::move_by(const vecd& delta) {
     m_position += delta;
 }
 
@@ -20,8 +26,9 @@ std::stringstream TransformComponent::to_stream() const {
     TS_END();
 }
 
-SpriteComponent::SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color, const std::string& name)
-    : m_sprite_pos(parent_position)
+SpriteComponent::SpriteComponent(Entity& e, const vecd& parent_position, const vecd& sprite_size, const Color& color, const std::string& name)
+    : Component(e)
+    , m_sprite_pos(parent_position)
     , m_sprite_size(sprite_size)
     , m_sprite_background_color(color)
     , m_texture_name(name)
@@ -29,21 +36,19 @@ SpriteComponent::SpriteComponent(const vec<double>& parent_position, const vec<d
 }
 
 void SpriteComponent::on_update() {
-    if (!has_parent())
-        report_error("no parent set for {}", *this);
     if (!m_initialized && !m_texture_name.empty()) {
         report("loading texture {}", m_texture_name);
-        auto& resman = parent()->world().application().resource_manager();
+        auto& resman = parent().world().application().resource_manager();
         auto  result = resman.get_resource_by_name(m_texture_name);
         if (result.error()) {
             report_error("error getting texture \"{}\": {}", m_texture_name, result.message());
         } else {
             LazyFile& file_ref = result.value().get();
-            auto      result   = file_ref.get();
-            if (result.error()) {
-                report_error("error loading file: {}", result.message());
+            auto      result   = file_ref.load();
+            if (!result) {
+                report_error("error loading file.");
             } else {
-                auto& data = result.value().get();
+                auto& data = *result;
                 bool  rt   = m_texture.loadFromMemory(data.data(), data.size());
                 if (!rt) {
                     report_error("texture not loaded properly");
@@ -53,17 +58,17 @@ void SpriteComponent::on_update() {
                 }
             }
         }
-        m_cached_pos = parent()->transform().position();
+        m_cached_pos = parent().transform().position();
     }
-    if (m_cached_pos != parent()->transform().position()) {
-        m_cached_pos = parent()->transform().position();
+    if (m_cached_pos != parent().transform().position()) {
+        m_cached_pos = parent().transform().position();
         m_drawable.set_changed();
     }
 }
 
 void SpriteComponent::on_draw(DrawSurface& surface) {
     if (!m_initialized) {
-        const vec<double>& pos = parent()->transform().position();
+        const vecd& pos = parent().transform().position();
         Rectangle          rect(pos + m_sprite_pos, m_sprite_size);
         if (!m_texture_name.empty()) {
             SimpleDrawable::Vector2f tex_size = SimpleDrawable::Vector2f(m_texture.getSize().x, m_texture.getSize().y);
@@ -84,7 +89,7 @@ void SpriteComponent::on_draw(DrawSurface& surface) {
         m_drawable.set_changed();
     }
     if (m_drawable.has_changed()) {
-        const vec<double>& pos = parent()->transform().position();
+        const vecd& pos = parent().transform().position();
         Rectangle          rect(pos + m_sprite_pos, m_sprite_size);
         if (!m_texture_name.empty()) {
             SimpleDrawable::Vector2f tex_size = SimpleDrawable::Vector2f(m_texture.getSize().x, m_texture.getSize().y);

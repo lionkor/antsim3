@@ -8,7 +8,7 @@
 #include "Core/HID.h"
 
 class Entity;
-
+class ResourceManager;
 
 class Component
     : public Object
@@ -17,7 +17,8 @@ class Component
     friend class Entity;
 
 private:
-    Entity* m_parent;
+    Entity&          m_parent;
+    ResourceManager& m_resource_manager;
 
 protected:
     /// Called just before the component is destructed, is passed the draw
@@ -30,18 +31,18 @@ protected:
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_move { nullptr };
 
 public:
-    Component()                   = default;
+    Component(Entity&);
     virtual ~Component() noexcept = default;
 
     virtual bool is_unique() const { return true; }
 
-    bool has_parent() const noexcept { return static_cast<bool>(m_parent); }
-
     virtual void on_update() { }
     virtual void on_draw(DrawSurface&) { }
 
-    Entity*       parent() noexcept { return m_parent; }
-    const Entity* parent() const noexcept { return m_parent; }
+    Entity&                parent() noexcept { return m_parent; }
+    const Entity&          parent() const noexcept { return m_parent; }
+    ResourceManager&       resource_manager() noexcept { return m_resource_manager; }
+    const ResourceManager& resource_manager() const noexcept { return m_resource_manager; }
 
     // Object interface
 public:
@@ -56,45 +57,41 @@ class TransformComponent
     friend class Entity;
 
 protected:
-    vec<double> m_position;
+    vecd m_position;
     double      m_rotation;
 
     /// Transform of the parent, set by the parent when assigned as a child
     TransformComponent* m_parent_transform { nullptr };
 
 public:
-    TransformComponent(const vec<double>& pos = { 0.0, 0.0 }, double rot = 0)
-        : m_position(pos)
+    TransformComponent(Entity& e, const vecd& pos = { 0.0, 0.0 }, double rot = 0)
+        : Component(e)
+        , m_position(pos)
         , m_rotation(rot) {
     }
 
-    TransformComponent(const TransformComponent&) = default;
-    TransformComponent(TransformComponent&&)      = default;
-    TransformComponent& operator=(const TransformComponent&) = default;
-    TransformComponent& operator=(TransformComponent&&) = default;
-
     /// Returns {0,0} if no parent
-    vec<double> parent_position() const { return m_parent_transform ? m_parent_transform->position() : vec<double>(0, 0); }
+    vecd parent_position() const { return m_parent_transform ? m_parent_transform->position() : vecd(0, 0); }
     /// Returns 0 if no parent
     double parent_rotation() const { return m_parent_transform ? m_parent_transform->rotation() : 0; }
 
     /// Absolute position
-    vec<double> position() const { return m_position + parent_position(); }
+    vecd position() const { return m_position + parent_position(); }
     /// Absolute rotation
     double rotation() const { return m_rotation + parent_rotation(); }
 
     /// Position relative to parent
-    const vec<double>& relative_position() const { return m_position; }
+    const vecd& relative_position() const { return m_position; }
     /// Rotation relative to parent
     double relative_rotation() const { return m_rotation; }
 
     // FIXME: These setters are not safe since we work with relative positons and rotations
-    void set_position(const vec<double>& pos) { m_position = pos; }
-    void set_position(vec<double>&& pos) { m_position = std::move(pos); }
+    void set_position(const vecd& pos) { m_position = pos; }
+    void set_position(vecd&& pos) { m_position = std::move(pos); }
     void set_rotation(double rot) { m_rotation = rot; }
     void set_rotation(double&& rot) { m_rotation = std::move(rot); }
 
-    void move_by(const vec<double>& delta);
+    void move_by(const vecd& delta);
 
     // Object interface
 public:
@@ -106,19 +103,19 @@ class SpriteComponent
 {
     OBJNAME(SpriteComponent)
 private:
-    vec<double>    m_sprite_pos;
-    vec<double>    m_sprite_size;
+    vecd    m_sprite_pos;
+    vecd    m_sprite_size;
     Color          m_sprite_background_color;
     std::string    m_texture_name;
     sf::Texture    m_texture;
     bool           m_texture_loaded { false };
     bool           m_initialized { false };
-    vec<double>    m_cached_pos;
+    vecd    m_cached_pos;
     SimpleDrawable m_drawable;
     // TODO sprite / texture
 
 public:
-    SpriteComponent(const vec<double>& parent_position, const vec<double>& sprite_size, const Color& color = Color::Green, const std::string& texture_name = "");
+    SpriteComponent(Entity& e, const vecd& parent_position, const vecd& sprite_size, const Color& color = Color::Green, const std::string& texture_name = "");
 
     std::string texture_name() const { return m_texture_name; }
 

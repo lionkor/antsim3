@@ -3,6 +3,7 @@
 #include "Utils/Random.h"
 #include "Physics/Ray.h"
 #include "Application.h"
+#include "ECS/Entity.h"
 
 #include <algorithm>
 
@@ -28,19 +29,24 @@ void World::add_new_entities() {
     m_entities_to_add.clear();
 }
 
-World::World() {
+World::World(Application& app)
+    : m_application(app) {
     m_update_timer.restart();
     m_entities_to_add.reserve(1000);
     m_entities.reserve(1000);
 }
 
-WeakPtr<Entity> World::add_entity(Entity*&& obj) {
-    ASSERT(obj != nullptr);
-    m_entities_to_add.push_back(SharedPtr<Entity>(std::move(obj)));
-    obj                    = nullptr;
-    auto entity            = WeakPtr<Entity>(m_entities_to_add.back());
-    entity.lock()->m_world = this;
+WeakPtr<Entity> World::add_entity(const vecd& pos) {
+    m_entities_to_add.push_back(std::make_shared<Entity>(*this, pos));
+    report_function();
+    auto entity = WeakPtr<Entity>(m_entities_to_add.back());
     return entity;
+}
+
+WeakPtr<Entity> World::add_entity(const Entity& entity) {
+    m_entities_to_add.push_back(make_shared<Entity>(entity));
+    auto e = WeakPtr<Entity>(m_entities_to_add.back());
+    return e;
 }
 
 RayHit World::try_hit(const vec<double>& pos) {
@@ -56,11 +62,8 @@ RayHit World::try_hit(const vec<double>& pos) {
 }
 
 void World::update(GameWindow& window) {
-    if (!m_application)
-        throw std::runtime_error("no application set, this can't be right!");
-
     auto& surface = window.surface();
-    
+
     add_new_entities();
 
     window.clear(surface.clear_color());
@@ -88,9 +91,9 @@ void World::update(GameWindow& window) {
 
 std::stringstream World::to_stream() const {
     TS_BEGIN(Object);
-    TS_PROP_M( m_entities.size());
+    TS_PROP_M(m_entities.size());
     TS_PROP_M(m_entities_to_add.size());
     TS_PROP_M(m_update_interval_ms);
-    TS_PROP_M(m_application->uuid());
+    TS_PROP_M(m_application.uuid());
     TS_END();
 }

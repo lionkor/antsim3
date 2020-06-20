@@ -8,26 +8,16 @@ void Entity::on_cleanup(DrawSurface& surface) {
     }
 }
 
-WeakPtr<Entity> Entity::add_child(Entity*&& entity) {
-    auto weak_ptr = m_world->add_entity(std::move(entity));
-    // if the entity already has a parent then something is wack
-    auto ptr = weak_ptr.lock();
-    ASSERT(!ptr->m_parent);
-    ptr->m_parent                       = this;
-    ptr->m_transform.m_parent_transform = &m_transform;
-    m_children.push_back(ptr.get());
-    return weak_ptr;
-}
-
 void Entity::remove_child(Entity* entity) {
     auto found = std::find(m_children.begin(), m_children.end(), entity);
     if (found != m_children.end())
         m_children.erase(found);
 }
 
-Entity::Entity(const vec<double>& pos)
+Entity::Entity(World& world, const vecd& pos)
     // all entitie have a transform component
-    : m_transform(add_component(new TransformComponent(pos))) { }
+    : m_world(world)
+    , m_transform(add_component<TransformComponent>(pos)) { }
 
 
 void Entity::on_update() {

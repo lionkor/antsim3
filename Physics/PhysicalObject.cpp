@@ -1,7 +1,7 @@
 #include "PhysicalObject.h"
 #include "Core/World.h"
 
-PhysicalObject::PhysicalObject(const vec<double> pos, const vec<double> size, World& world)
+PhysicalObject::PhysicalObject(const vecd pos, const vecd size, World& world)
     : m_pos(pos)
     , m_size(size)
     , m_world(world) {
@@ -26,12 +26,12 @@ void PhysicalObject::try_draw(DrawSurface& surface) {
         draw(surface);
 }
 
-void PhysicalObject::set_position(const vec<double>& pos) {
+void PhysicalObject::set_position(const vecd& pos) {
     m_pos         = pos;
     m_has_changed = true;
 }
 
-void PhysicalObject::set_size(const vec<double>& size) {
+void PhysicalObject::set_size(const vecd& size) {
     m_size        = size;
     m_has_changed = true;
 }
@@ -51,11 +51,11 @@ void PhysicalObject::draw(DrawSurface& surface) {
     }
 }
 
-bool PhysicalObject::is_hit(const vec<double>& pos) const {
+bool PhysicalObject::is_hit(const vecd& pos) const {
     return pos.x >= m_pos.x && pos.x <= m_pos.x + m_size.x && pos.y >= m_pos.y && pos.y <= m_pos.y + m_size.y;
 }
 
-void PhysicalObject::on_hit(const vec<double>&) {
+void PhysicalObject::on_hit(const vecd&) {
     report_trace("HIT!");
     m_has_changed = true;
 }

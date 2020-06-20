@@ -8,11 +8,11 @@ static inline std::atomic_size_t s_id_counter { 0 };
 
 static constexpr double G = 15;
 
-static constexpr size_t s_pieces = 50;
+static constexpr size_t s_pieces     = 50;
 static constexpr double s_size_limit = 5;
 
 struct Body {
-    Body(const vec<double>& _pos = { 0, 0 }, const vec<double>& _vel = { 0, 0 }, double _mass = 0, sf::Color _color = sf::Color::White)
+    Body(const vecd& _pos = { 0, 0 }, const vecd& _vel = { 0, 0 }, double _mass = 0, sf::Color _color = sf::Color::White)
         : pos(_pos), vel(_vel), mass(_mass), id(++s_id_counter) {
         if (_color == sf::Color::White) {
             color = sf::Color(Random::random(64, 255), Random::random(64, 255), Random::random(64, 255));
@@ -21,12 +21,12 @@ struct Body {
         }
     }
 
-    vec<double> pos { 0, 0 };
-    vec<double> vel { 0, 0 };
-    double      mass { 0 };
-    size_t      id;
-    bool        dead { false };
-    sf::Color   color;
+    vecd      pos { 0, 0 };
+    vecd      vel { 0, 0 };
+    double    mass { 0 };
+    size_t    id;
+    bool      dead { false };
+    sf::Color color;
 };
 
 class NBodySystemComponent : public Component
@@ -39,11 +39,12 @@ private:
     Managed<sf::Texture> m_planet_texture;
 
 public:
-    static vec<double> random_vector(double min, double max) {
-        return vec<double>(Random::random_real<double>(min, max), Random::random_real<double>(min, max));
+    static vecd random_vector(double min, double max) {
+        return vecd(Random::random_real<double>(min, max), Random::random_real<double>(min, max));
     }
 
-    NBodySystemComponent(size_t count) {
+    NBodySystemComponent(Entity& e, size_t count)
+        : Component(e) {
         ASSERT(count > 0);
         m_bodies.resize(count);
         for (auto& body : m_bodies) {
@@ -55,13 +56,9 @@ public:
     }
 
     void load_texture() {
-        auto& application = parent()->world().application();
-        auto& file        = application.resource_manager().get_resource_by_name("planet.png").value().get();
-        auto  result      = file.get();
-        ASSERT(result.ok());
-        auto& vector     = result.value().get();
-        m_planet_texture = Managed<sf::Texture>(new sf::Texture);
-        m_planet_texture->loadFromMemory(vector.data(), vector.size());
+        m_planet_texture                = Managed<sf::Texture>(new sf::Texture);
+        std::vector<std::uint8_t>& data = *parent().world().application().resource_manager().get_resource_by_name("planet.png").value().get().load();
+        m_planet_texture->loadFromMemory(data.data(), data.size());
         m_drawable.set_texture(m_planet_texture.get());
     }
 
@@ -70,8 +67,8 @@ public:
         m_drawable.resize(m_bodies.size() * 4);
         m_bodies_old = m_bodies;
         for (size_t i = 0; i < m_bodies_old.size(); ++i) {
-            const Body& body_1_old  = m_bodies_old[i];
-            Body&       body_1      = m_bodies[i];
+            const Body& body_1_old = m_bodies_old[i];
+            Body&       body_1     = m_bodies[i];
             if (body_1.dead)
                 continue;
             auto s1 = std::sqrt(body_1.mass * 100.0);
@@ -82,7 +79,7 @@ public:
                     continue;
                 if (body_2.dead)
                     continue;
-                auto r_squared = vec<double>::distance_squared(body_1.pos, body_2_old.pos);
+                auto r_squared = vecd::distance_squared(body_1.pos, body_2_old.pos);
                 if (false && (body_1.mass * body_2_old.mass) / r_squared < body_1.vel.length() / 100.0)
                     continue;
                 auto s2 = std::sqrt(body_2_old.mass * 100.0);
@@ -90,12 +87,12 @@ public:
                     if (body_1.mass >= body_2_old.mass) {
                         // collision!
                         //report("collision!");
-                        
+
                         body_1.color.r = std::lerp(body_1.color.r, body_2_old.color.r, (body_2_old.mass / body_1.mass) / 2.0);
                         body_1.color.g = std::lerp(body_1.color.g, body_2_old.color.b, (body_2_old.mass / body_1.mass) / 2.0);
                         body_1.color.b = std::lerp(body_1.color.g, body_2_old.color.b, (body_2_old.mass / body_1.mass) / 2.0);
-                        body_2.dead = true;
-                        auto c      = body_2_old.mass / double(s_pieces) * 0.25;
+                        body_2.dead    = true;
+                        auto c         = body_2_old.mass / double(s_pieces) * 0.25;
                         if (c < s_size_limit) {
                             body_1.mass += body_2_old.mass;
                         } else {
@@ -136,13 +133,13 @@ public:
 
         for (auto& old : m_bodies) {
             if (old.dead) {
-                auto c = old.mass / double(s_pieces) * 0.25;
+                auto c    = old.mass / double(s_pieces) * 0.25;
                 auto size = std::sqrt(old.mass * 100);
                 if (c < s_size_limit)
                     continue;
                 auto mag = old.vel.length();
                 for (size_t i = 0; i < s_pieces; ++i) {
-                    auto new_pos = old.pos + random_vector(-size, size);
+                    auto new_pos  = old.pos + random_vector(-size, size);
                     auto new_body = Body(new_pos, (new_pos - old.pos).normalized() * (mag * Random::random_real<double>(0.01, 0.3)), c, old.color);
                     new_body.pos += new_body.vel;
                     bodies_to_add.push_back(std::move(new_body));
@@ -156,7 +153,7 @@ public:
             m_bodies.push_back(std::move(new_body));
         }
         bodies_to_add.clear();
-        
+
         report("we have {} n-bodies!", m_bodies.size());
     }
 
@@ -171,13 +168,13 @@ static void init(Application& app) {
 
     window.set_framerate_limit(400);
 
-    auto  solar_system = world.add_entity(new Entity).lock();
-    auto& comp         = solar_system->add_component(new NBodySystemComponent(1100));
+    auto  solar_system = world.add_entity().lock();
+    auto& comp         = solar_system->add_component<NBodySystemComponent>(700);
     comp.load_texture();
 }
 
 int main() {
-    Application app(new GameWindow("orbits 1.0", { 1280, 720 }), new World);
+    Application app("orbits 1.0", { 1280, 720 });
     init(app);
     return app.run();
 }

@@ -12,11 +12,11 @@ class PhysicsObject
     OBJNAME(PhysicsObject)
 
 protected:
-    vec<double> m_vel { 0.0, 0.0 };
+    vecd m_vel { 0.0, 0.0 };
     Collider    m_collider;
 
 public:
-    PhysicsObject(const vec<double>& pos, const vec<double>& size, World& world);
+    PhysicsObject(const vecd& pos, const vecd& size, World& world);
 
     // Object interface
 public:

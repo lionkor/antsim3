@@ -112,4 +112,7 @@ vec<T> operator+(T val, const vec<T>& vec) {
     return vec + val;
 }
 
+using vecd = vec<double>;
+using veci = vec<int>;
+
 #endif // VEC_H

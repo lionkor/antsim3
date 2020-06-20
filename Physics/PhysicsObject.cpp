@@ -1,6 +1,6 @@
 #include "PhysicsObject.h"
 
-PhysicsObject::PhysicsObject(const vec<double>& pos, const vec<double>& size, World& world)
+PhysicsObject::PhysicsObject(const vecd& pos, const vecd& size, World& world)
     : PhysicalObject(pos, size, world) {
 }
 

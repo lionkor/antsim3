@@ -9,6 +9,7 @@
 #include "DebugTools.h"
 #include "Core/Object.h"
 #include "Result.h"
+#include "Common.h"
 
 class LazyFile
     : public Object
@@ -33,8 +34,7 @@ public:
     LazyFile(const LazyFile&) = delete;
     LazyFile& operator=(const LazyFile&) = delete;
 
-
-    [[nodiscard]] Result<std::reference_wrapper<std::vector<std::uint8_t>>> get();
+    [[nodiscard]] std::vector<std::uint8_t>* load();
 
     bool        is_valid() const { return m_validation_result.ok(); }
     std::string validation_error_message() const { return m_validation_result.message(); }

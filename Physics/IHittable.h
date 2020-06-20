@@ -16,8 +16,8 @@ public:
     IHittable() { }
     virtual ~IHittable() { }
 
-    virtual void on_hit(const vec<double>&) { }
-    virtual bool is_hit(const vec<double>&) const = 0;
+    virtual void on_hit(const vecd&) { }
+    virtual bool is_hit(const vecd&) const = 0;
 
     bool operator<(const IHittable& other) const {
         return layer < other.layer;

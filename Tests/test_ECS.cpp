@@ -7,25 +7,27 @@
 
 TEST_CASE("Entity ctor") {
     SUBCASE("non const") {
-        Entity e;
-        CHECK(e.transform().position() == vec<double> { 0, 0 });
+        Application app("", { 10, 10 });
+        World&      world = app.world();
+        Entity&     e     = *world.add_entity({ 0, 0 }).lock();
+        CHECK(e.transform().position() == vecd { 0, 0 });
         CHECK(e.transform().rotation() == 0.0);
         CHECK(e.parent() == nullptr);
         CHECK(e.children().empty() == true);
         CHECK(e.is_marked_destroyed() == false);
-        CHECK(e.has_world() == false);
         CHECK(e.has_parent() == false);
         CHECK(e.has_component<TransformComponent>() == true);
         CHECK_THROWS(e.world());
     }
     SUBCASE("const") {
-        const Entity e;
-        CHECK(e.transform().position() == vec<double> { 0, 0 });
+        Application   app("", { 10, 10 });
+        World&        world = app.world();
+        const Entity& e     = *world.add_entity({ 0, 0 }).lock();
+        CHECK(e.transform().position() == vecd { 0, 0 });
         CHECK(e.transform().rotation() == 0.0);
         CHECK(e.parent() == nullptr);
         CHECK(e.children().empty() == true);
         CHECK(e.is_marked_destroyed() == false);
-        CHECK(e.has_world() == false);
         CHECK(e.has_parent() == false);
         CHECK(e.has_component<TransformComponent>() == true);
         CHECK_THROWS(e.world());
@@ -33,17 +35,20 @@ TEST_CASE("Entity ctor") {
 }
 
 TEST_CASE("Entity::destroy without a World") {
-    Entity e;
+    Application app("", { 10, 10 });
+    World&      world = app.world();
+    Entity&     e     = *world.add_entity({ 0, 0 }).lock();
+
     CHECK(e.is_marked_destroyed() == false);
     e.destroy();
     CHECK(e.is_marked_destroyed() == true);
 }
 
 TEST_CASE("Entity::destroy with a world") {
-    Application app(new GameWindow("", { 10, 10 }), new World);
+    Application app("", { 10, 10 });
     World&      world = app.world();
-    Entity*     e     = new Entity;
-    auto        ret_e = world.add_entity(std::move(e));
+    Entity&     e     = *world.add_entity({ 0, 0 }).lock();
+    auto        ret_e = world.add_entity(e);
     world.update(app.window());
     REQUIRE(ret_e.expired() == false);
     {
@@ -56,22 +61,17 @@ TEST_CASE("Entity::destroy with a world") {
     world.update(app.window());
     // check if this happened
     CHECK(ret_e.expired() == true);
-    CHECK(world.end() - world.begin() == 0);
 }
 
 TEST_CASE("Entity hierarchy") {
-    Application app(new GameWindow("", { 10, 10 }), new World);
+    Application app("", { 10, 10 });
     World&      world  = app.world();
     GameWindow& window = app.window();
     SUBCASE("add child") {
-        auto    entity_ptr = world.add_entity(new Entity);
-        Entity* entity     = new Entity;
-        auto    uuid       = entity->uuid();
-        auto    child_ptr  = entity_ptr.lock()->add_child(std::move(entity));
+        auto entity_ptr = world.add_entity();
+        auto child_ptr  = entity_ptr.lock()->add_child();
         CHECK(entity_ptr.lock()->children().size() == 1);
-        CHECK(entity_ptr.lock()->children().front()->uuid() == uuid);
         CHECK(child_ptr.lock()->has_parent() == true);
-        CHECK(child_ptr.lock()->has_world() == true);
         CHECK(child_ptr.lock()->has_component<TransformComponent>() == true);
         world.update(window);
         auto& entities = world.entities();
@@ -81,9 +81,9 @@ TEST_CASE("Entity hierarchy") {
     }
     SUBCASE("destroy child") {
         CHECK(world.entities().empty());
-        auto entity_ptr = world.add_entity(new Entity).lock();
+        auto entity_ptr = world.add_entity().lock();
         CHECK(entity_ptr->children().empty());
-        auto child_ptr = entity_ptr->add_child(new Entity).lock();
+        auto child_ptr = entity_ptr->add_child().lock();
         CHECK(entity_ptr->children().empty() == false);
         world.update(window);
         CHECK(entity_ptr->children().size() == 1);
@@ -96,8 +96,8 @@ TEST_CASE("Entity hierarchy") {
         CHECK(*world.entities().front() == *entity_ptr);
     }
     SUBCASE("destroy parent") {
-        auto entity_ptr = world.add_entity(new Entity).lock();
-        auto child_ptr  = entity_ptr->add_child(new Entity).lock();
+        auto entity_ptr = world.add_entity().lock();
+        auto child_ptr  = entity_ptr->add_child().lock();
         world.update(window);
         entity_ptr->destroy();
         world.update(window);
@@ -110,6 +110,8 @@ TEST_CASE("Components Unique flag") {
     {
         OBJNAME(UniqueComponent)
     public:
+        UniqueComponent(Entity& e)
+            : Component(e) { }
         virtual bool is_unique() const override { return true; }
     };
 
@@ -117,15 +119,17 @@ TEST_CASE("Components Unique flag") {
     {
         OBJNAME(NonUniqueComponent)
     public:
+        NonUniqueComponent(Entity& e)
+            : Component(e) { }
         virtual bool is_unique() const override { return false; }
     };
 
-    Application app(new GameWindow("", { 10, 10 }), new World);
+    Application app("", { 10, 10 });
     World&      world = app.world();
-    auto        e     = world.add_entity(new Entity).lock();
-    CHECK_NOTHROW(e->add_component(new UniqueComponent));
-    CHECK_THROWS(e->add_component(new UniqueComponent));
+    auto        e     = world.add_entity().lock();
+    CHECK_NOTHROW(e->add_component<UniqueComponent>());
+    CHECK_THROWS(e->add_component<UniqueComponent>());
 
-    CHECK_NOTHROW(e->add_component(new NonUniqueComponent));
-    CHECK_NOTHROW(e->add_component(new NonUniqueComponent));
+    CHECK_NOTHROW(e->add_component<NonUniqueComponent>());
+    CHECK_NOTHROW(e->add_component<NonUniqueComponent>());
 }

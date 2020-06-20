@@ -3,7 +3,7 @@
 #include "Core/Application.h"
 
 TEST_CASE("Application interface") {
-    Application app(new GameWindow("test", { 100, 50 }), new World);
+    Application app("test", { 100, 50 });
     CHECK(app.class_name() == "Application");
     CHECK(app.window().title() == "test");
     CHECK(app.window().width<int>() == 100);
@@ -12,7 +12,8 @@ TEST_CASE("Application interface") {
 }
 
 TEST_CASE("GameWindow interface") {
-    GameWindow window("test", { 100, 50 });
+    Application app("test", { 100, 50 });
+    auto&       window = app.window();
     CHECK(window.width<int>() == 100);
     CHECK(window.height<int>() == 50);
     CHECK(window.title() == "test");
@@ -23,19 +24,11 @@ TEST_CASE("GameWindow interface") {
 }
 
 TEST_CASE("World interface") {
-    SUBCASE("throws with no application attached") {
-        World world;
-        CHECK(world.class_name() == "World");
-        GameWindow window("", { 100, 100 });
-        CHECK_THROWS(world.update(window));
-    }
     SUBCASE("add entity returns proper ptr and attached properly") {
-        GameWindow* window = new GameWindow("", { 10, 10 });
-        Application app(std::move(window), new World);
-        World& world = app.world();
-        Entity* entity     = new Entity;
-        
-        auto    entity_ptr = world.add_entity(std::move(entity));
+        Application app("", { 10, 10 });
+        World&      world = app.world();
+
+        auto entity_ptr = world.add_entity();
         CHECK(!entity_ptr.expired());
         // only this entity_ptr and the World should have a strong reference
         CHECK(entity_ptr.lock().use_count() == 2);
@@ -43,14 +36,6 @@ TEST_CASE("World interface") {
         world.update(app.window());
         // and removes the first ref again so we dont end up with a dangling ref
         CHECK(entity_ptr.lock().use_count() == 2);
-        CHECK(**world.begin() == *entity_ptr.lock());
-    }
-    SUBCASE("clears moved-from") {
-        World   world;
-        Entity* entity = new Entity;
-        world.add_entity(std::move(entity));
-        CHECK(entity == nullptr);
     }
 }
-
 

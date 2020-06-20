@@ -33,8 +33,9 @@ public:
         m_thread.join();
     }
 
-    GridComponent(std::size_t w, std::size_t h)
-        : m_cells(w * h)
+    GridComponent(Entity& e, std::size_t w, std::size_t h)
+        : Component(e)
+        , m_cells(w * h)
         , m_size(w, h)
         , m_drawable(SimpleDrawable::PrimitiveType::Quads, w * h * 4)
         , m_old_cells(w * h) {
@@ -141,7 +142,7 @@ public:
 int main(int, char**) {
     report("--- BEGIN ---");
 
-    Application app(new GameWindow("cells 1.0", { 1280, 720 }), new World);
+    Application app("cells 1.0", { 1280, 720 });
 
     GameWindow& window = app.window();
     static_cast<void>(window);
@@ -149,8 +150,8 @@ int main(int, char**) {
 
     world.set_update_interval(200);
 
-    auto grid = world.add_entity(new Entity);
-    grid.lock()->add_component(new GridComponent(320 * 5, 180 * 5));
+    auto grid = world.add_entity();
+    grid.lock()->add_component<GridComponent>(320 * 5, 180 * 5);
 
     auto ret = app.run();
     report("---  END  ---");

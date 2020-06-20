@@ -53,14 +53,14 @@ protected:
     sf::Color    m_clear_color;
 
     // FIXME: We should check somewhere if this is not nullptr anymore
-    class Application* m_application { nullptr };
+    class Application& m_application;
 
     /// Zooms the current camera's view by zoom, moving relative to the specified
     /// pixel.
     void zoom_view_at(sf::Vector2i pixel, float zoom);
 
 public:
-    GameWindow(const std::string& title, sf::Vector2u size);
+    GameWindow(Application& app, const std::string& title, sf::Vector2u size);
 
     void handle_events();
     void handle_mouse_button_press();
@@ -85,7 +85,7 @@ public:
     T height() const { return static_cast<T>(getSize().y); }
 
     /// Callback that is called whenever the left mouse button has been clicked.
-    std::function<void(const vec<double>&)> on_left_click { nullptr };
+    std::function<void(const vecd&)> on_left_click { nullptr };
 
     // Object interface
 public:
