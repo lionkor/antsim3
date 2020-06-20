@@ -3,85 +3,40 @@
  */
 
 #include "Engine.h"
-/*
-class PlanetComponent
-    : public Component
-{
-    OBJNAME(PlanetComponent)
-private:
-    static inline std::vector<PlanetComponent*> s_planets {};
-
-    double         m_mass;
-    vec<double>    m_vel { 0, 0 };
-    SimpleDrawable m_drawable;
-
-public:
-    PlanetComponent(double mass)
-        : m_mass(mass) {
-        s_planets.push_back(this);
-        m_drawable = SimpleDrawable(SimpleDrawable::PrimitiveType::Quads, 4);
-        report("{}", m_vel);
-    }
-
-    vec<double>& velocity() { return m_vel; }
-
-    virtual void on_update() override {
-        //m_vel                     = { 0, 0 };
-        const vec<double>& my_pos = parent()->transform().position();
-        //report("{}", my_pos);
-        double mass_2 = m_mass;
-        for (auto& planet_ptr : s_planets) {
-            if (planet_ptr == this)
-                continue;
-            double             mass_1    = planet_ptr->m_mass;
-            const vec<double>& other_pos = planet_ptr->parent()->transform().position();
-            double             r_squared = vec<double>::distance_squared(my_pos, other_pos);
-            //std::clamp(r_squared, 1.5 * std::sqrt(planet_ptr->m_mass), std::numeric_limits<double>::max());
-            vec<double> r_hat = other_pos - my_pos;
-            r_hat.normalize();
-            m_vel += ((mass_1 * mass_2) / r_squared) * r_hat;
-        }
-        report("{}", m_vel);
-        //parent()->transform().move_by(m_vel / m_mass);
-        parent()->transform().move_by(m_vel / m_mass);
-        auto sqrt_mass = std::sqrt(m_mass);
-        auto offset    = sqrt_mass;
-        auto color     = sf::Color(255, 255, 255, std::lerp(128, 220, m_mass / s_sun_mass));
-        m_drawable[0]  = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(my_pos.x - offset, my_pos.y - offset), color);
-        m_drawable[1]  = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(my_pos.x + offset, my_pos.y - offset), color);
-        m_drawable[2]  = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(my_pos.x + offset, my_pos.y + offset), color);
-        m_drawable[3]  = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(my_pos.x - offset, my_pos.y + offset), color);
-        m_drawable.set_changed();
-    }
-
-    virtual void on_draw(DrawSurface& surface) override {
-        m_drawable.draw(surface);
-    }
-};
-*/
 
 static inline std::atomic_size_t s_id_counter { 0 };
 
-static constexpr double G = 5;
+static constexpr double G = 15;
+
+static constexpr size_t s_pieces = 50;
+static constexpr double s_size_limit = 5;
 
 struct Body {
-    Body(const vec<double>& _pos = { 0, 0 }, const vec<double>& _vel = { 0, 0 }, double _mass = 0)
-        : pos(_pos), vel(_vel), mass(_mass), id(++s_id_counter) { }
+    Body(const vec<double>& _pos = { 0, 0 }, const vec<double>& _vel = { 0, 0 }, double _mass = 0, sf::Color _color = sf::Color::White)
+        : pos(_pos), vel(_vel), mass(_mass), id(++s_id_counter) {
+        if (_color == sf::Color::White) {
+            color = sf::Color(Random::random(64, 255), Random::random(64, 255), Random::random(64, 255));
+        } else {
+            color = _color;
+        }
+    }
 
     vec<double> pos { 0, 0 };
     vec<double> vel { 0, 0 };
     double      mass { 0 };
     size_t      id;
     bool        dead { false };
+    sf::Color   color;
 };
 
 class NBodySystemComponent : public Component
 {
     OBJNAME(NBodySystemComponent)
 private:
-    std::vector<Body> m_bodies;
-    std::vector<Body> m_bodies_old;
-    SimpleDrawable    m_drawable;
+    std::vector<Body>    m_bodies;
+    std::vector<Body>    m_bodies_old;
+    SimpleDrawable       m_drawable;
+    Managed<sf::Texture> m_planet_texture;
 
 public:
     static vec<double> random_vector(double min, double max) {
@@ -92,23 +47,34 @@ public:
         ASSERT(count > 0);
         m_bodies.resize(count);
         for (auto& body : m_bodies) {
-            body = Body { random_vector(-120000, 120000), random_vector(-1000, 1000), Random::random_real<double>(140, 800) };
+            body = Body { random_vector(-120000, 120000), random_vector(-40, 40), 2000 };
         }
         m_drawable.set_primitive(SimpleDrawable::PrimitiveType::Quads);
         m_drawable.resize(count * 4);
         m_bodies_old.reserve(count);
     }
 
+    void load_texture() {
+        auto& application = parent()->world().application();
+        auto& file        = application.resource_manager().get_resource_by_name("planet.png").value().get();
+        auto  result      = file.get();
+        ASSERT(result.ok());
+        auto& vector     = result.value().get();
+        m_planet_texture = Managed<sf::Texture>(new sf::Texture);
+        m_planet_texture->loadFromMemory(vector.data(), vector.size());
+        m_drawable.set_texture(m_planet_texture.get());
+    }
+
     virtual void on_update() override {
-        // copy all bodies
+        // FIXME: dont call this every time :/
         m_drawable.resize(m_bodies.size() * 4);
         m_bodies_old = m_bodies;
         for (size_t i = 0; i < m_bodies_old.size(); ++i) {
             const Body& body_1_old  = m_bodies_old[i];
             Body&       body_1      = m_bodies[i];
-            auto        body_1_size = body_1.mass * 100;
             if (body_1.dead)
                 continue;
+            auto s1 = std::sqrt(body_1.mass * 100.0);
             for (size_t k = 0; k < m_bodies_old.size(); ++k) {
                 const auto& body_2_old = m_bodies_old[k];
                 auto&       body_2     = m_bodies[k];
@@ -119,21 +85,32 @@ public:
                 auto r_squared = vec<double>::distance_squared(body_1.pos, body_2_old.pos);
                 if (false && (body_1.mass * body_2_old.mass) / r_squared < body_1.vel.length() / 100.0)
                     continue;
-                if (r_squared <= body_2_old.mass * 100 + body_1_size) {
-                    // collision!
-                    report("collision!");
-                    body_2.dead = true;
-                    if (body_1.mass < body_2_old.mass) {
-                        body_1.pos = body_2_old.pos;
+                auto s2 = std::sqrt(body_2_old.mass * 100.0);
+                if (std::sqrt(r_squared) <= s1 + s2) {
+                    if (body_1.mass >= body_2_old.mass) {
+                        // collision!
+                        //report("collision!");
+                        
+                        body_1.color.r = std::lerp(body_1.color.r, body_2_old.color.r, (body_2_old.mass / body_1.mass) / 2.0);
+                        body_1.color.g = std::lerp(body_1.color.g, body_2_old.color.b, (body_2_old.mass / body_1.mass) / 2.0);
+                        body_1.color.b = std::lerp(body_1.color.g, body_2_old.color.b, (body_2_old.mass / body_1.mass) / 2.0);
+                        body_2.dead = true;
+                        auto c      = body_2_old.mass / double(s_pieces) * 0.25;
+                        if (c < s_size_limit) {
+                            body_1.mass += body_2_old.mass;
+                        } else {
+                            body_1.mass += body_2_old.mass * 0.75;
+                        }
+                        body_1.vel += body_2_old.vel / body_1.mass;
+                    } else {
+                        // ignore
                     }
-                    body_1.mass += body_2_old.mass;
-                    body_1.vel += body_2_old.vel / body_2_old.mass;
                 } else {
-                    body_1.vel += ((G * body_1.mass * body_2_old.mass) / r_squared) * (body_2_old.pos - body_1_old.pos).normalized();
+                    body_1.vel += (((G * body_1.mass * body_2_old.mass) / r_squared) * (body_2_old.pos - body_1_old.pos).normalized()) / body_1.mass;
                 }
             }
-            body_1.pos += body_1.vel / body_1.mass;
-            auto offset           = std::sqrt(body_1_size);
+            body_1.pos += body_1.vel;
+            auto offset                      = s1;
             m_drawable[i * 4 + 0].position.x = body_1.pos.x - offset;
             m_drawable[i * 4 + 0].position.y = body_1.pos.y - offset;
             m_drawable[i * 4 + 1].position.x = body_1.pos.x + offset;
@@ -142,10 +119,45 @@ public:
             m_drawable[i * 4 + 2].position.y = body_1.pos.y + offset;
             m_drawable[i * 4 + 3].position.x = body_1.pos.x - offset;
             m_drawable[i * 4 + 3].position.y = body_1.pos.y + offset;
+            m_drawable[i * 4 + 0].color      = body_1.color;
+            m_drawable[i * 4 + 1].color      = body_1.color;
+            m_drawable[i * 4 + 2].color      = body_1.color;
+            m_drawable[i * 4 + 3].color      = body_1.color;
+            auto tex_size                    = m_planet_texture->getSize();
+            m_drawable[i * 4 + 0].texCoords  = SimpleDrawable::Vector2f(0, 0);
+            m_drawable[i * 4 + 1].texCoords  = SimpleDrawable::Vector2f(tex_size.x, 0);
+            m_drawable[i * 4 + 2].texCoords  = SimpleDrawable::Vector2f(tex_size.x, tex_size.y);
+            m_drawable[i * 4 + 3].texCoords  = SimpleDrawable::Vector2f(0, tex_size.y);
             m_drawable.set_changed();
         }
 
+        std::vector<Body> bodies_to_add;
+
+
+        for (auto& old : m_bodies) {
+            if (old.dead) {
+                auto c = old.mass / double(s_pieces) * 0.25;
+                auto size = std::sqrt(old.mass * 100);
+                if (c < s_size_limit)
+                    continue;
+                auto mag = old.vel.length();
+                for (size_t i = 0; i < s_pieces; ++i) {
+                    auto new_pos = old.pos + random_vector(-size, size);
+                    auto new_body = Body(new_pos, (new_pos - old.pos).normalized() * (mag * Random::random_real<double>(0.01, 0.3)), c, old.color);
+                    new_body.pos += new_body.vel;
+                    bodies_to_add.push_back(std::move(new_body));
+                }
+            }
+        }
+
         std::erase_if(m_bodies, [&](Body& elem) -> bool { return elem.dead; });
+
+        for (auto& new_body : bodies_to_add) {
+            m_bodies.push_back(std::move(new_body));
+        }
+        bodies_to_add.clear();
+        
+        report("we have {} n-bodies!", m_bodies.size());
     }
 
     virtual void on_draw(DrawSurface& surface) override {
@@ -159,8 +171,9 @@ static void init(Application& app) {
 
     window.set_framerate_limit(400);
 
-    auto solar_system = world.add_entity(new Entity).lock();
-    solar_system->add_component(new NBodySystemComponent(1000));
+    auto  solar_system = world.add_entity(new Entity).lock();
+    auto& comp         = solar_system->add_component(new NBodySystemComponent(1100));
+    comp.load_texture();
 }
 
 int main() {

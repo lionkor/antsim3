@@ -52,10 +52,8 @@ struct vec {
 
     inline vec<T> operator+(const vec& v) const { return vec<T>(x + v.x, y + v.y); }
     inline vec<T> operator-(const vec& v) const { return vec<T>(x - v.x, y - v.y); }
-    template<typename AnyNumberT>
-    inline vec<T> operator*(const AnyNumberT& i) const { return vec<T>(x * i, y * i); }
-    template<typename AnyNumberT>
-    inline vec<T> operator/(const AnyNumberT& i) const { return vec<T>(x / i, y / i); }
+    inline vec<T> operator*(const T& i) const { return vec<T>(x * i, y * i); }
+    inline vec<T> operator/(const T& i) const { return vec<T>(x / i, y / i); }
 
     inline vec<T> operator-() const { return vec<T>(-x, -y); }
 

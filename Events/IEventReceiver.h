@@ -19,7 +19,6 @@ public:
     virtual ~IEventReceiver();
 
     bool operator==(const IEventReceiver&) const;
-    bool operator!=(const IEventReceiver&) const;
 
     // Will reveice all events. Events received here are guaranteed to not yet be accepted.
     virtual void handle(Event&);
