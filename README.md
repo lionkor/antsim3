@@ -25,3 +25,5 @@ Take a look at the [project(s)](https://github.com/lionkor/antsim3/projects)
 * `sfml`, included
 
 All it will be is a simple lightweight hobby project engine.
+
+This project is under GPLv3. See the "LICENSE" file for more information.
