@@ -8,8 +8,8 @@ static inline std::atomic_size_t s_id_counter { 0 };
 
 static constexpr double G = 15;
 
-static constexpr size_t s_pieces     = 50;
-static constexpr double s_size_limit = 5;
+static constexpr size_t s_pieces     = 80;
+static constexpr double s_size_limit = 3;
 
 struct Body {
     Body(const vecd& _pos = { 0, 0 }, const vecd& _vel = { 0, 0 }, double _mass = 0, sf::Color _color = sf::Color::White)
@@ -48,7 +48,7 @@ public:
         ASSERT(count > 0);
         m_bodies.resize(count);
         for (auto& body : m_bodies) {
-            body = Body { random_vector(-120000, 120000), random_vector(-40, 40), 2000 };
+            body = Body { random_vector(-60000, 60000), random_vector(-20, 20), 2000 };
         }
         m_drawable.set_primitive(SimpleDrawable::PrimitiveType::Quads);
         m_drawable.resize(count * 4);
@@ -88,11 +88,13 @@ public:
                         // collision!
                         //report("collision!");
 
-                        body_1.color.r = std::lerp(body_1.color.r, body_2_old.color.r, (body_2_old.mass / body_1.mass) / 2.0);
-                        body_1.color.g = std::lerp(body_1.color.g, body_2_old.color.b, (body_2_old.mass / body_1.mass) / 2.0);
-                        body_1.color.b = std::lerp(body_1.color.g, body_2_old.color.b, (body_2_old.mass / body_1.mass) / 2.0);
-                        body_2.dead    = true;
-                        auto c         = body_2_old.mass / double(s_pieces) * 0.25;
+                        //if (body_1.color != body_2_old.color) {
+                            body_1.color.r = std::lerp(body_1.color.r, (body_1.color.r + body_2_old.color.r) / 2.0, body_2_old.mass / body_1.mass);
+                            body_1.color.g = std::lerp(body_1.color.g, (body_1.color.g + body_2_old.color.g) / 2.0, body_2_old.mass / body_1.mass);
+                            body_1.color.b = std::lerp(body_1.color.b, (body_1.color.b + body_2_old.color.b) / 2.0, body_2_old.mass / body_1.mass);
+                        //}
+                        body_2.dead = true;
+                        auto c      = body_2_old.mass / double(s_pieces) * 0.25;
                         if (c < s_size_limit) {
                             body_1.mass += body_2_old.mass;
                         } else {
@@ -153,9 +155,9 @@ public:
             m_bodies.push_back(std::move(new_body));
         }
         bodies_to_add.clear();
-
-        report("we have {} n-bodies!", m_bodies.size());
     }
+    
+    size_t body_count() const { return m_bodies.size(); }
 
     virtual void on_draw(DrawSurface& surface) override {
         m_drawable.draw(surface);
@@ -169,8 +171,13 @@ static void init(Application& app) {
     window.set_framerate_limit(400);
 
     auto  solar_system = world.add_entity().lock();
-    auto& comp         = solar_system->add_component<NBodySystemComponent>(700);
+    auto& comp         = solar_system->add_component<NBodySystemComponent>(900);
     comp.load_texture();
+    
+    auto count_label = app.add_gui_element(vecu(10,10), vecd(.4, .4), "PLACEHOLDER").lock();
+    count_label->on_update = [&]() {
+        count_label->set_text(fmt::format("bodies: {}", comp.body_count()));
+    };
 }
 
 int main() {

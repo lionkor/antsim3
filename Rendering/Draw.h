@@ -7,6 +7,7 @@
 
 #include "Core/Object.h"
 #include "Utils/DebugTools.h"
+#include "Utils/Common.h"
 #include "Physics/vec.h"
 
 struct Rectangle : public Object {
@@ -56,9 +57,11 @@ class DrawSurface
         sf::Texture*    texture;
     };
 
-    std::vector<CustomVArray> m_custom_varrays;
-    std::vector<sf::Vertex>   m_vertices;
-    sf::Color                 m_clear_color { sf::Color::Black };
+    std::vector<CustomVArray>  m_custom_varrays;
+    std::vector<sf::Vertex>    m_vertices;
+    std::vector<Ref<sf::Text>> m_texts;
+    sf::Color                  m_clear_color { sf::Color::Black };
+    sf::View                   m_gui_view;
 
 public:
     DrawSurface(GameWindow& window);
@@ -72,6 +75,10 @@ public:
 
     std::size_t submit_custom_varray(const sf::VertexArray& varray, sf::Texture* texture = nullptr);
     void        update_custom_varray(size_t index, const sf::VertexArray& varray, sf::Texture* texture = nullptr);
+
+    void draw_text(sf::Text& text);
+    
+    void set_gui_view_size(sf::Vector2f size) { m_gui_view.setSize(size); }
 
     void finalize();
 };

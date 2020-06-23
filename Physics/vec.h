@@ -114,5 +114,6 @@ vec<T> operator+(T val, const vec<T>& vec) {
 
 using vecd = vec<double>;
 using veci = vec<int>;
+using vecu = vec<unsigned>;
 
 #endif // VEC_H

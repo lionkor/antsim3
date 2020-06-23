@@ -64,6 +64,13 @@ void GameWindow::handle_events() {
                 zoom_view_at({ m_event.mouseWheelScroll.x, m_event.mouseWheelScroll.y }, 1.1f);
             break;
         }
+        case sf::Event::Resized: {
+            sf::FloatRect visibleArea(0.f, 0.f, m_event.size.width, m_event.size.height);
+            auto view = getView();
+            view.reset(visibleArea);
+            setView(view);
+            break;
+        }
         default:
             report_trace("not handled: ", m_event.type);
         }

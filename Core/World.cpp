@@ -81,8 +81,15 @@ void World::update(GameWindow& window) {
     for (auto& entity : m_entities) {
         entity->on_draw(surface);
     }
-    surface.finalize();
 
+    auto& gui_elems = m_application.gui_elements();
+    for (auto& element : gui_elems) {
+        element->update();
+        element->draw(surface);
+    }
+    
+    surface.finalize();
+    
     window.display();
     window.handle_events();
 

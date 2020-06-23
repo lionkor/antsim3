@@ -5,6 +5,7 @@ DrawSurface::DrawSurface(GameWindow& window)
     : m_window(window) {
     m_changed_indices.reserve(50'000);
     m_rects.reserve(50'000);
+    m_gui_view = m_window.getView();
 }
 
 void DrawSurface::update_rectangle(std::size_t index, const Rectangle& rect, const Color& fill_color, const Color&) {
@@ -30,7 +31,7 @@ std::size_t DrawSurface::draw_new_rectangle(const Rectangle& rect, const Color& 
 
 void DrawSurface::remove_rectangle(size_t index) {
     m_rects.erase(m_rects.begin() + index);
-     m_changed_indices.push_back(index);
+    m_changed_indices.push_back(index);
 }
 
 std::size_t DrawSurface::submit_custom_varray(const sf::VertexArray& varray, sf::Texture* texture) {
@@ -40,6 +41,10 @@ std::size_t DrawSurface::submit_custom_varray(const sf::VertexArray& varray, sf:
 
 void DrawSurface::update_custom_varray(std::size_t index, const sf::VertexArray& varray, sf::Texture* texture) {
     m_custom_varrays.at(index) = { varray, texture };
+}
+
+void DrawSurface::draw_text(sf::Text& text) {
+    m_texts.push_back(make_ref<sf::Text>(text));
 }
 
 void DrawSurface::finalize() {
@@ -58,4 +63,11 @@ void DrawSurface::finalize() {
     for (auto& varray : m_custom_varrays) {
         m_window.draw(varray.varray, sf::RenderStates(varray.texture));
     }
+    auto cached_view = m_window.getView();
+    m_window.setView(m_gui_view);
+    for (auto& text : m_texts) {
+        m_window.draw(text.get());
+    }
+    m_window.setView(cached_view);
+    m_texts.clear();
 }

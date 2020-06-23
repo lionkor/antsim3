@@ -49,7 +49,10 @@ int main(int, char**) {
     auto child = shared_entity->add_child();
     child.lock()->add_component<SpriteComponent>(vecd { 120, 0 }, vecd { 90, 90 }, Color::Red, "sprite1.png");
 
-    world.update(window);
+    auto label_ptr = app.add_gui_element(vecu(20, 20), vecd(0.4, 0.4), "Hello, World!").lock();
+    label_ptr->on_update = [&]() {
+        label_ptr->set_text(fmt::format("screen pos: {}\nworld  pos: {}", window.mouse_screen_pos(), window.mouse_world_pos()));
+    };
 
     std::cout << window << std::endl;
 

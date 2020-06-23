@@ -146,8 +146,7 @@ int main(int, char**) {
 
     GameWindow& window = app.window();
     static_cast<void>(window);
-    World& world = app.world();
-
+    World& world = app.world(); 
     world.set_update_interval(200);
 
     auto grid = world.add_entity();

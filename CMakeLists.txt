@@ -35,6 +35,7 @@ add_library(Engine SHARED
     Rendering/Draw.cpp
     Rendering/SimpleDrawable.cpp
     Rendering/ext_sf.cpp
+    Rendering/GuiElement.cpp
     Unused/Tool.cpp
     Utils/CsvLogger.cpp
     Utils/LazyFile.cpp
