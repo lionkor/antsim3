@@ -10,7 +10,7 @@ Building a simple modern 2D engine for simulation projects like simulating ants 
 
 Demos included:
 * cells, a multithreaded Conway's game of life
-* orbits, a simple little orbital physics simulation. I wrote this for testing some physics, its really shitty and laggy
+* orbits, a simple little orbital physics simulation
 
 ## Planned
 
