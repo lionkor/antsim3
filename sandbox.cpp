@@ -42,23 +42,15 @@ struct Cell {
     }
 };
 
-struct CellPair {
-    Cell old_cell;
-    Cell new_cell;
-
-    inline void swap() {
-        old_cell = new_cell;
-    }
-};
-
 
 class SandboxComponent : public Component
 {
     OBJNAME(SandboxComponent)
 private:
-    vec<size_t>           m_size;
-    SimpleDrawable        m_drawable;
-    std::vector<CellPair> m_cells;
+    vec<size_t>       m_size;
+    SimpleDrawable    m_drawable;
+    std::vector<Cell> m_old_cells;
+    std::vector<Cell> m_new_cells;
 
 public:
     static constexpr size_t CELL_SIZE = 10.0f;
@@ -67,12 +59,13 @@ public:
         : Component(e)
         , m_size(w, h)
         , m_drawable(SimpleDrawable::PrimitiveType::Quads, w * h * 4) {
-        m_cells.resize(w * h);
+        m_new_cells.resize(w * h);
+        m_old_cells.resize(w * h);
         for (std::size_t x = 0; x < m_size.x; ++x) {
             for (std::size_t y = 0; y < m_size.y / 2; ++y) {
-                at(x, y).new_cell.type = Cell::Type::Air;
+                at_new(x, y).type = Cell::Type::Air;
 
-                auto color = Cell::color_for_type(at(x, y).new_cell.type);
+                auto color = Cell::color_for_type(at_new(x, y).type);
 
                 m_drawable[index_3to1(x, y, 0, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE, y * CELL_SIZE), color);
                 m_drawable[index_3to1(x, y, 1, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE + CELL_SIZE, y * CELL_SIZE), color);
@@ -82,9 +75,9 @@ public:
         }
         for (std::size_t x = 0; x < m_size.x; ++x) {
             for (std::size_t y = m_size.y / 2; y < m_size.y; ++y) {
-                at(x, y).new_cell.type = Cell::Type::Dirt;
+                at_new(x, y).type = Cell::Type::Dirt;
 
-                auto color = Cell::color_for_type(at(x, y).new_cell.type);
+                auto color = Cell::color_for_type(at_new(x, y).type);
 
                 m_drawable[index_3to1(x, y, 0, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE, y * CELL_SIZE), color);
                 m_drawable[index_3to1(x, y, 1, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE + CELL_SIZE, y * CELL_SIZE), color);
@@ -95,23 +88,29 @@ public:
         m_drawable.set_changed();
     }
 
-    CellPair& at(std::size_t x, std::size_t y) {
+    Cell& at_new(std::size_t x, std::size_t y) {
         if (x >= m_size.x || y >= m_size.y) {
             report_error("invalid size passed, exiting");
             ASSERT_NOT_REACHABLE();
         }
-        return m_cells[x + y * m_size.x]; // x + y * width
+        return m_new_cells[x + y * m_size.x]; // x + y * width
+    }
+
+    Cell& at_old(std::size_t x, std::size_t y) {
+        if (x >= m_size.x || y >= m_size.y) {
+            report_error("invalid size passed, exiting");
+            ASSERT_NOT_REACHABLE();
+        }
+        return m_old_cells[x + y * m_size.x]; // x + y * width
     }
 
     virtual void on_update() override {
+        m_old_cells = m_new_cells;
         for (std::size_t x = 0; x < m_size.x; ++x) {
             for (std::size_t y = 0; y < m_size.y; ++y) {
-                auto _at = at(x, y);
                 // use old_cell for lookups, new_cell for changes
-                Cell&       new_cell = _at.new_cell;
-                const Cell& old_cell = _at.old_cell;
-                
-                
+                Cell&       new_cell = at_new(x, y);
+                const Cell& old_cell = at_old(x, y);
 
                 auto color = Cell::color_for_type(new_cell.type);
                 if (m_drawable[index_3to1(x, y, 0, m_size.y, 4)].color != color) {
@@ -121,7 +120,6 @@ public:
                     m_drawable[index_3to1(x, y, 3, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE, y * CELL_SIZE + CELL_SIZE), color);
                     m_drawable.set_changed();
                 }
-                at(x, y).swap();
             }
         }
     }
@@ -137,6 +135,8 @@ int main() {
     auto&       world  = app.world();
 
     window.set_framerate_limit(60);
+
+    world.set_update_interval(500);
 
     auto sandbox = world.add_entity().lock();
     sandbox->add_component<SandboxComponent>(200, 150);
