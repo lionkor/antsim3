@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef COMPONENT_H
@@ -62,8 +62,8 @@ class TransformComponent
     friend class Entity;
 
 protected:
-    vecd m_position;
-    double      m_rotation;
+    vecd   m_position;
+    double m_rotation;
 
     /// Transform of the parent, set by the parent when assigned as a child
     TransformComponent* m_parent_transform { nullptr };
@@ -108,14 +108,14 @@ class SpriteComponent
 {
     OBJNAME(SpriteComponent)
 private:
-    vecd    m_sprite_pos;
-    vecd    m_sprite_size;
+    vecd           m_sprite_pos;
+    vecd           m_sprite_size;
     Color          m_sprite_background_color;
     std::string    m_texture_name;
     sf::Texture    m_texture;
     bool           m_texture_loaded { false };
     bool           m_initialized { false };
-    vecd    m_cached_pos;
+    vecd           m_cached_pos;
     SimpleDrawable m_drawable;
     // TODO sprite / texture
 

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef GAMEWINDOW_H
@@ -16,6 +16,8 @@
 #include "Core/Object.h"
 #include "Physics/Ray.h"
 #include "Rendering/Draw.h"
+#include "Rendering/GuiElement.h"
+#include "Utils/Managed.h"
 
 class FpsLogger
 {
@@ -48,17 +50,17 @@ class GameWindow
     friend class Application;
 
 protected:
-    sf::Event    m_event;
-    sf::Vector2i m_mouse_pos;
-    bool         m_mmb_pressed { false };
-    DrawSurface  m_surface;
-    FpsLogger    m_fps_logger;
-    sf::Clock    m_fps_clock;
-    std::string  m_title;
-    sf::Color    m_clear_color;
+    sf::Event             m_event;
+    sf::Vector2i          m_mouse_pos;
+    bool                  m_mmb_pressed { false };
+    DrawSurface           m_surface;
+    FpsLogger             m_fps_logger;
+    sf::Clock             m_fps_clock;
+    std::string           m_title;
+    sf::Color             m_clear_color;
+    class Application&    m_application;
 
     // FIXME: We should check somewhere if this is not nullptr anymore
-    class Application& m_application;
 
     /// Zooms the current camera's view by zoom, moving relative to the specified
     /// pixel.

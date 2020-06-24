@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "GameWindow.h"
@@ -71,7 +71,7 @@ void GameWindow::handle_events() {
         }
         case sf::Event::Resized: {
             sf::FloatRect visibleArea(0.f, 0.f, m_event.size.width, m_event.size.height);
-            auto view = getView();
+            auto          view = getView();
             view.reset(visibleArea);
             setView(view);
             break;
@@ -119,8 +119,10 @@ void GameWindow::handle_key_press() {
 void GameWindow::internal_draw() {
     auto time = m_fps_clock.restart();
     auto val  = 1.0 / time.asSeconds();
-    if (val < 140)
-        m_fps_logger.log_fps(1.0 / time.asSeconds());
+    auto fps  = 1.0 / time.asSeconds();
+    if (val < 140) {
+        m_fps_logger.log_fps(fps);
+    }
 }
 
 void GameWindow::set_title(const std::string& title) {
