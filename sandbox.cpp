@@ -147,17 +147,39 @@ public:
 
     virtual void on_update() override {
         m_old_cells = m_new_cells;
+        static std::vector<vec<size_t>> s_swapped;
+        s_swapped.reserve(m_new_cells.size() / 4);
+        s_swapped.clear();
+
         for (std::size_t x = 0; x < m_size.x; ++x) {
             for (std::size_t y = 0; y < m_size.y; ++y) {
                 // use old_cell for lookups, new_cell for changes
                 Cell&       new_cell = at_new(x, y);
                 const Cell& old_cell = at_old(x, y);
 
-                if (in_bounds(x, y + 1)) {
-                    if (old_cell.density > at_old(x, y + 1).density) {
-                        std::swap(at_new(x, y + 1), new_cell);
+                if (in_bounds(x, y - 1)) {
+                    //if (old_cell.density > at_old(x, y + 1).density) {
+                    auto density_to_match = old_cell.density;
+                    auto prev             = vecu(x, y);
+                    auto pos              = vecu(x, y - 1);
+                    while (in_bounds(pos.x, pos.y) && at_old(pos.x, pos.y).density > density_to_match) {
+                        std::swap(at_new(pos.x, pos.y), at_new(prev.x, prev.y));
+                        prev = pos;
+                        --pos.y;
+                    }
+                    //}
+                }
+                /*
+                if (in_bounds(x + 1, y + 2)) {
+                    if (old_cell.density > at_old(x + 1, y).density
+                        && old_cell.density > at_old(x + 1, y + 1).density
+                        && old_cell.density > at_old(x + 1, y + 2).density
+                        && old_cell.density <= at_old(x, y + 1).density
+                        && old_cell.density <= at_old(x, y + 2).density) {
+                        std::swap(at_new(x + 1, y + 1), new_cell);
                     }
                 }
+                */
             }
         }
 
