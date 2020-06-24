@@ -110,12 +110,23 @@ public:
             auto array_pos = pos / 10;
             if (in_bounds(array_pos.x, array_pos.y)) {
                 if (action.button == HID::Left) {
-                    at_new(array_pos.x, array_pos.y) = Cell(Cell::Type::Dirt);
+                    draw_circle(array_pos.x, array_pos.y, 5, Cell(Cell::Type::Dirt));
                 } else {
-                    at_new(array_pos.x, array_pos.y) = Cell(Cell::Type::Air);
+                    draw_circle(array_pos.x, array_pos.y, 5, Cell(Cell::Type::Air));
                 }
             }
         };
+    }
+
+    void draw_circle(size_t x, size_t y, size_t _radius, Cell&& cell_template) {
+        int radius = int(_radius);
+        for (int i = -radius; i < radius; ++i) {
+            for (int k = -radius; k < radius; ++k) {
+                if (in_bounds(x + i, y + k)) {
+                    at_new(x + i, y + k) = cell_template;
+                }
+            }
+        }
     }
 
     Cell& at_new(std::size_t x, std::size_t y) {
