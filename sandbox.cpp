@@ -6,7 +6,7 @@ static constexpr size_t index_3to1(size_t x, size_t y, size_t z, size_t height, 
 
 
 struct Cell {
-    enum class Type
+    enum Type
     {
         Air,
         Dirt,
@@ -33,9 +33,9 @@ struct Cell {
     Type   type;
     double density;
 
-    Cell(Type type = Type::Air, double density = -1)
-        : type(type)
-        , density(density) {
+    Cell(Type _type = Type::Air, double _density = -1)
+        : type(_type)
+        , density(_density) {
         if (density < 0) {
             density = density_for_type(type);
         }
@@ -61,9 +61,10 @@ public:
         , m_drawable(SimpleDrawable::PrimitiveType::Quads, w * h * 4) {
         m_new_cells.resize(w * h);
         m_old_cells.resize(w * h);
+        /*
         for (std::size_t x = 0; x < m_size.x; ++x) {
             for (std::size_t y = 0; y < m_size.y / 2; ++y) {
-                at_new(x, y).type = Cell::Type::Air;
+                at_new(x, y) = Cell(Cell::Type::Dirt);
 
                 auto color = Cell::color_for_type(at_new(x, y).type);
 
@@ -75,7 +76,20 @@ public:
         }
         for (std::size_t x = 0; x < m_size.x; ++x) {
             for (std::size_t y = m_size.y / 2; y < m_size.y; ++y) {
-                at_new(x, y).type = Cell::Type::Dirt;
+                at_new(x, y) = Cell(Cell::Type::Air);
+
+                auto color = Cell::color_for_type(at_new(x, y).type);
+
+                m_drawable[index_3to1(x, y, 0, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE, y * CELL_SIZE), color);
+                m_drawable[index_3to1(x, y, 1, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE + CELL_SIZE, y * CELL_SIZE), color);
+                m_drawable[index_3to1(x, y, 2, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE + CELL_SIZE, y * CELL_SIZE + CELL_SIZE), color);
+                m_drawable[index_3to1(x, y, 3, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE, y * CELL_SIZE + CELL_SIZE), color);
+            }
+        }
+        */
+        for (std::size_t x = 0; x < m_size.x; ++x) {
+            for (std::size_t y = 0; y < m_size.y; ++y) {
+                at_new(x, y) = Cell(Cell::Type(Random::random<size_t>(0, 1)));
 
                 auto color = Cell::color_for_type(at_new(x, y).type);
 
@@ -86,6 +100,22 @@ public:
             }
         }
         m_drawable.set_changed();
+
+        report("first: {}\nlast: {}", at_new(0, 0).density, at_new(w - 1, h - 1).density);
+
+        on_mouse_down = [&](GameWindow& window, const HID::MouseAction& action) -> void {
+            auto pos = action.world_position(window);
+            // needed for the calculation we're doing :/
+            ASSERT(parent().transform().position() == vecd(0, 0));
+            auto array_pos = pos / 10;
+            if (in_bounds(array_pos.x, array_pos.y)) {
+                if (action.button == HID::Left) {
+                    at_new(array_pos.x, array_pos.y) = Cell(Cell::Type::Dirt);
+                } else {
+                    at_new(array_pos.x, array_pos.y) = Cell(Cell::Type::Air);
+                }
+            }
+        };
     }
 
     Cell& at_new(std::size_t x, std::size_t y) {
@@ -112,16 +142,33 @@ public:
                 Cell&       new_cell = at_new(x, y);
                 const Cell& old_cell = at_old(x, y);
 
+                if (in_bounds(x, y + 1)) {
+                    if (old_cell.density > at_old(x, y + 1).density) {
+                        std::swap(at_new(x, y + 1), new_cell);
+                    }
+                }
+            }
+        }
+
+        for (std::size_t x = 0; x < m_size.x; ++x) {
+            for (std::size_t y = 0; y < m_size.y; ++y) {
+                // use old_cell for lookups, new_cell for changes
+                Cell& new_cell = at_new(x, y);
+
                 auto color = Cell::color_for_type(new_cell.type);
                 if (m_drawable[index_3to1(x, y, 0, m_size.y, 4)].color != color) {
                     m_drawable[index_3to1(x, y, 0, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE, y * CELL_SIZE), color);
                     m_drawable[index_3to1(x, y, 1, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE + CELL_SIZE, y * CELL_SIZE), color);
                     m_drawable[index_3to1(x, y, 2, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE + CELL_SIZE, y * CELL_SIZE + CELL_SIZE), color);
                     m_drawable[index_3to1(x, y, 3, m_size.y, 4)] = SimpleDrawable::Vertex(SimpleDrawable::Vector2f(x * CELL_SIZE, y * CELL_SIZE + CELL_SIZE), color);
-                    m_drawable.set_changed();
                 }
             }
         }
+        m_drawable.set_changed();
+    }
+
+    bool in_bounds(size_t x, size_t y) {
+        return x < m_size.x && y < m_size.y;
     }
 
     virtual void on_draw(DrawSurface& surface) override {
@@ -136,7 +183,7 @@ int main() {
 
     window.set_framerate_limit(60);
 
-    world.set_update_interval(500);
+    world.set_update_interval(20);
 
     auto sandbox = world.add_entity().lock();
     sandbox->add_component<SandboxComponent>(200, 150);
