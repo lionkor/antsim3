@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef DRAW_H
 #define DRAW_H
 
 #include <SFML/Graphics.hpp>
-#include <boost/container/vector.hpp>
+#include <vector>
 #include <memory>
 
 #include "Core/Object.h"
@@ -53,9 +53,9 @@ class DrawSurface
         sf::Vertex vertices[4];
     };
 
-    GameWindow&                             m_window;
-    boost::container::vector<DrawRectangle> m_rects;
-    boost::container::vector<std::size_t>   m_changed_indices;
+    GameWindow&                m_window;
+    std::vector<DrawRectangle> m_rects;
+    std::vector<std::size_t>   m_changed_indices;
 
     struct CustomVArray {
         sf::VertexArray varray;
@@ -82,7 +82,7 @@ public:
     void        update_custom_varray(size_t index, const sf::VertexArray& varray, sf::Texture* texture = nullptr);
 
     void draw_text(sf::Text& text);
-    
+
     void set_gui_view_size(sf::Vector2f size) { m_gui_view.setSize(size); }
 
     void finalize();

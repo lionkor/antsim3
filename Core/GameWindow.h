@@ -11,8 +11,6 @@
 #include <fstream>
 #include <chrono>
 
-#include "Events/IEventReceiver.h"
-#include "Utils/DebugTools.h"
 #include "Core/Object.h"
 #include "Physics/Ray.h"
 #include "Rendering/Draw.h"
@@ -42,23 +40,22 @@ public:
 /// Manages anything window- and rendering related.
 class GameWindow
     : public Object,
-      public sf::RenderWindow,
-      public EventDispatcher
+      public sf::RenderWindow
 {
     OBJNAME(GameWindow)
 
     friend class Application;
 
 protected:
-    sf::Event             m_event;
-    sf::Vector2i          m_mouse_pos;
-    bool                  m_mmb_pressed { false };
-    DrawSurface           m_surface;
-    FpsLogger             m_fps_logger;
-    sf::Clock             m_fps_clock;
-    std::string           m_title;
-    sf::Color             m_clear_color;
-    class Application&    m_application;
+    sf::Event          m_event;
+    sf::Vector2i       m_mouse_pos;
+    bool               m_mmb_pressed { false };
+    DrawSurface        m_surface;
+    FpsLogger          m_fps_logger;
+    sf::Clock          m_fps_clock;
+    std::string        m_title;
+    sf::Color          m_clear_color;
+    class Application& m_application;
 
     // FIXME: We should check somewhere if this is not nullptr anymore
 
