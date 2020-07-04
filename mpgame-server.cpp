@@ -89,8 +89,10 @@ public:
                 m_clients.insert_or_assign(packet.name, client_addr);
             }
 
-            for (auto& client_address : m_clients) {
-                sendto(m_socket_fd, data.data(), data.size(), 0, reinterpret_cast<struct sockaddr*>(&client_address.second), addr_len);
+            for (auto& client : m_clients) {
+                if (client.first != packet.name) {
+                    sendto(m_socket_fd, data.data(), data.size(), 0, reinterpret_cast<struct sockaddr*>(&client.second), addr_len);
+                }
             }
         }
         return 0;
