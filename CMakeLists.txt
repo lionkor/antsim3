@@ -100,3 +100,9 @@ add_executable(sandbox
 )
 
 target_link_libraries(sandbox Engine)
+
+add_executable(mpgame-server
+    mpgame-server.cpp
+)
+
+target_link_libraries(mpgame-server Engine)
