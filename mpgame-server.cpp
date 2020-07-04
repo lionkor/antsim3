@@ -73,7 +73,7 @@ public:
             UpdatePacket packet = UpdatePacket::from_network_data(data);
             report("got packet: name = \"{}\", x = {}, y = {}", packet.name, packet.x, packet.y);
 
-            if (!m_players.contains(packet.name)) {
+            if (m_players.find(packet.name) != m_players.end()) {
                 // new player
                 m_players.insert_or_assign(packet.name, vec<float>(packet.x, packet.y));
                 report("inserted new player with name \"{}\" at x,y = {},{}", packet.name, packet.x, packet.y);
@@ -85,7 +85,7 @@ public:
                 report("updated player \"{}\" at x,y = {},{}", packet.name, packet.x, packet.y);
             }
 
-            if (!m_clients.contains(packet.name)) {
+            if (m_clients.find(packet.name) != m_clients.end()) {
                 m_clients.insert_or_assign(packet.name, client_addr);
             }
 
