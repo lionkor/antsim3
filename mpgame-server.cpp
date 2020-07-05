@@ -86,12 +86,12 @@ public:
             }
 
             if (m_clients.find(packet.name) != m_clients.end()) {
-                m_clients.insert_or_assign(packet.name, client_addr);
             }
+            m_clients.insert_or_assign(packet.name, client_addr);
 
             for (auto& client : m_clients) {
+                sendto(m_socket_fd, data.data(), data.size(), 0, reinterpret_cast<struct sockaddr*>(&client.second), addr_len);
                 if (client.first != packet.name) {
-                    sendto(m_socket_fd, data.data(), data.size(), 0, reinterpret_cast<struct sockaddr*>(&client.second), addr_len);
                 }
             }
         }
