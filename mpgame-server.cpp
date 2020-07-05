@@ -15,12 +15,6 @@ static inline void report_errno() {
     report_error("an error occurred: {}", strerror(errno));
 }
 
-static std::atomic_size_t s_id_counter = 0;
-
-static size_t new_id() {
-    return ++s_id_counter;
-}
-
 class Server
 {
 private:
@@ -54,23 +48,38 @@ public:
         m_ok = true;
     }
 
+
     int run() {
         if (!m_ok) {
             report_error("not initialized, see errors above");
             return -1;
         }
+
+        UpdatePacket packet { "John", 24.5, 22.1 };
+
+        auto         array = serialize_into_array<UpdatePacket, 128>(packet);
+        report("array size: {}", array.size());
+        std::string  data_string(array.begin(), array.end());
+        report("string size: {}", data_string.size());
+        UpdatePacket other_packet = deserialize_from_string<UpdatePacket>(data_string);
+        
+        ASSERT(packet.name == other_packet.name);
+        ASSERT(packet.x == other_packet.x);
+        ASSERT(packet.y == other_packet.y);
+
         while (m_running) {
-            std::string data;
-            data.resize(UpdatePacket::network_size());
+            std::string        data;
+            data.resize(PACKET_SIZE, ' '); // spaces as padding
             struct sockaddr_in client_addr;
             socklen_t          addr_len;
-            int                ret = recvfrom(m_socket_fd, data.data(), UpdatePacket::network_size(), 0, reinterpret_cast<struct sockaddr*>(&client_addr), &addr_len);
-            /*if (static_cast<size_t>(ret) != UpdatePacket::network_size()) {
-                report_error("invalid packet received: _{}_", data);
-                report_warning("ignoring potentially fatal problems here");
+            int                ret = recvfrom(m_socket_fd, data.data(), PACKET_SIZE, 0, reinterpret_cast<struct sockaddr*>(&client_addr), &addr_len);
+            static_cast<void>(ret);
+            report("got raw packet: _{}_", data);
+            if (data.empty()) {
+                report_error("empty packet received!");
                 continue;
-            }*/
-            UpdatePacket packet = UpdatePacket::from_network_data(data);
+            }
+            UpdatePacket packet = deserialize_from_string<UpdatePacket>(data);
             report("got packet: name = \"{}\", x = {}, y = {}", packet.name, packet.x, packet.y);
 
             if (m_players.find(packet.name) == m_players.end()) {
@@ -100,11 +109,7 @@ public:
 };
 
 int main() {
-    UpdatePacket packet { "James", 2542334.6, -1115.9 };
-    report("before: name = _{}_, x = _{}_, y = _{}_", packet.name, packet.x, packet.y);
-    report("network data: _{}_", packet.to_network_data());
-    packet = UpdatePacket::from_network_data(packet.to_network_data());
-    report("after: name = _{}_, x = _{}_, y = _{}_", packet.name, packet.x, packet.y);
     Server server { 26999 };
+    report("server running");
     return server.run();
 }
