@@ -115,6 +115,9 @@ private:
     vecd                    m_player_position;
     std::vector<Player>     m_other_players;
     SimpleDrawable          m_simple_drawable;
+    sf::Font                m_font;
+    sf::Text                m_text;
+    bool                    m_dir_pressed[4] { false, false, false, false };
 
 public:
     // TODO make the player a Player ?!
@@ -125,11 +128,34 @@ public:
         , m_name(name)
         , m_simple_drawable(SimpleDrawable::PrimitiveType::Points, 1) {
         m_player_position = parent().transform().position();
-        on_key_down       = [&](GameWindow&, const HID::Key& key) {
+
+        on_key_down = [&](GameWindow&, const HID::Key& key) {
             key_pressed(key);
         };
+
+        on_key_up = [&](GameWindow&, const HID::Key& key) {
+            key_released(key);
+        };
+
+        auto& resman    = parent().world().application().resource_manager();
+        auto  res_maybe = resman.get_resource_by_name("mono.ttf");
+        if (res_maybe.ok()) {
+            auto* data = res_maybe.value().get().load();
+            if (data) {
+                bool ok = m_font.loadFromMemory(data->data(), data->size());
+                if (!ok) {
+                    report_error("failed to load font {}", "mono.ttf");
+                }
+            } else {
+                report_error(res_maybe.value().get().validation_error_message());
+            }
+        } else {
+            report_error(res_maybe.message());
+        }
+
+        m_text = sf::Text(m_name, m_font, 10);
     }
-    
+
     ~ClientComponent() {
         UpdatePacket disc_packet;
         disc_packet.name = m_name;
@@ -137,30 +163,44 @@ public:
         send_packet(disc_packet);
     }
 
-    void key_pressed(HID::Key key) {
-        vecd vel(0, 0);
+    void key_released(HID::Key key) {
         switch (key) {
         case HID::Key::W:
-            vel += vecd(0, -1);
+            m_dir_pressed[0] = false;
             break;
         case HID::Key::A:
-            vel += vecd(-1, 0);
+            m_dir_pressed[1] = false;
             break;
         case HID::Key::S:
-            vel += vecd(0, 1);
+            m_dir_pressed[2] = false;
             break;
         case HID::Key::D:
-            vel += vecd(1, 0);
+            m_dir_pressed[3] = false;
             break;
         default:
             // nothing
             break;
         }
-        if (vel.length() != 0) {
-            vel.normalize();
+    }
+
+    void key_pressed(HID::Key key) {
+        switch (key) {
+        case HID::Key::W:
+            m_dir_pressed[0] = true;
+            break;
+        case HID::Key::A:
+            m_dir_pressed[1] = true;
+            break;
+        case HID::Key::S:
+            m_dir_pressed[2] = true;
+            break;
+        case HID::Key::D:
+            m_dir_pressed[3] = true;
+            break;
+        default:
+            // nothing
+            break;
         }
-        m_player_position += vel * m_speed;
-        m_update_to_server = true;
     }
 
     std::vector<Player>::iterator find_player_with_name(const std::string& name) {
@@ -217,6 +257,25 @@ public:
     }
 
     virtual void on_update() override {
+        vecd vel(0, 0);
+        if (m_dir_pressed[0]) {
+            vel.y -= 1;
+        }
+        if (m_dir_pressed[1]) {
+            vel.x -= 1;
+        }
+        if (m_dir_pressed[2]) {
+            vel.y += 1;
+        }
+        if (m_dir_pressed[3]) {
+            vel.x += 1;
+        }
+        if (vel.length() != 0) {
+            vel.normalize();
+            m_update_to_server = true;
+        }
+        m_player_position += vel * m_speed;
+        
         if (m_update_to_server) {
             m_update_to_server = false;
             UpdatePacket packet;
@@ -247,18 +306,23 @@ public:
     }
 
     virtual void on_draw(DrawSurface& surface) override {
+        sf::Vector2f real_position(m_player_position.x, m_player_position.y);
+        sf::Vector2i screen_pos = surface.window().mapCoordsToPixel(real_position);
+        m_text.setPosition(screen_pos.x, screen_pos.y);
+        surface.draw_text(m_text);
         m_simple_drawable.draw(surface);
     }
 };
 
 int main(int argc, char** argv) {
     Application app("MPGAME Client", { 512, 512 });
-    auto&       window = app.window();
-    auto&       world  = app.world();
+    auto&       world = app.world();
 
-    auto player = world.add_entity({ 256, 256 }).lock();
-    ASSERT(argc == 2);
-    player->add_component<ClientComponent>("localhost", 26999, argv[1]);
+    { // scope for shared_ptr lock
+        auto player = world.add_entity({ 256, 256 }).lock();
+        ASSERT(argc == 2);
+        player->add_component<ClientComponent>("localhost", 26999, argv[1]);
+    }
 
     return app.run();
     /*

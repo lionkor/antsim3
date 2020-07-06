@@ -84,7 +84,10 @@ public:
     void draw_text(sf::Text& text);
 
     void set_gui_view_size(sf::Vector2f size) { m_gui_view.setSize(size); }
-
+    
+    GameWindow& window() { return m_window; }
+    const GameWindow& window() const { return m_window; }
+    
     void finalize();
 };
 

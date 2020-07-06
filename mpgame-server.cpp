@@ -15,6 +15,13 @@ static inline void report_errno() {
     report_error("an error occurred: {}", strerror(errno));
 }
 
+class UDPServer
+{
+private:
+    // TODO
+public:
+};
+
 class Server
 {
 private:
@@ -57,18 +64,18 @@ public:
 
         UpdatePacket packet { "John", 24.5, 22.1 };
 
-        auto         array = serialize_into_array<UpdatePacket, 128>(packet);
+        auto array = serialize_into_array<UpdatePacket, 128>(packet);
         report("array size: {}", array.size());
-        std::string  data_string(array.begin(), array.end());
+        std::string data_string(array.begin(), array.end());
         report("string size: {}", data_string.size());
         UpdatePacket other_packet = deserialize_from_string<UpdatePacket>(data_string);
-        
+
         ASSERT(packet.name == other_packet.name);
         ASSERT(packet.x == other_packet.x);
         ASSERT(packet.y == other_packet.y);
 
         while (m_running) {
-            std::string        data;
+            std::string data;
             data.resize(PACKET_SIZE, ' '); // spaces as padding
             struct sockaddr_in client_addr;
             socklen_t          addr_len;
@@ -84,7 +91,7 @@ public:
 
             if (m_players.find(packet.name) == m_players.end()) {
                 // new player
-                m_players.insert_or_assign(packet.name, vec<float>(packet.x, packet.y));
+                m_players.insert_or_assign(packet.name, vec<double>(packet.x, packet.y));
                 report("inserted new player with name \"{}\" at x,y = {},{}", packet.name, packet.x, packet.y);
             } else {
                 // update player
