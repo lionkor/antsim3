@@ -63,7 +63,7 @@ void Entity::destroy() {
      * When an Entity is destroyed, it is marked for deletion.
      * The World that the Entity is part of will then 
      */
-    //report("destroy called on {}", uuid());
+    report("destroy called on {}", uuid());
     if (m_parent && !m_parent->is_marked_destroyed()) {
         m_parent->remove_child(this);
     }

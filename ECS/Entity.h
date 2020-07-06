@@ -63,6 +63,19 @@ public:
         return iter != m_comps.end();
     }
 
+    template<class DerivedComponentT>
+    requires std::derived_from<DerivedComponentT, Component> DerivedComponentT* fetch_component() {
+        const std::string name = DerivedComponentT::class_name_static();
+        auto              iter = std::find_if(m_comps.begin(), m_comps.end(), [&](const auto& comp) {
+            return comp->class_name() == name;
+        });
+        if (iter != m_comps.end()) {
+            return reinterpret_cast<DerivedComponentT*>((*iter).get());
+        } else {
+            return nullptr;
+        }
+    }
+
     template<class DerivedComponentT, typename... Args>
     requires(std::derived_from<DerivedComponentT, Component> && !std::is_same_v<DerivedComponentT, Component>)
         DerivedComponentT& add_component(Args&&... args) {

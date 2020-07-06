@@ -102,14 +102,20 @@ add_executable(sandbox
 target_link_libraries(sandbox Engine)
 
 add_executable(mpgame-server
-    mpgame-server.cpp
+    mpgame/mpgame-server.cpp
+    mpgame/UDPClient.cpp
+    mpgame/ClientComponent.cpp
+    mpgame/PlayerComponent.cpp
 )
 
 target_link_libraries(mpgame-server Engine boost_serialization)
 add_definitions(-DBOOST_ASIO_DISABLE_CONCEPTS)
 
 add_executable(mpgame-client
-    mpgame-client.cpp
+    mpgame/mpgame-client.cpp
+    mpgame/UDPClient.cpp
+    mpgame/ClientComponent.cpp
+    mpgame/PlayerComponent.cpp
 )
 
 target_link_libraries(mpgame-client Engine boost_serialization)

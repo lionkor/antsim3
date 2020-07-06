@@ -6,14 +6,16 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
 #include "Physics/vec.h"
 #include "Utils/DebugTools.h"
 
 #include "mpgame-common.h"
-
-static inline void report_errno() {
-    report_error("an error occurred: {}", strerror(errno));
-}
 
 class UDPServer
 {
@@ -25,13 +27,16 @@ public:
 class Server
 {
 private:
-    std::map<std::string, vec<float>>         m_players;
+    std::map<std::string, vec<double>>        m_players;
     std::map<std::string, struct sockaddr_in> m_clients;
     bool                                      m_running { true };
     bool                                      m_ok { false };
     int                                       m_socket_fd;
 
 public:
+    
+    int socket_fd() { return m_socket_fd; }
+    
     Server(std::uint16_t port) {
         m_socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
         if (m_socket_fd == -1) {
@@ -55,7 +60,10 @@ public:
         m_ok = true;
     }
 
-
+    ~Server() {
+        close(m_socket_fd);
+    }
+    
     int run() {
         if (!m_ok) {
             report_error("not initialized, see errors above");
@@ -81,13 +89,11 @@ public:
             socklen_t          addr_len;
             int                ret = recvfrom(m_socket_fd, data.data(), PACKET_SIZE, 0, reinterpret_cast<struct sockaddr*>(&client_addr), &addr_len);
             static_cast<void>(ret);
-            report("got raw packet: _{}_", data);
             if (data.empty()) {
                 report_error("empty packet received!");
                 continue;
             }
             UpdatePacket packet = deserialize_from_string<UpdatePacket>(data);
-            report("got packet: name = \"{}\", x = {}, y = {}", packet.name, packet.x, packet.y);
 
             if (m_players.find(packet.name) == m_players.end()) {
                 // new player
@@ -95,28 +101,32 @@ public:
                 report("inserted new player with name \"{}\" at x,y = {},{}", packet.name, packet.x, packet.y);
             } else {
                 // update player
-                vec<float>& pos = m_players.at(packet.name);
-                pos.x           = packet.x;
-                pos.y           = packet.y;
-                report("updated player \"{}\" at x,y = {},{}", packet.name, packet.x, packet.y);
+                vec<double>& pos = m_players.at(packet.name);
+                pos.x            = packet.x;
+                pos.y            = packet.y;
             }
 
-            if (m_clients.find(packet.name) != m_clients.end()) {
-            }
             m_clients.insert_or_assign(packet.name, client_addr);
 
             for (auto& client : m_clients) {
-                sendto(m_socket_fd, data.data(), data.size(), 0, reinterpret_cast<struct sockaddr*>(&client.second), addr_len);
-                if (client.first != packet.name) {
+                if (client.first == packet.name) {
+                    continue;
                 }
+                sendto(m_socket_fd, data.data(), data.size(), 0, reinterpret_cast<struct sockaddr*>(&client.second), addr_len);
+            }
+            if (std::filesystem::exists("kill_server")) {
+                std::filesystem::remove("kill_server");
+                report("killed via kill_server");
+                m_running = false;
             }
         }
         return 0;
     }
 };
 
+static inline Server g_server(26999);
+
 int main() {
-    Server server { 26999 };
     report("server running");
-    return server.run();
+    return g_server.run();
 }
