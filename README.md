@@ -10,7 +10,9 @@ Building a simple modern 2D engine for simulation projects like simulating ants 
 
 Demos included:
 * cells, a multithreaded Conway's game of life
-* orbits, a simple little orbital physics simulation
+* orbits, a little orbital physics simulation
+* mpgame, a simple multiplayer game
+* sandbox, a bouyancy physics sandbox
 
 ## Planned
 
