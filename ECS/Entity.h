@@ -82,6 +82,8 @@ public:
     void         on_mouse_down(GameWindow&, const HID::MouseAction&);
     void         on_mouse_up(GameWindow&, const HID::MouseAction&);
     void         on_mouse_move(GameWindow&, const HID::MouseAction&);
+    void         on_key_down(GameWindow&, const HID::Key&);
+    void         on_key_up(GameWindow&, const HID::Key&);
     bool         has_parent() const { return static_cast<bool>(m_parent); }
     virtual void destroy() final;
     virtual bool is_marked_destroyed() const final { return m_destroyed; }

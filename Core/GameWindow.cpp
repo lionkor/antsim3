@@ -38,8 +38,10 @@ void GameWindow::handle_events() {
             close();
             break;
         case sf::Event::KeyPressed:
-            report_trace(nameof(sf::Event::KeyPressed), " with key.code=", m_event.key.code);
             handle_key_press();
+            break;
+        case sf::Event::KeyReleased:
+            handle_key_release();
             break;
         case sf::Event::MouseButtonPressed:
             handle_mouse_button_press();
@@ -106,13 +108,31 @@ void GameWindow::handle_mouse_button_release() {
 
 void GameWindow::handle_key_press() {
     ASSERT(m_event.type == sf::Event::KeyPressed);
+    m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+        entity_ptr->on_key_down(*this, m_event.key.code);
+        return true;
+    });
     switch (m_event.key.code) {
     case sf::Keyboard::Escape:
         report("closing through Escape");
         close();
         break;
     default:
-        report_trace("not handled: ", m_event.key.code);
+        // nothing
+        break;
+    }
+}
+
+void GameWindow::handle_key_release() {
+    ASSERT(m_event.type == sf::Event::KeyReleased);
+    m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+        entity_ptr->on_key_up(*this, m_event.key.code);
+        return true;
+    });
+    switch (m_event.key.code) {
+    default:
+        // nothing
+        break;
     }
 }
 

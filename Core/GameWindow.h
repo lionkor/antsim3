@@ -70,6 +70,7 @@ public:
     void handle_mouse_button_press();
     void handle_mouse_button_release();
     void handle_key_press();
+    void handle_key_release();
     void internal_draw();
 
     /// Gets the title.

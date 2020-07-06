@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "Entity.h"
@@ -88,4 +88,18 @@ std::stringstream Entity::to_stream() const {
     }
     ss << "};";
     TS_END();
+}
+
+void Entity::on_key_down(GameWindow& window, const HID::Key& key) {
+    for (auto& comp : m_comps) {
+        if (comp->on_key_down)
+            comp->on_key_down(window, key);
+    }
+}
+
+void Entity::on_key_up(GameWindow& window, const HID::Key& key) {
+    for (auto& comp : m_comps) {
+        if (comp->on_key_up)
+            comp->on_key_up(window, key);
+    }
 }

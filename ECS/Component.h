@@ -35,6 +35,9 @@ protected:
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_up { nullptr };
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_move { nullptr };
 
+    std::function<void(GameWindow&, const HID::Key&)> on_key_down { nullptr };
+    std::function<void(GameWindow&, const HID::Key&)> on_key_up { nullptr };
+
 public:
     Component(Entity&);
     virtual ~Component() noexcept = default;

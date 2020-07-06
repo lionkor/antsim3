@@ -34,5 +34,7 @@ struct MouseAction {
 
 MouseAction from_sf_mouse_action(sf::Event);
 
+using Key = sf::Keyboard::Key;
+
 }
 #endif // HID_H
