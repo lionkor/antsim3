@@ -94,9 +94,9 @@ public:
                         //report("collision!");
 
                         //if (body_1.color != body_2_old.color) {
-                            body_1.color.r = std::lerp(body_1.color.r, (body_1.color.r + body_2_old.color.r) / 2.0, body_2_old.mass / body_1.mass);
-                            body_1.color.g = std::lerp(body_1.color.g, (body_1.color.g + body_2_old.color.g) / 2.0, body_2_old.mass / body_1.mass);
-                            body_1.color.b = std::lerp(body_1.color.b, (body_1.color.b + body_2_old.color.b) / 2.0, body_2_old.mass / body_1.mass);
+                            body_1.color.r = lerp<unsigned char>(body_1.color.r, (body_1.color.r + body_2_old.color.r) / 2.0, body_2_old.mass / body_1.mass);
+                            body_1.color.g = lerp<unsigned char>(body_1.color.g, (body_1.color.g + body_2_old.color.g) / 2.0, body_2_old.mass / body_1.mass);
+                            body_1.color.b = lerp<unsigned char>(body_1.color.b, (body_1.color.b + body_2_old.color.b) / 2.0, body_2_old.mass / body_1.mass);
                         //}
                         body_2.dead = true;
                         auto c      = body_2_old.mass / double(s_pieces) * 0.25;
@@ -154,7 +154,10 @@ public:
             }
         }
 
-        std::erase_if(m_bodies, [&](Body& elem) -> bool { return elem.dead; });
+        auto to_erase = std::find_if(m_bodies.begin(), m_bodies.end(), [&](Body& elem) -> bool { return elem.dead; });
+        if (to_erase != m_bodies.end()) {
+            m_bodies.erase(to_erase);
+        }
 
         for (auto& new_body : bodies_to_add) {
             m_bodies.push_back(std::move(new_body));

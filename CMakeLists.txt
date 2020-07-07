@@ -10,16 +10,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fconcepts")
 
 project(Engine)
 
-add_subdirectory("SFML" "SFML")
-
 include_directories(Engine
     "."
     "./fmt/include"
     "./doctest/doctest"
-    "./SFML/include"
 )
 
-add_library(Engine SHARED
+add_library(Engine STATIC
     Cellular/Cell.cpp
     Core/Application.cpp
     Core/GameWindow.cpp
@@ -42,6 +39,7 @@ add_library(Engine SHARED
     Utils/CsvLogger.cpp
     Utils/LazyFile.cpp
     Utils/ResourceManager.cpp
+    Core/Math.cpp
 
     # fmt
     fmt/src/format.cc
@@ -51,7 +49,7 @@ add_library(Engine SHARED
 target_link_libraries(Engine
     sfml-graphics 
     sfml-window 
-    sfml-system
+    sfml-system 
     pthread
 )
 
