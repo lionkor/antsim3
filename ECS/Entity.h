@@ -8,7 +8,9 @@
 
 #include <vector>
 #include <concepts>
+#ifdef CPP_20
 #include <utility>
+#endif // CPP_20
 
 #include "Core/Object.h"
 #include "Core/World.h"
@@ -55,7 +57,10 @@ public:
     void remove_child(Entity* entity);
 
     template<class DerivedComponentT>
-    requires std::derived_from<DerivedComponentT, Component> bool has_component() const {
+#ifdef CPP_20
+    requires std::derived_from<DerivedComponentT, Component>
+#endif // CPP_20
+        bool has_component() const {
         const std::string name = DerivedComponentT::class_name_static();
         auto              iter = std::find_if(m_comps.begin(), m_comps.end(), [&](const auto& comp) {
             return comp->class_name() == name;
@@ -64,7 +69,10 @@ public:
     }
 
     template<class DerivedComponentT>
-    requires std::derived_from<DerivedComponentT, Component> DerivedComponentT* fetch_component() {
+#ifdef CPP_20
+    requires std::derived_from<DerivedComponentT, Component> 
+#endif // CPP_20
+    DerivedComponentT* fetch_component() {
         const std::string name = DerivedComponentT::class_name_static();
         auto              iter = std::find_if(m_comps.begin(), m_comps.end(), [&](const auto& comp) {
             return comp->class_name() == name;
@@ -77,7 +85,9 @@ public:
     }
 
     template<class DerivedComponentT, typename... Args>
+#ifdef CPP_20
     requires(std::derived_from<DerivedComponentT, Component> && !std::is_same_v<DerivedComponentT, Component>)
+#endif // CPP_20
         DerivedComponentT& add_component(Args&&... args) {
         auto comp = std::make_shared<DerivedComponentT>(*this, std::forward<Args>(args)...);
         if (comp->is_unique() && has_component<DerivedComponentT>()) {
