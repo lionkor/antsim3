@@ -7,9 +7,9 @@
 #define GAMEOBJNAME_H
 
 #include <vector>
-#include <concepts>
-#ifdef CPP_20
 #include <utility>
+#ifdef CPP_20
+#include <concepts>
 #endif // CPP_20
 
 #include "Core/Object.h"
