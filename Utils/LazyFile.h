@@ -32,7 +32,7 @@ private:
     void validate();
 
 public:
-    LazyFile(const std::filesystem::path&);
+    LazyFile(const std::string&);
     LazyFile(LazyFile&&) = default;
     LazyFile& operator=(LazyFile&&) = default;
 

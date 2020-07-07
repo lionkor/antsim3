@@ -108,8 +108,9 @@ add_executable(mpgame-server
     mpgame/PlayerComponent.cpp
 )
 
-target_link_libraries(mpgame-server Engine boost_serialization boost_system)
 add_definitions(-DBOOST_ASIO_DISABLE_CONCEPTS)
+
+target_link_libraries(mpgame-server Engine boost_serialization boost_system)
 
 add_executable(mpgame-client
     mpgame/mpgame-client.cpp

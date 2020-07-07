@@ -55,7 +55,7 @@ void LazyFile::force_unload() {
     reset();
 }
 
-LazyFile::LazyFile(const std::filesystem::path& path)
+LazyFile::LazyFile(const std::string& path)
     : m_path(path) {
     validate();
 }
