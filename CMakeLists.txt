@@ -51,6 +51,7 @@ target_link_libraries(Engine
     sfml-window 
     sfml-system 
     pthread
+    stdc++fs
 )
 
 project(antsim3)

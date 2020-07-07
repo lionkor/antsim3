@@ -10,7 +10,7 @@
 #include "ECS/Entity.h"
 
 GameWindow::GameWindow(Application& app, const std::string& title, sf::Vector2u size)
-    : sf::RenderWindow(sf::VideoMode(size.x, size.y), title, sf::Style::Default, sf::ContextSettings(0, 0, 8))
+    : sf::RenderWindow(sf::VideoMode(size.x, size.y), title, sf::Style::Default, sf::ContextSettings(0, 0, 8, 3, 1))
     , m_surface(*this)
     , m_fps_logger("fps.csv")
     , m_title(title)
