@@ -22,6 +22,20 @@ Take a look at the [project(s)](https://github.com/lionkor/antsim3/projects)
 
 ## How to build & run
 
+### General guide
+
+This is a quick guide for experienced devs. Inexperienced devs should check out the other sections below.
+
+1. Ensure you have sfml and boost installed and up-to-date (dev headers, too)
+2. Clone this repo recursively
+3. Make a new directory for the build files, e.g. antsim3/build
+4. Run cmake
+5. Run make
+6. Run from antsim3 directory (not the build directory!)
+7. profit
+
+**Note:** If you want to help develop this engine, make sure to use GCC 10 and ensure that `CPP_20` is defined.
+
 ### Windows
 
 The windows build is currently not maintained. If you're experienced with C++ development on windows, feel free to contact me, we could use some help!
@@ -37,7 +51,7 @@ Make sure the following libraries are installed with this command:
 Clone the git repo:
 
 ```bash
-$ git clone https://github.com/lionkor/antsim3
+$ git clone https://github.com/lionkor/antsim3 --recursive
 $ cd antsim3
 ```
 
