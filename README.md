@@ -26,7 +26,7 @@ Take a look at the [project(s)](https://github.com/lionkor/antsim3/projects)
 
 This is a quick guide for experienced devs. Inexperienced devs should check out the other sections below.
 
-1. Ensure you have sfml and boost installed and up-to-date (dev headers, too)
+1. Ensure you have boost installed and up-to-date (dev headers, too) and all dependencies of SFML
 2. Clone this repo recursively
 3. Make a new directory for the build files, e.g. antsim3/build
 4. Run cmake
@@ -45,7 +45,7 @@ The windows build is currently not maintained. If you're experienced with C++ de
 Make sure the following libraries are installed with this command:
 
 ```bash
-# apt install libsfml-dev libboost-dev cmake git build-essential
+# apt install libboost-dev cmake git build-essential libgl-dev libflac8 libogg0 libopenal1 libvorbis0a libvorbisenc2 libvorbisfile3 libfreetype6 libgl1 libx11-6 libxrandr2 libudev1
 ```
 
 Clone the git repo:
