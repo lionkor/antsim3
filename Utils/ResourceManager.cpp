@@ -8,7 +8,11 @@
 ResourceManager::ResourceManager(const std::filesystem::path& res_file_path)
     : m_res_file(res_file_path)
     , m_res_base_path(m_res_file.path().parent_path()) {
-    reload_resfile();
+    if (res_file_path.empty()) {
+        report_warning("resfile name empty, might cause confusing errors");
+    } else {
+        reload_resfile();
+    }
 }
 
 void ResourceManager::reload_resfile() {
@@ -16,7 +20,7 @@ void ResourceManager::reload_resfile() {
     auto result = m_res_file.force_reload();
     if (result.error()) { // FIXME: Handle all these asserts properly?
         report_error(error_fmt, result.message());
-        ASSERT_NOT_REACHABLE();
+        return;
     }
     auto contents = m_res_file.load();
     if (!contents) {

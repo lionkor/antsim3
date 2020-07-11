@@ -10,8 +10,8 @@
 #include "Core/GameWindow.h"
 #include "Core/Application.h"
 
-TEST_CASE("Entity Tests") {
-    Application app("Test", { 512, 512 });
+TEST_CASE("Entity add/remove/...") {
+    Application app("Test", { 512, 512 }, "");
     auto& world = app.world();
     SUBCASE("Adding an Entity") {
         CHECK(world.entities().size() == 0);
@@ -31,6 +31,8 @@ TEST_CASE("Entity Tests") {
         world.update(app.window());
         CHECK(world.entities().size() == 1);
         entity_weak.lock()->destroy();
+        CHECK(world.entities().size() == 1);
+        CHECK(entity_weak.expired() == false);
         world.update(app.window());
         CHECK(world.entities().size() == 0);
         CHECK(entity_weak.expired());

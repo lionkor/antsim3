@@ -43,7 +43,6 @@ World::World(Application& app)
 
 WeakPtr<Entity> World::add_entity(const vecd& pos) {
     m_entities_to_add.push_back(std::make_shared<Entity>(*this, pos));
-    report_function();
     auto entity = WeakPtr<Entity>(m_entities_to_add.back());
     return entity;
 }
