@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "PhysicalObject.h"
@@ -32,12 +32,12 @@ void PhysicalObject::try_draw(DrawSurface& surface) {
 }
 
 void PhysicalObject::set_position(const vecd& pos) {
-    m_pos         = pos;
+    m_pos = pos;
     m_has_changed = true;
 }
 
 void PhysicalObject::set_size(const vecd& size) {
-    m_size        = size;
+    m_size = size;
     m_has_changed = true;
 }
 
@@ -47,7 +47,7 @@ void PhysicalObject::update() {
 void PhysicalObject::draw(DrawSurface& surface) {
     // TODO: Abstract this away somehow
     if (!m_has_index) {
-        m_index     = surface.draw_new_rectangle(Rectangle(m_pos, m_size));
+        m_index = surface.draw_new_rectangle(Rectangle(m_pos, m_size));
         m_has_index = true;
     }
     if (m_has_changed) {

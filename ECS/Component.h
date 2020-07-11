@@ -22,7 +22,7 @@ class Component
     friend class Entity;
 
 private:
-    Entity&          m_parent;
+    Entity& m_parent;
     ResourceManager& m_resource_manager;
 
 protected:
@@ -47,9 +47,9 @@ public:
     virtual void on_update() { }
     virtual void on_draw(DrawSurface&) { }
 
-    Entity&                parent() noexcept { return m_parent; }
-    const Entity&          parent() const noexcept { return m_parent; }
-    ResourceManager&       resource_manager() noexcept { return m_resource_manager; }
+    Entity& parent() noexcept { return m_parent; }
+    const Entity& parent() const noexcept { return m_parent; }
+    ResourceManager& resource_manager() noexcept { return m_resource_manager; }
     const ResourceManager& resource_manager() const noexcept { return m_resource_manager; }
 
     // Object interface
@@ -65,7 +65,7 @@ class TransformComponent
     friend class Entity;
 
 protected:
-    vecd   m_position;
+    vecd m_position;
     double m_rotation;
 
     /// Transform of the parent, set by the parent when assigned as a child
@@ -111,14 +111,14 @@ class SpriteComponent
 {
     OBJNAME(SpriteComponent)
 private:
-    vecd           m_sprite_pos;
-    vecd           m_sprite_size;
-    Color          m_sprite_background_color;
-    std::string    m_texture_name;
-    sf::Texture    m_texture;
-    bool           m_texture_loaded { false };
-    bool           m_initialized { false };
-    vecd           m_cached_pos;
+    vecd m_sprite_pos;
+    vecd m_sprite_size;
+    Color m_sprite_background_color;
+    std::string m_texture_name;
+    sf::Texture m_texture;
+    bool m_texture_loaded { false };
+    bool m_initialized { false };
+    vecd m_cached_pos;
     SimpleDrawable m_drawable;
     // TODO sprite / texture
 

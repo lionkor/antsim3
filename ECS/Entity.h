@@ -27,14 +27,14 @@ class Entity final
     friend class World;
 
 private:
-    class World&                            m_world;
+    class World& m_world;
     std::vector<std::shared_ptr<Component>> m_comps;
-    TransformComponent&                     m_transform;
-    bool                                    m_destroyed { false };
+    TransformComponent& m_transform;
+    bool m_destroyed { false };
 
     // FIXME: This could/should be WeakPtr
     std::vector<Entity*> m_children;
-    Entity*              m_parent { nullptr };
+    Entity* m_parent { nullptr };
 
     void on_cleanup(DrawSurface&);
 
@@ -49,7 +49,7 @@ public:
         // if the entity already has a parent then something is wack
         auto ptr = weak_ptr.lock();
         ASSERT(!ptr->m_parent);
-        ptr->m_parent                       = this;
+        ptr->m_parent = this;
         ptr->m_transform.m_parent_transform = &m_transform;
         m_children.push_back(ptr.get());
         return weak_ptr;
@@ -62,21 +62,22 @@ public:
 #endif // CPP_20
         bool has_component() const {
         const std::string name = DerivedComponentT::class_name_static();
-        auto              iter = std::find_if(m_comps.begin(), m_comps.end(), [&](const auto& comp) {
-            return comp->class_name() == name;
-        });
+        const auto has_this_name = [&](const auto& obj_ptr) { return obj_ptr->class_name == name; };
+        decltype(m_comps)::const_iterator iter = std::find_if(m_comps.begin(), m_comps.end(), has_this_name);
         return iter != m_comps.end();
     }
 
     template<class DerivedComponentT>
 #ifdef CPP_20
-    requires std::derived_from<DerivedComponentT, Component> 
+    requires std::derived_from<DerivedComponentT, Component>
 #endif // CPP_20
-    DerivedComponentT* fetch_component() {
+        DerivedComponentT* fetch_component() {
         const std::string name = DerivedComponentT::class_name_static();
-        auto              iter = std::find_if(m_comps.begin(), m_comps.end(), [&](const auto& comp) {
-            return comp->class_name() == name;
-        });
+        decltype(m_comps)::const_iterator iter;
+        iter = std::find_if(m_comps.begin(), m_comps.end(),
+            [&](const auto& comp) {
+                return comp->class_name() == name;
+            });
         if (iter != m_comps.end()) {
             return reinterpret_cast<DerivedComponentT*>((*iter).get());
         } else {
@@ -100,14 +101,14 @@ public:
         return dynamic_cast<DerivedComponentT&>(ref);
     }
 
-    void         on_update();
-    void         on_draw(DrawSurface&);
-    void         on_mouse_down(GameWindow&, const HID::MouseAction&);
-    void         on_mouse_up(GameWindow&, const HID::MouseAction&);
-    void         on_mouse_move(GameWindow&, const HID::MouseAction&);
-    void         on_key_down(GameWindow&, const HID::Key&);
-    void         on_key_up(GameWindow&, const HID::Key&);
-    bool         has_parent() const { return static_cast<bool>(m_parent); }
+    void on_update();
+    void on_draw(DrawSurface&);
+    void on_mouse_down(GameWindow&, const HID::MouseAction&);
+    void on_mouse_up(GameWindow&, const HID::MouseAction&);
+    void on_mouse_move(GameWindow&, const HID::MouseAction&);
+    void on_key_down(GameWindow&, const HID::Key&);
+    void on_key_up(GameWindow&, const HID::Key&);
+    bool has_parent() const { return static_cast<bool>(m_parent); }
     virtual void destroy() final;
     virtual bool is_marked_destroyed() const final { return m_destroyed; }
 
@@ -118,12 +119,12 @@ public:
         return m_world;
     }
 
-    std::vector<Entity*>&       children() { return m_children; }
+    std::vector<Entity*>& children() { return m_children; }
     const std::vector<Entity*>& children() const { return m_children; }
-    Entity*                     parent() { return m_parent; }
-    const Entity*               parent() const { return m_parent; }
-    TransformComponent&         transform() { return m_transform; }
-    const TransformComponent&   transform() const { return m_transform; }
+    Entity* parent() { return m_parent; }
+    const Entity* parent() const { return m_parent; }
+    TransformComponent& transform() { return m_transform; }
+    const TransformComponent& transform() const { return m_transform; }
 
     // Object interface
 public:

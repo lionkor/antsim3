@@ -36,7 +36,7 @@ private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
     std::vector<SharedPtr<Entity>> m_entities;
     std::vector<SharedPtr<Entity>> m_entities_to_add;
-    std::size_t                    m_update_interval_ms;
+    std::size_t m_update_interval_ms;
 
     class Application& m_application;
 
@@ -59,10 +59,10 @@ public:
         m_update_interval_ms = ms;
     }
 
-    Application&       application() { return m_application; }
+    Application& application() { return m_application; }
     const Application& application() const { return m_application; }
 
-    std::vector<SharedPtr<Entity>>&       entities() { return m_entities; }
+    std::vector<SharedPtr<Entity>>& entities() { return m_entities; }
     const std::vector<SharedPtr<Entity>>& entities() const { return m_entities; }
 
     /// When fn returns false, the loop breaks.

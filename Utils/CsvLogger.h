@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef CSVLOGGER_H
@@ -17,18 +17,18 @@
 class CsvLogger
 {
 private:
-    std::string             m_filename;
-    std::ofstream           m_os;
+    std::string m_filename;
+    std::ofstream m_os;
     std::queue<std::string> m_queue;
-    std::thread             m_thread;
-    bool                    m_kill_thread { false };
-    std::mutex              m_mutex;
+    std::thread m_thread;
+    bool m_kill_thread { false };
+    std::mutex m_mutex;
 
 public:
     CsvLogger(const std::string& filename);
     ~CsvLogger();
 
-    bool               ok() const { return m_os.is_open(); }
+    bool ok() const { return m_os.is_open(); }
     const std::string& filename() const { return m_filename; }
 
     template<typename T>
@@ -38,4 +38,4 @@ public:
     }
 };
 
-#endif // CSVLOGGER_H 
+#endif // CSVLOGGER_H

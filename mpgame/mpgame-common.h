@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef MPGAMECOMMON_H
@@ -25,8 +25,8 @@
 namespace boost_ip = boost::asio::ip;
 
 static inline boost_ip::udp::endpoint resolve_endpoint(boost::asio::io_service& ios, const std::string& host, std::uint16_t port) {
-    boost_ip::udp::resolver           resolver { ios };
-    boost_ip::udp::resolver::query    query { boost_ip::udp::v4(), host, std::to_string(port) };
+    boost_ip::udp::resolver resolver { ios };
+    boost_ip::udp::resolver::query query { boost_ip::udp::v4(), host, std::to_string(port) };
     boost_ip::udp::resolver::iterator iter = resolver.resolve(query);
     return *iter;
 }
@@ -52,8 +52,8 @@ struct UpdatePacket : public ISerializable {
     } type { Type::Update };
 
     std::string name;
-    double      x;
-    double      y;
+    double x;
+    double y;
 
     template<class Archive>
     void serialize(Archive& ar, const unsigned int) {

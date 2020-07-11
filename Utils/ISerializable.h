@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef ISERIALIZABLE_H
@@ -26,7 +26,7 @@ public:
 
 template<class T>
 [[nodiscard]] static inline std::string serialize_into_string(const T& object) {
-    std::ostringstream            oss;
+    std::ostringstream oss;
     boost::archive::text_oarchive archive(oss);
     archive << object;
     return oss.str();
@@ -34,7 +34,7 @@ template<class T>
 
 template<class T, size_t size>
 [[nodiscard]] static inline std::array<std::uint8_t, size> serialize_into_array(const T& object) {
-    std::ostringstream            oss;
+    std::ostringstream oss;
     boost::archive::text_oarchive archive(oss);
     archive << object;
     auto str = oss.str();
@@ -47,9 +47,9 @@ template<class T, size_t size>
 
 template<class T>
 [[nodiscard]] static inline T deserialize_from_string(const std::string& str) {
-    std::istringstream            iss(str);
+    std::istringstream iss(str);
     boost::archive::text_iarchive archive(iss);
-    T                             object;
+    T object;
     archive >> object;
     return object;
 }

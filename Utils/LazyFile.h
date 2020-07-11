@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef LAZYFILE_H
@@ -22,11 +22,11 @@ class LazyFile
     OBJNAME(LazyFile)
 
 private:
-    Result<bool>              m_validation_result;
+    Result<bool> m_validation_result;
     std::vector<std::uint8_t> m_data;
-    std::filesystem::path     m_path;
-    struct stat               m_stat;
-    bool                      m_loaded { false };
+    std::filesystem::path m_path;
+    struct stat m_stat;
+    bool m_loaded { false };
 
     void reset();
     void validate();
@@ -41,16 +41,16 @@ public:
 
     [[nodiscard]] std::vector<std::uint8_t>* load();
 
-    bool        is_valid() const { return m_validation_result.ok(); }
+    bool is_valid() const { return m_validation_result.ok(); }
     std::string validation_error_message() const { return m_validation_result.message(); }
     std::size_t size_on_disk() const { return m_stat.st_size; }
 
     [[nodiscard]] Result<bool> force_reload();
     [[nodiscard]] Result<bool> restat();
-    void                       force_unload();
+    void force_unload();
 
     const std::filesystem::path& path() const { return m_path; }
-    std::filesystem::path        filename() const { return m_path.filename(); }
+    std::filesystem::path filename() const { return m_path.filename(); }
 
     /// Whether the file has changed on disk. update the LazyFile with restat()
     bool has_changed_on_disk() const;

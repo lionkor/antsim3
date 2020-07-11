@@ -15,9 +15,9 @@ class GuiElement
 {
     OBJNAME(GuiElement)
 private:
-    sf::Text           m_text_obj;
+    sf::Text m_text_obj;
     class Application& m_app;
-    sf::Font           m_font;
+    sf::Font m_font;
 
 public:
     GuiElement(Application& app, const vecu& screen_pos, const vecd& scale, const std::string& text = "", sf::Color color = sf::Color::White);
@@ -28,7 +28,7 @@ public:
 
     void set_text(const std::string& text) { m_text_obj.setString(text); }
 
-    std::function<void()>             on_update { nullptr };
+    std::function<void()> on_update { nullptr };
     std::function<void(DrawSurface&)> on_draw { nullptr };
 };
 

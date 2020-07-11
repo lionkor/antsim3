@@ -15,7 +15,7 @@ template<class T>
 class Result
 {
     std::optional<T> m_value;
-    std::string      m_message;
+    std::string m_message;
 
 public:
     Result()
@@ -23,14 +23,14 @@ public:
         , m_message("internal: uninitialized result") { }
 
     Result& set_value(T value) {
-        m_value   = std::optional<T>(std::forward<T>(value));
+        m_value = std::optional<T>(std::forward<T>(value));
         m_message = "Success";
         return *this;
     }
 
     template<typename... Args>
     Result& set_error(const std::string& format_string, Args&&... args) {
-        m_value   = std::nullopt;
+        m_value = std::nullopt;
         m_message = fmt::format(format_string, std::forward<Args>(args)...);
         return *this;
     }
@@ -38,8 +38,8 @@ public:
     auto value() { return m_value.value(); }
     auto value_or(T _else) { return m_value.value_or(_else); }
 
-    bool        ok() const { return m_value.has_value(); }
-    bool        error() const { return !ok(); }
+    bool ok() const { return m_value.has_value(); }
+    bool error() const { return !ok(); }
     std::string message() const { return m_message; }
 
     operator bool() const { return ok(); }

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #define TRACE 0
@@ -23,13 +23,13 @@ class GridComponent : public Component
 {
     OBJNAME(GridComponent)
 private:
-    std::vector<Cell>   m_cells;
+    std::vector<Cell> m_cells;
     const vec<unsigned> m_size;
-    SimpleDrawable      m_drawable;
-    std::thread         m_thread;
-    std::atomic_bool    m_do_update { false };
-    std::atomic_bool    m_kill_thread { false };
-    std::vector<Cell>   m_old_cells;
+    SimpleDrawable m_drawable;
+    std::thread m_thread;
+    std::atomic_bool m_do_update { false };
+    std::atomic_bool m_kill_thread { false };
+    std::vector<Cell> m_old_cells;
 
 
 public:
@@ -65,11 +65,11 @@ public:
                     //continue;
                 }
                 std::memcpy(m_old_cells.data(), m_cells.data(), sizeof(Cell) * m_cells.size());
-                m_do_update   = false;
+                m_do_update = false;
                 size_t alives = 0;
                 for (std::size_t x = 0; x < m_size.x; ++x) {
                     for (std::size_t y = 0; y < m_size.y; ++y) {
-                        int  nb     = 0;
+                        int nb = 0;
                         auto gccell = at_old(x, y);
                         if (gccell.alive)
                             nb -= 1;
@@ -151,7 +151,7 @@ int main(int, char**) {
 
     GameWindow& window = app.window();
     static_cast<void>(window);
-    World& world = app.world(); 
+    World& world = app.world();
     world.set_update_interval(200);
 
     auto grid = world.add_entity();

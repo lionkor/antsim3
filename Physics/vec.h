@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef VEC_H
@@ -18,7 +18,7 @@ struct vec {
     T x;
     T y;
 
-    vec()           = default;
+    vec() = default;
     vec(const vec&) = default;
     vec& operator=(const vec&) = default;
 
@@ -88,7 +88,7 @@ struct vec {
     void inline normalize() noexcept {
         *this = *this / length();
     }
-    
+
     inline vec normalized() const noexcept {
         vec v = *this;
         v.normalize();
@@ -99,7 +99,6 @@ struct vec {
         return (a.x - b.x) * (a.x - b.x)
                + (a.y - b.y) * (a.y - b.y);
     }
-
 };
 
 template<class T>

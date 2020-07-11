@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef CLIENTCOMPONENT_H
@@ -15,7 +15,7 @@
 
 struct PlayerInfo {
     std::string name;
-    vecd        position;
+    vecd position;
 
     bool operator==(const PlayerInfo& player) {
         return name == player.name;
@@ -27,11 +27,11 @@ class ClientComponent : public Component
     OBJNAME(ClientComponent)
 private:
     boost::asio::io_service m_io_service;
-    UDPClient               m_backend;
-    std::string             m_name;
-    double                  m_speed { 0.7 };
-    bool                    m_update_to_server { true };
-    sf::Font                m_font;
+    UDPClient m_backend;
+    std::string m_name;
+    double m_speed { 0.7 };
+    bool m_update_to_server { true };
+    sf::Font m_font;
 
     void update_other_players_from_server();
     void handle_new_player_connected(const UpdatePacket& packet);
@@ -41,12 +41,12 @@ public:
     ClientComponent(Entity& e, const std::string& address, std::uint16_t port, const std::string& name);
     ~ClientComponent();
 
-    void      send_packet(const UpdatePacket& packet);
+    void send_packet(const UpdatePacket& packet);
     sf::Font& font() { return m_font; }
 
     const std::string& name() const { return m_name; }
-    virtual void       on_update() override;
-    virtual void       on_draw(DrawSurface& surface) override;
+    virtual void on_update() override;
+    virtual void on_draw(DrawSurface& surface) override;
 
     std::vector<Entity*>::iterator find_player_with_name(const std::string& name);
 };

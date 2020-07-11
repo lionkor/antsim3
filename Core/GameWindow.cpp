@@ -21,7 +21,7 @@ GameWindow::GameWindow(Application& app, const std::string& title, sf::Vector2u 
 
 void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {
     const sf::Vector2f beforeCoord { mapPixelToCoords(pixel) };
-    sf::View           view { getView() };
+    sf::View view { getView() };
     view.zoom(zoom);
     setView(view);
     const sf::Vector2f afterCoord { mapPixelToCoords(pixel) };
@@ -56,7 +56,7 @@ void GameWindow::handle_events() {
                 view.move(-sf::Vector2f(diff));
                 setView(view);
             }
-            m_mouse_pos             = sf::Mouse::getPosition(*this);
+            m_mouse_pos = sf::Mouse::getPosition(*this);
             HID::MouseAction action = HID::from_sf_mouse_action(m_event);
             m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
                 entity_ptr->on_mouse_move(*this, action);
@@ -73,7 +73,7 @@ void GameWindow::handle_events() {
         }
         case sf::Event::Resized: {
             sf::FloatRect visibleArea(0.f, 0.f, m_event.size.width, m_event.size.height);
-            auto          view = getView();
+            auto view = getView();
             view.reset(visibleArea);
             setView(view);
             break;
@@ -138,8 +138,8 @@ void GameWindow::handle_key_release() {
 
 void GameWindow::internal_draw() {
     auto time = m_fps_clock.restart();
-    auto val  = 1.0 / time.asSeconds();
-    auto fps  = 1.0 / time.asSeconds();
+    auto val = 1.0 / time.asSeconds();
+    auto fps = 1.0 / time.asSeconds();
     if (val < 140) {
         m_fps_logger.log_fps(fps);
     }

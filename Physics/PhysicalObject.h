@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef PHYSICAL_OBJNAME_H
@@ -25,13 +25,13 @@ private:
     bool m_is_destroyed { false };
 
 protected:
-    vecd  m_pos;
-    vecd  m_size;
-    std::size_t  m_index;
-    bool         m_has_index { false };
+    vecd m_pos;
+    vecd m_size;
+    std::size_t m_index;
+    bool m_has_index { false };
     mutable bool m_has_changed { true };
-    World&       m_world;
-    
+    World& m_world;
+
     /// An update is 1 tick in the engine.
     virtual void update();
     /// Draws this object on the given surface. Usually called by World.
@@ -40,7 +40,7 @@ protected:
 public:
     /// Construct a new object at that position in the world.
     PhysicalObject(const vecd pos, const vecd size, World& world);
-    
+
     virtual ~PhysicalObject() {
     }
 
@@ -82,4 +82,3 @@ public:
 };
 
 #endif // PHYSICAL_OBJNAME_H
-

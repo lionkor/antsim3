@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef COLLIDER_H
@@ -25,14 +25,14 @@ public:
 
 private:
     std::vector<vecd> m_points { vecd { 0.0 }, vecd { 1.0 }, vecd { 2.0 } }; // collider vertices in order
-    double                   m_radius { 20 };
-    Shape                    m_shape;
+    double m_radius { 20 };
+    Shape m_shape;
 
 public:
     Collider(const Collider::Shape& shape = Shape::Rectangle);
 
-//    OkResult set_points(const std::vector<vecd>& points);
-//    OkResult set_radius(double radius);
+    //    OkResult set_points(const std::vector<vecd>& points);
+    //    OkResult set_radius(double radius);
 
     // Object interface
 public:

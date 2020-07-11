@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "Engine.h"
@@ -38,7 +38,7 @@ struct Cell {
         return s_color_map.at(type);
     }
 
-    Type   type;
+    Type type;
     double density;
 
     Cell(Type _type = Type::Air, double _density = -1)
@@ -55,8 +55,8 @@ class SandboxComponent : public Component
 {
     OBJNAME(SandboxComponent)
 private:
-    vec<size_t>       m_size;
-    SimpleDrawable    m_drawable;
+    vec<size_t> m_size;
+    SimpleDrawable m_drawable;
     std::vector<Cell> m_old_cells;
     std::vector<Cell> m_new_cells;
     std::vector<bool> m_updated_cells;
@@ -175,7 +175,7 @@ public:
         for (std::size_t x = 0; x < m_size.x; ++x) {
             for (std::size_t y = 0; y < m_size.y; ++y) {
                 // use old_cell for lookups, new_cell for changes
-                Cell&       new_cell = at_new(x, y);
+                Cell& new_cell = at_new(x, y);
                 const Cell& old_cell = at_old(x, y);
 
                 if (was_updated(x, y))
@@ -183,8 +183,8 @@ public:
 
                 if (in_bounds(x, y - 1)) {
                     auto density_to_match = old_cell.density;
-                    auto prev             = vecu(x, y);
-                    auto pos              = vecu(x, y - 1);
+                    auto prev = vecu(x, y);
+                    auto pos = vecu(x, y - 1);
                     while (in_bounds(pos.x, pos.y) && at_old(pos.x, pos.y).density > density_to_match) {
                         std::swap(at_new(pos.x, pos.y), at_new(prev.x, prev.y));
                         mark_updated(pos.x, pos.y);
@@ -262,8 +262,8 @@ public:
 
 int main() {
     Application app("Sandbox", { 1280, 720 });
-    auto&       window = app.window();
-    auto&       world  = app.world();
+    auto& window = app.window();
+    auto& world = app.world();
 
     window.set_framerate_limit(60);
 
@@ -272,7 +272,7 @@ int main() {
     auto sandbox = world.add_entity().lock();
     sandbox->add_component<SandboxComponent>(200, 150);
 
-    auto      fps_counter = app.add_gui_element(vecu(10, 10), vecd(0.4, 0.4), "... FPS").lock();
+    auto fps_counter = app.add_gui_element(vecu(10, 10), vecd(0.4, 0.4), "... FPS").lock();
     sf::Clock clock;
     fps_counter->on_update = [&]() {
         auto time = clock.restart().asSeconds();

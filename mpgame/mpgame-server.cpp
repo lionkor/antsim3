@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include <vector>
@@ -32,16 +32,15 @@ public:
 class Server
 {
 private:
-    std::map<std::string, vec<double>>        m_players;
+    std::map<std::string, vec<double>> m_players;
     std::map<std::string, struct sockaddr_in> m_clients;
-    bool                                      m_running { true };
-    bool                                      m_ok { false };
-    int                                       m_socket_fd;
+    bool m_running { true };
+    bool m_ok { false };
+    int m_socket_fd;
 
 public:
-    
     int socket_fd() { return m_socket_fd; }
-    
+
     Server(std::uint16_t port) {
         m_socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
         if (m_socket_fd == -1) {
@@ -50,9 +49,9 @@ public:
         }
 
         struct sockaddr_in addr;
-        addr.sin_family      = AF_INET; // IPv4
+        addr.sin_family = AF_INET; // IPv4
         addr.sin_addr.s_addr = INADDR_ANY;
-        addr.sin_port        = htons(port);
+        addr.sin_port = htons(port);
 
         int ret = bind(m_socket_fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr));
 
@@ -68,7 +67,7 @@ public:
     ~Server() {
         close(m_socket_fd);
     }
-    
+
     int run() {
         if (!m_ok) {
             report_error("not initialized, see errors above");
@@ -91,8 +90,8 @@ public:
             std::string data;
             data.resize(PACKET_SIZE, ' '); // spaces as padding
             struct sockaddr_in client_addr;
-            socklen_t          addr_len;
-            int                ret = recvfrom(m_socket_fd, data.data(), PACKET_SIZE, 0, reinterpret_cast<struct sockaddr*>(&client_addr), &addr_len);
+            socklen_t addr_len;
+            int ret = recvfrom(m_socket_fd, data.data(), PACKET_SIZE, 0, reinterpret_cast<struct sockaddr*>(&client_addr), &addr_len);
             static_cast<void>(ret);
             if (data.empty()) {
                 report_error("empty packet received!");
@@ -107,8 +106,8 @@ public:
             } else {
                 // update player
                 vec<double>& pos = m_players.at(packet.name);
-                pos.x            = packet.x;
-                pos.y            = packet.y;
+                pos.x = packet.x;
+                pos.y = packet.y;
             }
 
             m_clients.insert_or_assign(packet.name, client_addr);

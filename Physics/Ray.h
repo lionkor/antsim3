@@ -42,7 +42,7 @@ public:
 class Ray : public Object
 {
     OBJNAME(Ray)
-    vecd   m_pos;
+    vecd m_pos;
     RayHit m_hit;
 
 public:

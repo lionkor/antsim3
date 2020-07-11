@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "ResourceManager.h"
@@ -13,7 +13,7 @@ ResourceManager::ResourceManager(const std::filesystem::path& res_file_path)
 
 void ResourceManager::reload_resfile() {
     static const std::string error_fmt = "A fatal occured trying to load/reload the res file: {}";
-    auto                     result    = m_res_file.force_reload();
+    auto result = m_res_file.force_reload();
     if (result.error()) { // FIXME: Handle all these asserts properly?
         report_error(error_fmt, result.message());
         ASSERT_NOT_REACHABLE();

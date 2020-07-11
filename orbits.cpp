@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 /**
@@ -13,7 +13,7 @@ static inline std::atomic_size_t s_id_counter { 0 };
 
 static constexpr double G = 15;
 
-static constexpr size_t s_pieces     = 80;
+static constexpr size_t s_pieces = 80;
 static constexpr double s_size_limit = 3;
 
 struct Body {
@@ -26,11 +26,11 @@ struct Body {
         }
     }
 
-    vecd      pos { 0, 0 };
-    vecd      vel { 0, 0 };
-    double    mass { 0 };
-    size_t    id;
-    bool      dead { false };
+    vecd pos { 0, 0 };
+    vecd vel { 0, 0 };
+    double mass { 0 };
+    size_t id;
+    bool dead { false };
     sf::Color color;
 };
 
@@ -38,9 +38,9 @@ class NBodySystemComponent : public Component
 {
     OBJNAME(NBodySystemComponent)
 private:
-    std::vector<Body>    m_bodies;
-    std::vector<Body>    m_bodies_old;
-    SimpleDrawable       m_drawable;
+    std::vector<Body> m_bodies;
+    std::vector<Body> m_bodies_old;
+    SimpleDrawable m_drawable;
     Managed<sf::Texture> m_planet_texture;
 
 public:
@@ -61,7 +61,7 @@ public:
     }
 
     void load_texture() {
-        m_planet_texture                = Managed<sf::Texture>(new sf::Texture);
+        m_planet_texture = Managed<sf::Texture>(new sf::Texture);
         std::vector<std::uint8_t>& data = *parent().world().application().resource_manager().get_resource_by_name("planet.png").value().get().load();
         m_planet_texture->loadFromMemory(data.data(), data.size());
         m_drawable.set_texture(m_planet_texture.get());
@@ -73,13 +73,13 @@ public:
         m_bodies_old = m_bodies;
         for (size_t i = 0; i < m_bodies_old.size(); ++i) {
             const Body& body_1_old = m_bodies_old[i];
-            Body&       body_1     = m_bodies[i];
+            Body& body_1 = m_bodies[i];
             if (body_1.dead)
                 continue;
             auto s1 = std::sqrt(body_1.mass * 100.0);
             for (size_t k = 0; k < m_bodies_old.size(); ++k) {
                 const auto& body_2_old = m_bodies_old[k];
-                auto&       body_2     = m_bodies[k];
+                auto& body_2 = m_bodies[k];
                 if (body_1_old.id == body_2.id)
                     continue;
                 if (body_2.dead)
@@ -94,12 +94,12 @@ public:
                         //report("collision!");
 
                         //if (body_1.color != body_2_old.color) {
-                            body_1.color.r = lerp<unsigned char>(body_1.color.r, (body_1.color.r + body_2_old.color.r) / 2.0, body_2_old.mass / body_1.mass);
-                            body_1.color.g = lerp<unsigned char>(body_1.color.g, (body_1.color.g + body_2_old.color.g) / 2.0, body_2_old.mass / body_1.mass);
-                            body_1.color.b = lerp<unsigned char>(body_1.color.b, (body_1.color.b + body_2_old.color.b) / 2.0, body_2_old.mass / body_1.mass);
+                        body_1.color.r = lerp<unsigned char>(body_1.color.r, (body_1.color.r + body_2_old.color.r) / 2.0, body_2_old.mass / body_1.mass);
+                        body_1.color.g = lerp<unsigned char>(body_1.color.g, (body_1.color.g + body_2_old.color.g) / 2.0, body_2_old.mass / body_1.mass);
+                        body_1.color.b = lerp<unsigned char>(body_1.color.b, (body_1.color.b + body_2_old.color.b) / 2.0, body_2_old.mass / body_1.mass);
                         //}
                         body_2.dead = true;
-                        auto c      = body_2_old.mass / double(s_pieces) * 0.25;
+                        auto c = body_2_old.mass / double(s_pieces) * 0.25;
                         if (c < s_size_limit) {
                             body_1.mass += body_2_old.mass;
                         } else {
@@ -114,7 +114,7 @@ public:
                 }
             }
             body_1.pos += body_1.vel;
-            auto offset                      = s1;
+            auto offset = s1;
             m_drawable[i * 4 + 0].position.x = body_1.pos.x - offset;
             m_drawable[i * 4 + 0].position.y = body_1.pos.y - offset;
             m_drawable[i * 4 + 1].position.x = body_1.pos.x + offset;
@@ -123,15 +123,15 @@ public:
             m_drawable[i * 4 + 2].position.y = body_1.pos.y + offset;
             m_drawable[i * 4 + 3].position.x = body_1.pos.x - offset;
             m_drawable[i * 4 + 3].position.y = body_1.pos.y + offset;
-            m_drawable[i * 4 + 0].color      = body_1.color;
-            m_drawable[i * 4 + 1].color      = body_1.color;
-            m_drawable[i * 4 + 2].color      = body_1.color;
-            m_drawable[i * 4 + 3].color      = body_1.color;
-            auto tex_size                    = m_planet_texture->getSize();
-            m_drawable[i * 4 + 0].texCoords  = SimpleDrawable::Vector2f(0, 0);
-            m_drawable[i * 4 + 1].texCoords  = SimpleDrawable::Vector2f(tex_size.x, 0);
-            m_drawable[i * 4 + 2].texCoords  = SimpleDrawable::Vector2f(tex_size.x, tex_size.y);
-            m_drawable[i * 4 + 3].texCoords  = SimpleDrawable::Vector2f(0, tex_size.y);
+            m_drawable[i * 4 + 0].color = body_1.color;
+            m_drawable[i * 4 + 1].color = body_1.color;
+            m_drawable[i * 4 + 2].color = body_1.color;
+            m_drawable[i * 4 + 3].color = body_1.color;
+            auto tex_size = m_planet_texture->getSize();
+            m_drawable[i * 4 + 0].texCoords = SimpleDrawable::Vector2f(0, 0);
+            m_drawable[i * 4 + 1].texCoords = SimpleDrawable::Vector2f(tex_size.x, 0);
+            m_drawable[i * 4 + 2].texCoords = SimpleDrawable::Vector2f(tex_size.x, tex_size.y);
+            m_drawable[i * 4 + 3].texCoords = SimpleDrawable::Vector2f(0, tex_size.y);
             m_drawable.set_changed();
         }
 
@@ -140,13 +140,13 @@ public:
 
         for (auto& old : m_bodies) {
             if (old.dead) {
-                auto c    = old.mass / double(s_pieces) * 0.25;
+                auto c = old.mass / double(s_pieces) * 0.25;
                 auto size = std::sqrt(old.mass * 100);
                 if (c < s_size_limit)
                     continue;
                 auto mag = old.vel.length();
                 for (size_t i = 0; i < s_pieces; ++i) {
-                    auto new_pos  = old.pos + random_vector(-size, size);
+                    auto new_pos = old.pos + random_vector(-size, size);
                     auto new_body = Body(new_pos, (new_pos - old.pos).normalized() * (mag * Random::random_real<double>(0.01, 0.3)), c, old.color);
                     new_body.pos += new_body.vel;
                     bodies_to_add.push_back(std::move(new_body));
@@ -164,7 +164,7 @@ public:
         }
         bodies_to_add.clear();
     }
-    
+
     size_t body_count() const { return m_bodies.size(); }
 
     virtual void on_draw(DrawSurface& surface) override {
@@ -174,15 +174,15 @@ public:
 
 static void init(Application& app) {
     GameWindow& window = app.window();
-    World&      world  = app.world();
+    World& world = app.world();
 
     window.set_framerate_limit(400);
 
-    auto  solar_system = world.add_entity().lock();
-    auto& comp         = solar_system->add_component<NBodySystemComponent>(900);
+    auto solar_system = world.add_entity().lock();
+    auto& comp = solar_system->add_component<NBodySystemComponent>(900);
     comp.load_texture();
-    
-    auto count_label = app.add_gui_element(vecu(10,10), vecd(.4, .4), "PLACEHOLDER").lock();
+
+    auto count_label = app.add_gui_element(vecu(10, 10), vecd(.4, .4), "PLACEHOLDER").lock();
     count_label->on_update = [&]() {
         count_label->set_text(fmt::format("bodies: {}", comp.body_count()));
     };

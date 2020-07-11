@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "LazyFile.h"
@@ -40,8 +40,8 @@ void LazyFile::validate() {
 
 Result<bool> LazyFile::restat() {
     Result<bool> result;
-    struct stat  new_stat;
-    auto         ret = stat(m_path.c_str(), &new_stat);
+    struct stat new_stat;
+    auto ret = stat(m_path.c_str(), &new_stat);
     if (ret != 0) {
         result.set_error("stat \"{}\" failed with error: {}", m_path, std::strerror(errno));
         report_error(result.message());
@@ -63,7 +63,7 @@ LazyFile::LazyFile(const std::string& path)
 Result<bool> LazyFile::force_reload() {
     reset();
     Result<bool> result;
-    auto         res = restat();
+    auto res = restat();
     if (!res) {
         result.set_error("force_reload {} failed: {}", m_path, res.message());
         report(result.message());
@@ -78,7 +78,7 @@ Result<bool> LazyFile::force_reload() {
     }
 
     // reload
-    m_loaded         = false;
+    m_loaded = false;
     auto load_result = load();
     if (!load_result) {
         result.set_error("force_reload {} failed.", m_path);
@@ -154,7 +154,7 @@ std::vector<uint8_t>* LazyFile::load() {
 
 bool LazyFile::has_changed_on_disk() const {
     struct stat new_stat;
-    auto        ret = stat(m_path.c_str(), &new_stat);
+    auto ret = stat(m_path.c_str(), &new_stat);
     if (ret != 0) {
         return true;
     }

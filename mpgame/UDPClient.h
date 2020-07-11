@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef UDPCLIENT_H
@@ -12,8 +12,8 @@ class UDPClient
 {
 private:
     boost::asio::io_service& m_io_service;
-    boost_ip::udp::socket    m_socket;
-    boost_ip::udp::endpoint  m_endpoint;
+    boost_ip::udp::socket m_socket;
+    boost_ip::udp::endpoint m_endpoint;
 
 public:
     UDPClient(boost::asio::io_service& io_service, const std::string& host, std::uint16_t port);
@@ -32,10 +32,10 @@ class Client
 {
 private:
     boost::asio::io_service m_io_service;
-    UDPClient               m_backend;
-    bool                    m_is_running { true };
-    std::string             m_name;
-    vec<double>              m_position;
+    UDPClient m_backend;
+    bool m_is_running { true };
+    std::string m_name;
+    vec<double> m_position;
 
 public:
     void send_packet(const UpdatePacket& packet) {

@@ -47,14 +47,14 @@ class GameWindow
     friend class Application;
 
 protected:
-    sf::Event          m_event;
-    sf::Vector2i       m_mouse_pos;
-    bool               m_mmb_pressed { false };
-    DrawSurface        m_surface;
-    FpsLogger          m_fps_logger;
-    sf::Clock          m_fps_clock;
-    std::string        m_title;
-    sf::Color          m_clear_color;
+    sf::Event m_event;
+    sf::Vector2i m_mouse_pos;
+    bool m_mmb_pressed { false };
+    DrawSurface m_surface;
+    FpsLogger m_fps_logger;
+    sf::Clock m_fps_clock;
+    std::string m_title;
+    sf::Color m_clear_color;
     class Application& m_application;
 
     // FIXME: We should check somewhere if this is not nullptr anymore

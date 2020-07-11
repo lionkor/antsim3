@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "ClientComponent.h"
@@ -12,8 +12,8 @@ ClientComponent::ClientComponent(Entity& e, const std::string& address, uint16_t
     , m_backend(m_io_service, address, port)
     , m_name(name) {
 
-    auto& resman    = parent().world().application().resource_manager();
-    auto  res_maybe = resman.get_resource_by_name("mono.ttf");
+    auto& resman = parent().world().application().resource_manager();
+    auto res_maybe = resman.get_resource_by_name("mono.ttf");
     if (res_maybe.ok()) {
         auto* data = res_maybe.value().get().load();
         if (data) {
@@ -30,8 +30,8 @@ ClientComponent::ClientComponent(Entity& e, const std::string& address, uint16_t
 
     // add playable player
     { // shared_ptr lock scope
-        auto  playable = parent().add_child().lock();
-        auto& comp     = playable->add_component<PlayerComponent>(name);
+        auto playable = parent().add_child().lock();
+        auto& comp = playable->add_component<PlayerComponent>(name);
         comp.set_is_player_controlled(true);
     }
 }
@@ -55,7 +55,7 @@ std::vector<Entity*>::iterator ClientComponent::find_player_with_name(const std:
 
 void ClientComponent::update_other_players_from_server() {
     // whatever
-    auto                      raw_packets = m_backend.receive();
+    auto raw_packets = m_backend.receive();
     std::vector<UpdatePacket> packets;
     packets.reserve(raw_packets.size());
     for (auto& str : raw_packets) {
@@ -86,7 +86,7 @@ void ClientComponent::update_other_players_from_server() {
             }
             if (player_iter != parent().children().end()) {
                 (*player_iter)->transform().set_position(vecd(packet.x, packet.y));
-                
+
             } else {
                 report("got a new connection!");
                 auto player = parent().add_child().lock();
@@ -100,7 +100,7 @@ void ClientComponent::update_other_players_from_server() {
 void ClientComponent::send_packet(const UpdatePacket& packet) {
     auto array = serialize_into_array<UpdatePacket, PACKET_SIZE>(packet);
     m_backend.send(array);
-   // report("sent _{}_", std::string(array.begin(), array.end()));
+    // report("sent _{}_", std::string(array.begin(), array.end()));
 }
 
 void ClientComponent::on_update() {

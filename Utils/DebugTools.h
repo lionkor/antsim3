@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef DEBUGTOOLS_H
@@ -20,25 +20,25 @@
 
 static const char* const ANSI_RESET = "\u001b[0m";
 
-static const char* const ANSI_BLACK   = "\u001b[30m";
-static const char* const ANSI_RED     = "\u001b[31m";
-static const char* const ANSI_GREEN   = "\u001b[32m";
-static const char* const ANSI_YELLOW  = "\u001b[33m";
-static const char* const ANSI_BLUE    = "\u001b[34m";
+static const char* const ANSI_BLACK = "\u001b[30m";
+static const char* const ANSI_RED = "\u001b[31m";
+static const char* const ANSI_GREEN = "\u001b[32m";
+static const char* const ANSI_YELLOW = "\u001b[33m";
+static const char* const ANSI_BLUE = "\u001b[34m";
 static const char* const ANSI_MAGENTA = "\u001b[35m";
-static const char* const ANSI_CYAN    = "\u001b[36m";
-static const char* const ANSI_WHITE   = "\u001b[37m";
+static const char* const ANSI_CYAN = "\u001b[36m";
+static const char* const ANSI_WHITE = "\u001b[37m";
 
-static const char* const ANSI_BLACK_BOLD   = "\u001b[30;1m";
-static const char* const ANSI_RED_BOLD     = "\u001b[31;1m";
-static const char* const ANSI_GREEN_BOLD   = "\u001b[32;1m";
-static const char* const ANSI_YELLOW_BOLD  = "\u001b[33;1m";
-static const char* const ANSI_BLUE_BOLD    = "\u001b[34;1m";
+static const char* const ANSI_BLACK_BOLD = "\u001b[30;1m";
+static const char* const ANSI_RED_BOLD = "\u001b[31;1m";
+static const char* const ANSI_GREEN_BOLD = "\u001b[32;1m";
+static const char* const ANSI_YELLOW_BOLD = "\u001b[33;1m";
+static const char* const ANSI_BLUE_BOLD = "\u001b[34;1m";
 static const char* const ANSI_MAGENTA_BOLD = "\u001b[35;1m";
-static const char* const ANSI_CYAN_BOLD    = "\u001b[36;1m";
-static const char* const ANSI_WHITE_BOLD   = "\u001b[37;1m";
+static const char* const ANSI_CYAN_BOLD = "\u001b[36;1m";
+static const char* const ANSI_WHITE_BOLD = "\u001b[37;1m";
 
-static const char* const ANSI_BOLD      = "\u001b[1m";
+static const char* const ANSI_BOLD = "\u001b[1m";
 static const char* const ANSI_UNDERLINE = "\u001b[4m";
 
 #include <string>

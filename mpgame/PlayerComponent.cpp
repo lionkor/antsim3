@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "PlayerComponent.h"
@@ -14,9 +14,9 @@ PlayerComponent::PlayerComponent(Entity& e, const std::string& name)
     ASSERT(parent().has_parent());
 
     // init drawable
-    auto         transform_pos = parent().transform().position();
-    sf::Vector2f pos           = sf::Vector2f(transform_pos.x, transform_pos.y);
-    sf::Color    random_color(Random::random(64, 255), Random::random(64, 255), Random::random(64, 255));
+    auto transform_pos = parent().transform().position();
+    sf::Vector2f pos = sf::Vector2f(transform_pos.x, transform_pos.y);
+    sf::Color random_color(Random::random(64, 255), Random::random(64, 255), Random::random(64, 255));
     m_drawable[0] = sf::Vertex(pos, random_color);
     m_drawable[1] = sf::Vertex(sf::Vector2f(pos.x + m_size.x, pos.y), random_color);
     m_drawable[2] = sf::Vertex(pos + sf::Vector2f(m_size.x, m_size.y), random_color);
@@ -84,7 +84,7 @@ void PlayerComponent::on_update() {
         m_is_initialized = true;
         ASSERT(parent().parent()->has_component<ClientComponent>());
         auto* client_comp = parent().parent()->fetch_component<ClientComponent>();
-        m_text            = sf::Text(m_name, client_comp->font(), 10);
+        m_text = sf::Text(m_name, client_comp->font(), 10);
         m_update_clock.restart();
     }
     if (m_is_player_controlled) {
@@ -106,9 +106,9 @@ void PlayerComponent::on_update() {
         }
         parent().transform().move_by(vel);
     }
-    
+
     if (m_update_clock.getElapsedTime().asMilliseconds() > 40) {
-        auto  pos  = parent().transform().position();
+        auto pos = parent().transform().position();
         auto* comp = parent().parent()->fetch_component<ClientComponent>();
         comp->send_packet(UpdatePacket { m_name, pos.x, pos.y });
         m_update_clock.restart();
@@ -116,8 +116,8 @@ void PlayerComponent::on_update() {
 
     auto transform_pos = parent().transform().position();
     if (transform_pos != m_last_position) {
-        m_last_position        = transform_pos;
-        sf::Vector2f pos       = sf::Vector2f(transform_pos.x, transform_pos.y);
+        m_last_position = transform_pos;
+        sf::Vector2f pos = sf::Vector2f(transform_pos.x, transform_pos.y);
         m_drawable[0].position = pos;
         m_drawable[1].position = sf::Vector2f(pos.x + m_size.x, pos.y);
         m_drawable[2].position = pos + sf::Vector2f(m_size.x, m_size.y);

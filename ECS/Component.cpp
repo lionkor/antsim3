@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "Component.h"
@@ -44,17 +44,17 @@ void SpriteComponent::on_update() {
     if (!m_initialized && !m_texture_name.empty()) {
         report("loading texture {}", m_texture_name);
         auto& resman = parent().world().application().resource_manager();
-        auto  result = resman.get_resource_by_name(m_texture_name);
+        auto result = resman.get_resource_by_name(m_texture_name);
         if (result.error()) {
             report_error("error getting texture \"{}\": {}", m_texture_name, result.message());
         } else {
             LazyFile& file_ref = result.value().get();
-            auto      result   = file_ref.load();
+            auto result = file_ref.load();
             if (!result) {
                 report_error("error loading file.");
             } else {
                 auto& data = *result;
-                bool  rt   = m_texture.loadFromMemory(data.data(), data.size());
+                bool rt = m_texture.loadFromMemory(data.data(), data.size());
                 if (!rt) {
                     report_error("texture not loaded properly");
                 } else {
@@ -74,7 +74,7 @@ void SpriteComponent::on_update() {
 void SpriteComponent::on_draw(DrawSurface& surface) {
     if (!m_initialized) {
         const vecd& pos = parent().transform().position();
-        Rectangle          rect(pos + m_sprite_pos, m_sprite_size);
+        Rectangle rect(pos + m_sprite_pos, m_sprite_size);
         if (!m_texture_name.empty()) {
             SimpleDrawable::Vector2f tex_size = SimpleDrawable::Vector2f(m_texture.getSize().x, m_texture.getSize().y);
 
@@ -95,7 +95,7 @@ void SpriteComponent::on_draw(DrawSurface& surface) {
     }
     if (m_drawable.has_changed()) {
         const vecd& pos = parent().transform().position();
-        Rectangle          rect(pos + m_sprite_pos, m_sprite_size);
+        Rectangle rect(pos + m_sprite_pos, m_sprite_size);
         if (!m_texture_name.empty()) {
             SimpleDrawable::Vector2f tex_size = SimpleDrawable::Vector2f(m_texture.getSize().x, m_texture.getSize().y);
 

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef OBJNAME_H
@@ -56,6 +56,16 @@ public:
         return *this;
     }
 
+    template<const char* name>
+    static inline bool has_name(const Object& obj) {
+        return obj.class_name() == name;
+    }
+
+    template<const char* name, class PointerT>
+    static inline bool has_name(const PointerT& obj) {
+        return obj->class_name() == name;
+    }
+
     virtual ~Object() { }
 
     virtual const UUID& uuid() const final { return m_uuid; }
@@ -65,7 +75,7 @@ public:
 
     // to be defined by the inheritor
     // use the OBJNAME(...) macro for this!
-    virtual std::string       class_name() const = 0;
+    virtual std::string class_name() const = 0;
     virtual std::stringstream to_stream() const {
         std::stringstream ss;
 #if SHOW_UUID
@@ -79,6 +89,14 @@ public:
 
 inline std::ostream& operator<<(std::ostream& os, const Object& obj) {
     return os << "[" << (&obj)->class_name() << "]:{" << obj.to_stream().str() << "}";
+}
+
+static inline bool compare_by_name(const Object& a, const Object& b) {
+    return a.class_name() == b.class_name();
+}
+
+static inline bool compare_by_name(const Object& a, const std::string& name) {
+    return a.class_name() == name;
 }
 
 #define OBJNAME(classname)                            \

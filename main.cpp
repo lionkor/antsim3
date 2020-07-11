@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 /**
@@ -40,11 +40,11 @@ public:
 int main(int, char**) {
     Application app("AntSim3", { 1280, 720 });
 
-    auto& world  = app.world();
+    auto& world = app.world();
     auto& window = app.window();
     static_cast<void>(window);
 
-    auto entity        = world.add_entity({ 100, 200 });
+    auto entity = world.add_entity({ 100, 200 });
     auto shared_entity = entity.lock();
     shared_entity->add_component<SpriteComponent>(vecd { 10, 10 }, vecd { 100, 100 }, Color::Blue, "sprite1.png");
     shared_entity->add_component<SpriteComponent>(vecd { 50, 50 }, vecd { 50, 50 }, Color::Blue, "sprite1.png");

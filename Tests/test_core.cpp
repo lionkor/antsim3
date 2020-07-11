@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "doctest.h"
@@ -18,7 +18,7 @@ TEST_CASE("Application interface") {
 
 TEST_CASE("GameWindow interface") {
     Application app("test", { 100, 50 });
-    auto&       window = app.window();
+    auto& window = app.window();
     CHECK(window.width<int>() == 100);
     CHECK(window.height<int>() == 50);
     CHECK(window.title() == "test");
@@ -31,7 +31,7 @@ TEST_CASE("GameWindow interface") {
 TEST_CASE("World interface") {
     SUBCASE("add entity returns proper ptr and attached properly") {
         Application app("", { 10, 10 });
-        World&      world = app.world();
+        World& world = app.world();
 
         auto entity_ptr = world.add_entity();
         CHECK(!entity_ptr.expired());
@@ -43,4 +43,3 @@ TEST_CASE("World interface") {
         CHECK(entity_ptr.lock().use_count() == 2);
     }
 }
-

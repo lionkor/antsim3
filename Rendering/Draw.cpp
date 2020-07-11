@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Lion Kortlepel 2020
 // This software is free software and licensed under GPL-3.0.
-// You should have received a copy of the GNU General Public License along 
+// You should have received a copy of the GNU General Public License along
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "Draw.h"
@@ -24,10 +24,10 @@ void DrawSurface::update_rectangle(std::size_t index, const Rectangle& rect, con
 
 std::size_t DrawSurface::draw_new_rectangle(const Rectangle& rect, const Color& fill_color, const Color&) {
     DrawRectangle buf;
-    buf.vertices[0]   = sf::Vertex(sf::Vector2f(rect.pos.x, rect.pos.y), fill_color);
-    buf.vertices[1]   = sf::Vertex(sf::Vector2f(rect.pos.x + rect.size.x, rect.pos.y), fill_color);
-    buf.vertices[2]   = sf::Vertex(sf::Vector2f(rect.pos.x + rect.size.x, rect.pos.y + rect.size.y), fill_color);
-    buf.vertices[3]   = sf::Vertex(sf::Vector2f(rect.pos.x, rect.pos.y + rect.size.y), fill_color);
+    buf.vertices[0] = sf::Vertex(sf::Vector2f(rect.pos.x, rect.pos.y), fill_color);
+    buf.vertices[1] = sf::Vertex(sf::Vector2f(rect.pos.x + rect.size.x, rect.pos.y), fill_color);
+    buf.vertices[2] = sf::Vertex(sf::Vector2f(rect.pos.x + rect.size.x, rect.pos.y + rect.size.y), fill_color);
+    buf.vertices[3] = sf::Vertex(sf::Vector2f(rect.pos.x, rect.pos.y + rect.size.y), fill_color);
     std::size_t index = m_rects.size();
     m_rects.push_back(std::move(buf));
     m_changed_indices.push_back(index);
