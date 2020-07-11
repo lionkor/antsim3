@@ -23,6 +23,7 @@ protected:
     std::string m_scriptfile_name;
 
     void setup_globals();
+    void run_script();
 
 public:
     ScriptableComponent(Entity&, const std::string& scriptfile_name);

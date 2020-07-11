@@ -2,38 +2,51 @@
 
 #include "Core/Application.h"
 
-static ScriptableComponent::LuaFunction g_error = [](lua_State* L) -> int {
+static int g_error(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
     lua_getglobal(L, "g_scriptfile_name");
     const char* scriptname = lua_tostring(L, 1);
     impl::report_impl("{}{}[{}LUA{}{} ERROR] in {}: {}{}\n", ANSI_RESET, ANSI_RED, ANSI_BOLD, ANSI_RESET, ANSI_RED, scriptname, arg, ANSI_RESET);
     return 0;
-};
+}
 
-static ScriptableComponent::LuaFunction g_warning = [](lua_State* L) -> int {
+static int g_warning(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
     lua_getglobal(L, "g_scriptfile_name");
     const char* scriptname = lua_tostring(L, 1);
     impl::report_impl("{}{}[{}LUA{}{} WARNING] in {}: {}{}\n", ANSI_RESET, ANSI_YELLOW, ANSI_BOLD, ANSI_RESET, ANSI_YELLOW, scriptname, arg, ANSI_RESET);
     return 0;
-};
+}
 
-static ScriptableComponent::LuaFunction g_info = [](lua_State* L) -> int {
+static int g_info(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
     lua_getglobal(L, "g_scriptfile_name");
     const char* scriptname = lua_tostring(L, 1);
     impl::report_impl("[{}LUA{} INFO] in {}: {}\n", ANSI_BOLD, ANSI_RESET, scriptname, arg);
     return 0;
-};
+}
 
 void ScriptableComponent::setup_globals() {
     register_global(m_scriptfile_name, "g_scriptfile_name");
     register_function(g_error, "g_error");
     register_function(g_warning, "g_warning");
     register_function(g_info, "g_info");
+}
+
+void ScriptableComponent::run_script() {
+    if (luaL_loadstring(m_lua_state, m_script_code.c_str()) == LUA_OK) {
+        auto top = lua_gettop(m_lua_state);
+        if (lua_pcall(m_lua_state, 0, 1, 0) == LUA_OK) {
+            lua_pop(m_lua_state, top);
+        } else {
+            report_error("lua_pcall failed");
+        }
+    } else {
+        report_error("luaL_loadstring failed");
+    }
 }
 
 void ScriptableComponent::register_global(int value, const std::string& name) {
@@ -82,14 +95,5 @@ ScriptableComponent::~ScriptableComponent() {
 }
 
 void ScriptableComponent::on_update() {
-    if (luaL_loadstring(m_lua_state, m_script_code.c_str()) == LUA_OK) {
-        auto top = lua_gettop(m_lua_state);
-        if (lua_pcall(m_lua_state, 0, 1, 0) == LUA_OK) {
-            lua_pop(m_lua_state, top);
-        } else {
-            report_error("lua_pcall failed");
-        }
-    } else {
-        report_error("luaL_loadstring failed");
-    }
+    run_script();
 }
