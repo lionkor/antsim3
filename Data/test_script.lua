@@ -1,1 +1,1 @@
-g_info(nice_number)
+Engine.log_info("Hello, World!")

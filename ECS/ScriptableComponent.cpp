@@ -2,7 +2,9 @@
 
 #include "Core/Application.h"
 
-static int g_error(lua_State* L) {
+namespace LuaLib {
+
+static int log_error(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
     lua_getglobal(L, "g_scriptfile_name");
@@ -11,7 +13,7 @@ static int g_error(lua_State* L) {
     return 0;
 }
 
-static int g_warning(lua_State* L) {
+static int log_warning(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
     lua_getglobal(L, "g_scriptfile_name");
@@ -20,7 +22,7 @@ static int g_warning(lua_State* L) {
     return 0;
 }
 
-static int g_info(lua_State* L) {
+static int log_info(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
     lua_getglobal(L, "g_scriptfile_name");
@@ -29,11 +31,20 @@ static int g_info(lua_State* L) {
     return 0;
 }
 
+static const luaL_Reg g_engine_lib[] = {
+    { "log_error", LuaLib::log_error },
+    { "log_warning", LuaLib::log_warning },
+    { "log_info", LuaLib::log_info },
+};
+
+}
+
 void ScriptableComponent::setup_globals() {
+    // sets up constant runtime globals
     register_global(m_scriptfile_name, "g_scriptfile_name");
-    register_function(g_error, "g_error");
-    register_function(g_warning, "g_warning");
-    register_function(g_info, "g_info");
+    
+    // setup global engine namespace function table
+    register_global(LuaLib::g_engine_lib, "Engine");
 }
 
 void ScriptableComponent::run_script() {
@@ -47,6 +58,12 @@ void ScriptableComponent::run_script() {
     } else {
         report_error("luaL_loadstring failed");
     }
+}
+
+void ScriptableComponent::register_global(const luaL_Reg* value, const std::string& name) {
+    lua_newtable(m_lua_state);
+    luaL_setfuncs(m_lua_state, value, 0);
+    lua_setglobal(m_lua_state, name.c_str());
 }
 
 void ScriptableComponent::register_global(int value, const std::string& name) {

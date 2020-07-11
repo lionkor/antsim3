@@ -34,6 +34,7 @@ public:
     void register_global(int value, const std::string& name);
     void register_global(float value, const std::string& name);
     void register_global(const std::string& value, const std::string& name);
+    void register_global(const luaL_Reg* value, const std::string& name);
 
     typedef int (*LuaFunction)(lua_State*);
 
