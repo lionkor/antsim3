@@ -92,9 +92,9 @@ project(tests)
 
 add_executable(tests 
     Tests/test_main.cpp
-    Tests/test_core.cpp
+    #Tests/test_core.cpp
     Tests/test_ECS.cpp
-    Tests/test_vec.cpp
+    #Tests/test_vec.cpp
 )
 
 target_link_libraries(tests Engine)
