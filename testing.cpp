@@ -5,26 +5,17 @@
 
 #include "Engine.h"
 
-#include <thread>
-#include <limits>
+#include "ECS/ScriptableComponent.h"
 
 int main() {
-    CsvLogger logger("thread_ids.csv");
+    Application app("testing!", { 512, 512 });
 
-    auto logthread = [&]() -> void {
-        logger.log(fmt::format("{}", std::this_thread::get_id()));
-    };
-
-    std::vector<std::thread> threads;
-    for (;;) {
-        report("cycle!");
-        report("creating");
-        for (int i = 0; i < 20; ++i)
-            threads.push_back(std::thread(logthread));
-        report("joining");
-        for (auto& thread : threads) {
-            if (thread.joinable())
-                thread.join();
-        }
+    auto& world = app.world();
+    
+    {
+        auto entity = world.add_entity().lock();
+        entity->add_component<ScriptableComponent>();
     }
+
+    return app.run();
 }

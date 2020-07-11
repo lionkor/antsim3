@@ -27,6 +27,7 @@ add_library(Engine STATIC
     Core/HID.cpp
     ECS/Component.cpp
     ECS/Entity.cpp
+    ECS/ScriptableComponent.cpp
     Events/Event.cpp
     Events/EventDispatcher.cpp
     Events/IEventReceiver.cpp
@@ -55,6 +56,7 @@ target_link_libraries(Engine
     sfml-system 
     pthread
     stdc++fs
+    lua
 )
 
 project(antsim3)
