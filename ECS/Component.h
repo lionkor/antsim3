@@ -14,6 +14,9 @@
 
 class Entity;
 class ResourceManager;
+class GameWindow;
+class World;
+class Application;
 
 class Component
     : public Object
@@ -24,6 +27,9 @@ class Component
 private:
     Entity& m_parent;
     ResourceManager& m_resource_manager;
+    World& m_world;
+    GameWindow& m_game_window;
+    Application& m_application;
 
 protected:
     /// Called just before the component is destructed, is passed the draw
@@ -51,6 +57,12 @@ public:
     const Entity& parent() const noexcept { return m_parent; }
     ResourceManager& resource_manager() noexcept { return m_resource_manager; }
     const ResourceManager& resource_manager() const noexcept { return m_resource_manager; }
+    GameWindow& window() noexcept { return m_game_window; }
+    const GameWindow& window() const noexcept { return m_game_window; }
+    World& world() noexcept { return m_world; }
+    const World& world() const noexcept { return m_world; }
+    Application& application() noexcept { return m_application; }
+    const Application& application() const noexcept { return m_application; }
 
     // Object interface
 public:

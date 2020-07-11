@@ -10,7 +10,10 @@
 
 Component::Component(Entity& parent)
     : m_parent(parent)
-    , m_resource_manager(m_parent.world().application().resource_manager()) {
+    , m_resource_manager(m_parent.world().application().resource_manager())
+    , m_world(m_parent.world())
+    , m_game_window(m_parent.world().application().window())
+    , m_application(m_parent.world().application()) {
 }
 
 std::stringstream Component::to_stream() const {
