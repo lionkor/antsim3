@@ -14,7 +14,7 @@ int main() {
     
     {
         auto entity = world.add_entity().lock();
-        entity->add_component<ScriptableComponent>();
+        entity->add_component<ScriptableComponent>("test_script.lua");
     }
 
     return app.run();

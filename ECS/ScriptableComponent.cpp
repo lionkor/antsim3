@@ -1,27 +1,38 @@
 #include "ScriptableComponent.h"
 
-extern "C" {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include "Core/Application.h"
+
+ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfile_name)
+    : Component(e)
+    , m_lua_state(luaL_newstate()) {
+    // load lua standard libraries
+    luaL_openlibs(m_lua_state);
+    
+    auto& resman = parent().world().application().resource_manager();
+    auto maybe_lazyfile = resman.get_resource_by_name(scriptfile_name);
+    if (maybe_lazyfile.error()) {
+        report_error("ScriptableComponent failed to load script {}", scriptfile_name);
+    } else {
+        auto* data = maybe_lazyfile.value().get().load();
+        m_script_code = std::string(data->begin(), data->end());
+    }
 }
 
-ScriptableComponent::ScriptableComponent(Entity& e)
-    : Component(e) {
-    lua_State* L = luaL_newstate();
-    luaL_openlibs(L);
-
-    // Our Lua code, it simply prints a Hello, World message
-    const char* code = "print('Hello, World')";
-
-    // Here we load the string and use lua_pcall for run the code
-    if (luaL_loadstring(L, code) == LUA_OK) {
-        if (lua_pcall(L, 0, 1, 0) == LUA_OK) {
-            // If it was executed successfuly we
-            // remove the code from the stack
-            lua_pop(L, lua_gettop(L));
-        }
+ScriptableComponent::~ScriptableComponent() {
+    if (m_lua_state) {
+        lua_close(m_lua_state);
     }
+}
 
-    lua_close(L);
+void ScriptableComponent::on_update() {
+    if (luaL_loadstring(m_lua_state, m_script_code.c_str()) == LUA_OK) {
+        auto top = lua_gettop(m_lua_state);
+        if (lua_pcall(m_lua_state, 0, 1, 0) == LUA_OK) {
+            lua_pop(m_lua_state, top);
+        } else {
+            report_error("lua_pcall failed");
+        }
+    } else {
+        report_error("luaL_loadstring failed");
+    }
 }
