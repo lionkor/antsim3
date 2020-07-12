@@ -15,6 +15,7 @@
 #include "Utils/Common.h"
 #include "Utils/Constants.h"
 #include "Utils/CsvLogger.h"
+#include "Utils/stl_ext.h"
 
 using std::size_t;
 

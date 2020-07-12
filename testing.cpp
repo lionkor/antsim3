@@ -7,6 +7,7 @@
 
 #include "ECS/ScriptableComponent.h"
 
+
 int main() {
     Application app("testing!", { 512, 512 });
 

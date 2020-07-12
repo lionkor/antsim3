@@ -1,6 +1,7 @@
 #include "ScriptableComponent.h"
 
 #include "Core/Application.h"
+#include "Utils/stl_ext.h"
 
 namespace LuaLib {
 
@@ -42,12 +43,12 @@ static const luaL_Reg g_engine_lib[] = {
 void ScriptableComponent::setup_globals() {
     // sets up constant runtime globals
     register_global(m_scriptfile_name, "g_scriptfile_name");
-    
+
     // setup global engine namespace function table
     register_global(LuaLib::g_engine_lib, "Engine");
 }
 
-void ScriptableComponent::run_script() {
+void ScriptableComponent::initialize_script() {
     if (luaL_loadstring(m_lua_state, m_script_code.c_str()) == LUA_OK) {
         auto top = lua_gettop(m_lua_state);
         if (lua_pcall(m_lua_state, 0, 1, 0) == LUA_OK) {
@@ -64,6 +65,22 @@ void ScriptableComponent::register_global(const luaL_Reg* value, const std::stri
     lua_newtable(m_lua_state);
     luaL_setfuncs(m_lua_state, value, 0);
     lua_setglobal(m_lua_state, name.c_str());
+}
+
+void ScriptableComponent::call_function(const std::string& name, int nargs, int nresults) {
+    static std::vector<std::string> undefined_functions;
+    if (stl_ext::contains(undefined_functions, name)) {
+        // already figured out that this function does not exist
+        return;
+    }
+    if (lua_isnoneornil(m_lua_state, 1) == 1) {
+        report_warning("'{}' does not exist in {}", name, m_scriptfile_name);
+        undefined_functions.push_back(name);
+    } else {
+        if (lua_pcall(m_lua_state, nargs, nresults, 0) != LUA_OK) {
+            report_error("calling '{}' failed in {}", name, m_scriptfile_name);
+        }
+    }
 }
 
 void ScriptableComponent::register_global(int value, const std::string& name) {
@@ -103,6 +120,27 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
     }
 
     setup_globals();
+
+    /*
+    std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_down { nullptr };
+    std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_up { nullptr };
+    std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_move { nullptr };
+
+    std::function<void(GameWindow&, const HID::Key&)> on_key_down { nullptr };
+    std::function<void(GameWindow&, const HID::Key&)> on_key_up { nullptr };
+    */
+
+    on_mouse_down = [&](GameWindow& window, const HID::MouseAction& ma) {
+        auto pos = ma.world_position(window);
+        load_global("on_mouse_down");
+        lua_pushinteger(m_lua_state, ma.button);
+        lua_pushnumber(m_lua_state, pos.x);
+        lua_pushnumber(m_lua_state, pos.y);
+        call_function("on_mouse_down", 3, 0);
+        pop_stack();
+    };
+
+    initialize_script();
 }
 
 ScriptableComponent::~ScriptableComponent() {
@@ -112,5 +150,7 @@ ScriptableComponent::~ScriptableComponent() {
 }
 
 void ScriptableComponent::on_update() {
-    run_script();
+    load_global("update");
+    call_function("update", 0, 0);
+    pop_stack();
 }

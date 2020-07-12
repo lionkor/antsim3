@@ -43,6 +43,7 @@ add_library(Engine STATIC
     Utils/CsvLogger.cpp
     Utils/LazyFile.cpp
     Utils/ResourceManager.cpp
+    Utils/stl_ext.cpp
     Core/Math.cpp
 
     # fmt

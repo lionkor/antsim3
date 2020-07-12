@@ -19,11 +19,11 @@ namespace HID {
 
 enum MouseButton
 {
-    Left,
-    Right,
-    Middle,
-    Extra1,
-    Extra2
+    Left = 0,
+    Right = 1,
+    Middle = 2,
+    Extra1 = 3,
+    Extra2 = 4
 };
 
 struct MouseAction {
