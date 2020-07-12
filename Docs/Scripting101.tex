@@ -1,0 +1,109 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{makeidx}
+
+\definecolor{color_keyword}{rgb}{0,0.6,0}
+\definecolor{color_comment}{rgb}{0.5,0.5,0.5}
+\definecolor{color_string}{rgb}{0.58,0,0.82}
+\definecolor{color_number}{rgb}{0.58,0,0.82}
+\definecolor{color_background}{rgb}{0.95,0.95,0.95}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{color_background},   
+    commentstyle=\color{color_comment},
+    keywordstyle=\color{color_keyword},
+    numberstyle=\tiny\color{color_number},
+    stringstyle=\color{color_string},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=3
+}
+\lstset{style=mystyle}
+
+\title{Engine Scripting with Lua}
+\author{Lion Kortlepel \texttt{@lionkor}}
+
+\begin{document}
+
+\begin{titlepage}
+\clearpage\maketitle
+\thispagestyle{empty}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+\tableofcontents
+\pagebreak
+
+\begin{abstract}
+This engine lets you script behavior in \href{https://www.lua.org/about.html}{Lua}. 
+In order for this to be useful, the engine provides a number of functions and globals, which are documented in this PDF. Further, it will show how to use Lua to script some basic behavior by providing some examples.
+
+\end{abstract}
+
+\pagebreak
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section{Setup}
+
+For scripts to be read by the engine, an \texttt{Entity} needs to have a  \texttt{ScriptableComponent}. The constructor of the latter accepts a scriptfile name, like \texttt{example.lua}. For the file to be loaded it needs to be in the \texttt{Data/} directory and listed in the \texttt{Data/res.list} of your project.
+
+An example program follows that will be used for the rest of this pdf.
+
+\begin{lstlisting}[language=C++,title=example.cpp]
+#include "Engine.h"
+int main() {
+	// Create an application
+	Application app("Scripting101 Program", { 800, 600 });
+	// Create an entity
+	WeakPtr<Entity> entity_weak = app.add_entity();
+	// Lock the Ptr for temporary access
+	auto entity = entity_weak.lock();
+	// Add ScriptableComponent
+	entity->add_component<ScriptableComponent>("example.lua");
+	// Run the application
+	return app.run();
+}
+\end{lstlisting}
+
+Additionally, the files \texttt{Data/example.lua} and \texttt{Data/res.list} exist.
+
+\begin{lstlisting}[language={[5.0]Lua},title=Data/example.lua]
+Engine.log_info("Hello, World!")
+\end{lstlisting}
+
+\begin{lstlisting}[title=Data/res.list]
+example.lua
+\end{lstlisting}
+
+With these files in place and the \texttt{example.cpp} compiled, we can now write code in \texttt{Data/example.lua}.
+
+\pagebreak
+
+\section{Exposed Functions}
+
+\subsection{Engine API}
+
+The \texttt{Engine} namespace provides general engine functionality, mostly used for debugging and core engine functionalities.
+
+\subsubsection{Engine.log\_info(message)}
+
+\begin{lstlisting}[language={[5.0]Lua},title=Data/example.lua]
+Engine.log_info("Hello, World!")
+\end{lstlisting}
+
+
+\end{document}
