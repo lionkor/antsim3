@@ -72,8 +72,32 @@ static const luaL_Reg g_entity_lib[] = {
 
 }
 
+static int error_handler(lua_State* L) {
+    if (lua_isstring(L, 1)) {
+        report_error("lua internal call error: {}", luaL_checkstring(L, 1));
+    } else {
+        report_error("error_handler didn't receive string");
+    }
+    return 0;
 }
 
+static inline int internal_pcall(lua_State* L, int nargs, int nret) {
+    /* calculate stack position for message handler */
+    int hpos = lua_gettop(L) - nargs;
+    int ret = 0;
+    /* push custom error message handler */
+    lua_pushcfunction(L, LuaLib::error_handler);
+    /* move it before function and arguments */
+    lua_insert(L, hpos);
+    /* call lua_pcall function with custom handler */
+    ret = lua_pcall(L, nargs, nret, hpos);
+    /* remove custom error message handler from stack */
+    lua_remove(L, hpos);
+    /* pass return value of lua_pcall */
+    return ret;
+}
+
+}
 
 void ScriptableComponent::setup_table_MouseButton() {
     begin_table();
@@ -110,10 +134,11 @@ void ScriptableComponent::setup_globals() {
 void ScriptableComponent::initialize_script() {
     if (luaL_loadstring(m_lua_state, m_script_code.c_str()) == LUA_OK) {
         auto top = lua_gettop(m_lua_state);
-        if (lua_pcall(m_lua_state, 0, 1, 0) == LUA_OK) {
+        if (LuaLib::internal_pcall(m_lua_state, 0, 1) == LUA_OK) {
             lua_pop(m_lua_state, top);
         } else {
-            report_error("lua_pcall failed");
+            report_error("lua_pcall failed: {}", luaL_checkstring(m_lua_state, 0));
+            return;
         }
     } else {
         report_error("luaL_loadstring failed");
@@ -136,7 +161,7 @@ void ScriptableComponent::call_function(const std::string& name, int nargs, int 
         report_warning("'{}' does not exist in {}", name, m_scriptfile_name);
         undefined_functions.push_back(name);
     } else {
-        if (lua_pcall(m_lua_state, nargs, nresults, 0) != LUA_OK) {
+        if (LuaLib::internal_pcall(m_lua_state, nargs, nresults) != LUA_OK) {
             report_error("calling '{}' failed in {}", name, m_scriptfile_name);
         }
     }
