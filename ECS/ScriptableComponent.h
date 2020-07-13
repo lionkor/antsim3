@@ -40,6 +40,7 @@ public:
     void register_global(float value, const std::string& name);
     void register_global(const std::string& value, const std::string& name);
     void register_global(const luaL_Reg* value, const std::string& name);
+    void register_global(std::uintptr_t value, const std::string& name);
 
     void load_global(const std::string& name) {
         lua_getglobal(m_lua_state, name.c_str());

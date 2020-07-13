@@ -1,12 +1,9 @@
-i = 1
-
 function update()
 end
 
 function on_mouse_down(mb, x, y)
-    if mb == 0 then
-        Engine.log_info(x * y)
-    else
-        Engine.log_info("wrong button >:(")
+    if mb == MouseButton.LMB then
+        Engine.log_info("lmb pressed!")
+        Engine.log_warning("g_parent is " .. g_parent)
     end
 end

@@ -32,7 +32,7 @@
 \lstset{style=mystyle}
 
 \title{Engine Scripting with Lua}
-\author{Lion Kortlepel \texttt{@lionkor}}
+\author{\texttt{@lionkor}}
 
 \begin{document}
 
@@ -92,18 +92,152 @@ example.lua
 With these files in place and the \texttt{example.cpp} compiled, we can now write code in \texttt{Data/example.lua}.
 
 \pagebreak
-
 \section{Exposed Functions}
 
 \subsection{Engine API}
 
 The \texttt{Engine} namespace provides general engine functionality, mostly used for debugging and core engine functionalities.
 
+
 \subsubsection{Engine.log\_info(message)}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Prints an info message to the debug output.
+	\item[]{\bf Arguments}
+	\begin{enumerate}
+		\item{\texttt{message - string}} 
+			\\ The message to be printed.
+	\end{enumerate}
+	\item[]{\bf Returns}
+		\\ Nothing
+\end{itemize}
 
-\begin{lstlisting}[language={[5.0]Lua},title=Data/example.lua]
-Engine.log_info("Hello, World!")
+\subsubsection{Engine.log\_warning(message)}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Prints a yellow warning message to the debug output.
+	\item[]{\bf Arguments}
+	\begin{enumerate}
+		\item{\texttt{message - string}} 
+			\\ The message to be printed.
+	\end{enumerate}
+	\item[]{\bf Returns}
+		\\ Nothing
+\end{itemize}
+
+\subsubsection{Engine.log\_error(message)}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Prints a red error message to the debug output.
+	\item[]{\bf Arguments}
+	\begin{enumerate}
+		\item{\texttt{message - string}} 
+			\\ The message to be printed.
+	\end{enumerate}
+	\item[]{\bf Returns}
+		\\ Nothing
+\end{itemize}
+
+\pagebreak
+\section{Constants}
+
+The engine exposes several constant values and tables to all scripts. These are read-only.
+\subsection{Tables}
+
+\subsubsection{MouseButton}
+
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ A table which holds the integer values used in identifying mouse buttons in mouse-event related callbacks. The actual values are implementation defined and may change.
+	\item[]{\bf Entries}
+\begin{itemize}
+	\item{\texttt{MouseButton.LMB}} - Left mouse button integer equivalent
+	\item{\texttt{MouseButton.RMB}} - Right mouse button integer equivalent
+	\item{\texttt{MouseButton.MMB}} - Middle mouse button integer equivalent
+	\item{\texttt{MouseButton.XB1}} - Extra mouse button 1 integer equivalent
+	\item{\texttt{MouseButton.XB2}} - Extra mouse button 2 integer equivalent
+	
+\end{itemize}
+\end{itemize}
+
+\subsection{Values}
+
+Please note that values with "unfriendly" names such as \texttt{g\_parent} are only to be used internally, but are documented here to provide a single and complete reference.
+
+\subsubsection{g\_scriptfile\_name}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ The full name of the current script file. Used automatically by the engine in calls to \texttt{Engine.log\_*} and similar function families.
+\end{itemize}
+
+\subsubsection{g\_parent}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ The address of the parent \texttt{Entity}, as \texttt{std::uintptr\_t}. Used internally in the implementation of parent-modifying functions. May be used to compare entities in a really crude way.
+\end{itemize}
+
+\pagebreak
+\section{Special Lua Functions}
+
+The engine calls specific lua functions (if they exist), at specific points in time or when events occur. The following is a listing of all of those special functions.
+If they do not exist, a warning is printed into the debug output once and any further attempts at calling the function will not occur.
+
+\subsection{Periodically Called Functions}
+
+These functions are called periodically. It is advised not to put any heavy calculations in any of these, unless absolutely unavoidable. Any "power-hungry" code in these functions will cause a slowdown.
+
+\subsubsection{update()}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Called every frame from the moment the \texttt{ScriptableComponent} is created until it or the \texttt{Entity} is destroyed.
+	\item[]{\bf Arguments}
+		\\ None
+	\item[]{\bf Returns}
+		\\ Nothing
+	\item[]{\bf Example}
+\begin{lstlisting}[language={[5.0]Lua}]
+function update()
+	-- do things here
+end
 \end{lstlisting}
+\end{itemize}
 
+
+\subsection{Event Callbacks}
+
+These functions are called when a specific event occurs, for example a mouse click.
+
+\subsubsection{on\_mouse\_down(mouse\_button, x, y)}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Called when the user presses any mouse button.
+	\item[]{\bf Arguments}
+		\begin{enumerate}
+			\item{\texttt{mouse\_button - integer}} 
+				\\ The mouse button that has been pressed. The buttons are represented as integers, but the engine provides global \texttt{MouseButton} table to compare against:
+				\begin{itemize}
+					\item[-]\texttt{MouseButton.LMB} - The left mouse button
+					\item[-]\texttt{MouseButton.RMB} - The right mouse button
+					\item[-]\texttt{MouseButton.MMB} - The middle mouse button
+					\item[-]\texttt{MouseButton.XB1} - The extra button 1 (only exists on some mice)
+					\item[-]\texttt{MouseButton.XB2} - The extra button 1 (only exists on some mice)
+				\end{itemize}
+			\item{\texttt{x - number}}
+				\\ The x-position of the mouse in the world.
+			\item{\texttt{y - number}}
+				\\ The y-position of the mouse in the world.
+		\end{enumerate}
+	\item[]{\bf Returns}
+		\\ Nothing
+	\item[]{\bf Example}
+	\\ This example prints "\texttt{lmb left mouse pressed!}" in the debug output whenever the user presses the left mouse button.
+\begin{lstlisting}[language={[5.0]Lua}]
+function on_mouse_down(mb, x, y)
+    if mb == MouseButton.LMB then
+        Engine.log_info("left mouse pressed!")
+    end
+end
+\end{lstlisting}
+\end{itemize}
 
 \end{document}

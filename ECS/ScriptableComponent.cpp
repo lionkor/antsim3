@@ -2,6 +2,7 @@
 
 #include "Core/Application.h"
 #include "Utils/stl_ext.h"
+#include "Utils/Constants.h"
 
 namespace LuaLib {
 
@@ -40,9 +41,17 @@ static const luaL_Reg g_engine_lib[] = {
 
 }
 
+
 void ScriptableComponent::setup_globals() {
     // sets up constant runtime globals
     register_global(m_scriptfile_name, "g_scriptfile_name");
+    register_global(reinterpret_cast<std::uintptr_t>(&parent()), "g_parent");
+    
+    lua_newtable(m_lua_state);
+    lua_pushliteral(m_lua_state, "LMB");
+    lua_pushinteger(m_lua_state, HID::MouseButton::Left);
+    lua_settable(m_lua_state, -3);
+    lua_setglobal(m_lua_state, "MouseButton");
 
     // setup global engine namespace function table
     register_global(LuaLib::g_engine_lib, "Engine");
@@ -88,6 +97,11 @@ void ScriptableComponent::register_global(int value, const std::string& name) {
     lua_setglobal(m_lua_state, name.c_str());
 }
 
+void ScriptableComponent::register_global(std::uintptr_t value, const std::string& name) {
+    lua_pushinteger(m_lua_state, value);
+    lua_setglobal(m_lua_state, name.c_str());
+}
+
 void ScriptableComponent::register_global(float value, const std::string& name) {
     lua_pushnumber(m_lua_state, value);
     lua_setglobal(m_lua_state, name.c_str());
@@ -110,7 +124,7 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
     // load lua standard libraries
     luaL_openlibs(m_lua_state);
 
-    auto& resman = parent().world().application().resource_manager();
+    auto& resman = resource_manager();
     auto maybe_lazyfile = resman.get_resource_by_name(scriptfile_name);
     if (maybe_lazyfile.error()) {
         report_error("ScriptableComponent failed to load script {}", scriptfile_name);
@@ -119,7 +133,6 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
         m_script_code = std::string(data->begin(), data->end());
     }
 
-    setup_globals();
 
     /*
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_down { nullptr };
@@ -140,6 +153,7 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
         pop_stack();
     };
 
+    setup_globals();
     initialize_script();
 }
 
