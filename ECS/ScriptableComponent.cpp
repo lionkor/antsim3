@@ -67,7 +67,7 @@ static void throw_error(lua_State* L, const std::string& message) {
     lua_error(L);
 }
 
-static ::Entity* identify_entity(lua_State* L, long long i) {
+static ::Entity* get_entity(lua_State* L, long long i) {
     if (i == 0) {
         // we understand that we want the currently attached-to entity
         // which is stored in g_parent
@@ -80,7 +80,7 @@ static ::Entity* identify_entity(lua_State* L, long long i) {
 
 // number,number position()
 static int position(lua_State* L) {
-    ::Entity* entity = identify_entity(L, 0);
+    ::Entity* entity = get_entity(L, 0);
     lua_pushnumber(L, entity->transform().position().x);
     lua_pushnumber(L, entity->transform().position().y);
     return 2;
@@ -88,14 +88,29 @@ static int position(lua_State* L) {
 
 // number rotation()
 static int rotation(lua_State* L) {
-    ::Entity* entity = identify_entity(L, 0);
+    ::Entity* entity = get_entity(L, 0);
     lua_pushnumber(L, entity->transform().rotation());
     return 1;
+}
+
+// void move_by(dx, dy)
+static int move_by(lua_State* L) {
+    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+        double dx = luaL_checknumber(L, 1);
+        double dy = luaL_checknumber(L, 2);
+        lua_pop(L, 2);
+        ::Entity* entity = get_entity(L, 0);
+        entity->transform().move_by(vecd { dx, dy });
+    } else {
+        throw_error(L, "Entity.move_by expects two numbers as arguments");
+    }
+    return 0;
 }
 
 static const luaL_Reg g_entity_lib[] = {
     { "position", Entity::position },
     { "rotation", Entity::rotation },
+    { "move_by", Entity::move_by }, 
 };
 
 }

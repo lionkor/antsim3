@@ -1,4 +1,5 @@
 function update()
+    Entity.move_by(1, 2)
     local x, y = Entity.position()
     local r = Entity.rotation()
     Engine.log_info(x .. ", " .. y .. " @ " .. r)
