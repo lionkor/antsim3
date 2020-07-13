@@ -111,7 +111,6 @@ The \texttt{Entity} namespace provides access to the entity that this component 
 			\item{\texttt{y - number}} 
 				\\ The y-component of the position.
 		\end{enumerate}
-		
 \end{itemize}
 
 \subsubsection{Entity.rotation()}
@@ -125,7 +124,36 @@ The \texttt{Entity} namespace provides access to the entity that this component 
 			\item{\texttt{r - number}} 
 				\\ The rotation of the entity.
 		\end{enumerate}
-		
+\end{itemize}
+
+\subsubsection{Entity.move\_by(dx, dy)}\label{EntityMoveBy}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Moves the entity by a specific amount of units. Use \texttt{Entity.set\_position} (see \ref{EntitySetPosition}) to set the position directly.
+	\item[]{\bf Arguments}
+		\begin{enumerate}
+			\item{\texttt{dx - number}} 
+				\\ Change (delta) in x-direction.
+			\item{\texttt{dy - number}} 
+				\\ Change (delta) in y-direction.				
+		\end{enumerate}
+	\item[]{\bf Returns}
+		\\ Nothing
+\end{itemize}
+
+\subsubsection{Entity.set\_position(x, y)}\label{EntitySetPosition}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Moves the entity to a specific position. Use \texttt{Entity.move\_by} (see \ref{EntityMoveBy}) to move the entity by an amount.
+	\item[]{\bf Arguments}
+		\begin{enumerate}
+			\item{\texttt{x - number}} 
+				\\ New x-coordinate.
+			\item{\texttt{y - number}} 
+				\\ New y-coordinate.
+		\end{enumerate}
+	\item[]{\bf Returns}
+		\\ Nothing
 \end{itemize}
 
 \subsection{Engine API}

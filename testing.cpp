@@ -15,7 +15,7 @@ int main() {
 
     {
         auto entity = world.add_entity().lock();
-        entity->add_component<SpriteComponent>(vecd { 10, 10 }, vecd { 20, 20 }, sf::Color::Red);
+        entity->add_component<SpriteComponent>(vecd { -10, -10 }, vecd { 20, 20 }, sf::Color::Red);
         auto& component = entity->add_component<ScriptableComponent>("test_script.lua");
         component.register_global(69, "nice_number");
     }

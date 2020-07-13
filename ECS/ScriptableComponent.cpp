@@ -107,10 +107,25 @@ static int move_by(lua_State* L) {
     return 0;
 }
 
+// void set_position(dx, dy)
+static int set_position(lua_State* L) {
+    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+        double dx = luaL_checknumber(L, 1);
+        double dy = luaL_checknumber(L, 2);
+        lua_pop(L, 2);
+        ::Entity* entity = get_entity(L, 0);
+        entity->transform().set_position(vecd { dx, dy });
+    } else {
+        throw_error(L, "Entity.set_position expects two numbers as arguments");
+    }
+    return 0;
+}
+
 static const luaL_Reg g_entity_lib[] = {
     { "position", Entity::position },
     { "rotation", Entity::rotation },
     { "move_by", Entity::move_by }, 
+    { "set_position", Entity::set_position }, 
 };
 
 }
