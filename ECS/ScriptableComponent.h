@@ -28,6 +28,7 @@ protected:
     std::vector<std::string> m_undefined_functions;
 
     void setup_globals();
+    void setup_table_MouseButton();
     void initialize_script();
 
 public:
@@ -36,8 +37,13 @@ public:
 
     virtual void on_update() override;
 
+    void begin_table();
+    void end_table(const std::string& name);
+    void begin_table_entry(const std::string& name);
+    void end_table_entry();
+
     void register_global(int value, const std::string& name);
-    void register_global(float value, const std::string& name);
+    void register_global(double value, const std::string& name);
     void register_global(const std::string& value, const std::string& name);
     void register_global(const luaL_Reg* value, const std::string& name);
     void register_global(std::uintptr_t value, const std::string& name);
