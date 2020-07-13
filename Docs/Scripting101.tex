@@ -31,7 +31,7 @@
 }
 \lstset{style=mystyle}
 
-\title{Engine Scripting with Lua}
+\title{Engine Scripting with Lua\\(WIP)}
 \author{\texttt{@lionkor}}
 
 \begin{document}
@@ -93,6 +93,40 @@ With these files in place and the \texttt{example.cpp} compiled, we can now writ
 
 \pagebreak
 \section{Exposed Functions}
+
+\subsection{Entity API}
+
+The \texttt{Entity} namespace provides access to the entity that this component belongs to. 
+
+\subsubsection{Entity.position()}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Returns the position of the entity.
+	\item[]{\bf Arguments}
+		\\ None
+	\item[]{\bf Returns}
+		\begin{enumerate}
+			\item{\texttt{x - number}} 
+				\\ The x-component of the position.
+			\item{\texttt{y - number}} 
+				\\ The y-component of the position.
+		\end{enumerate}
+		
+\end{itemize}
+
+\subsubsection{Entity.rotation()}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Returns the rotation of the entity.
+	\item[]{\bf Arguments}
+		\\ None
+	\item[]{\bf Returns}
+		\begin{enumerate}
+			\item{\texttt{r - number}} 
+				\\ The rotation of the entity.
+		\end{enumerate}
+		
+\end{itemize}
 
 \subsection{Engine API}
 
