@@ -46,7 +46,7 @@ The windows build is currently not maintained. If you're experienced with C++ de
 Make sure the following libraries are installed with this command (all of them are required):
 
 ```bash
-# apt install libboost-dev cmake git build-essential libgl-dev libflac8 libogg0 libopenal1 libvorbis0a libvorbisenc2 libvorbisfile3 libfreetype6 libgl1 libx11-6 libxrandr2 libudev1 libudev-dev libopenal-dev libvorbis-dev libflac-dev libxrandr-dev libfreetype6-dev 
+# apt install libboost-dev cmake git build-essential libgl-dev libflac8 libogg0 libopenal1 libvorbis0a libvorbisenc2 libvorbisfile3 libfreetype6 libgl1 libx11-6 libxrandr2 libudev1 libudev-dev libopenal-dev libvorbis-dev libflac-dev libxrandr-dev libfreetype6-dev liblua5.3
 ```
 
 You'll also need lua and lua development headers to compile ECS/ScriptableComponent.
@@ -63,7 +63,7 @@ After this, you are ready to build. For this, run the following commands in orde
 ```bash
 $ mkdir build
 $ cd build
-$ cmake .. 
+$ cmake .. -DDEBIAN_PATHS=1
 $ cd ..
 $ make -C build -j $(shell grep -c ^processor /proc/cpuinfo) all
 ```

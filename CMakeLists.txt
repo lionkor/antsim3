@@ -19,6 +19,11 @@ include_directories(Engine
     "./SFML/include"
 )
 
+if(DEBIAN_PATHS)
+    include_directories("/usr/include/lua5.3")
+    link_directories("/usr/lib/lua5.3")
+endif()
+
 add_library(Engine STATIC
     Cellular/Cell.cpp
     Core/Application.cpp
@@ -57,8 +62,13 @@ target_link_libraries(Engine
     sfml-system 
     pthread
     stdc++fs
-    lua
 )
+
+if(DEBIAN_PATHS)
+    target_link_libraries(Engine lua5.3)
+else()
+    target_link_libraries(Engine lua)
+endif()
 
 project(antsim3)
 
