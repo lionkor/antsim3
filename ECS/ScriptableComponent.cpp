@@ -23,6 +23,7 @@ void end_table_entry(lua_State* L) {
 }
 
 namespace Engine {
+// void log_error(string)
 static int log_error(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
@@ -32,6 +33,7 @@ static int log_error(lua_State* L) {
     return 0;
 }
 
+// void log_warning(string)
 static int log_warning(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
@@ -41,6 +43,7 @@ static int log_warning(lua_State* L) {
     return 0;
 }
 
+// void log_info(string)
 static int log_info(lua_State* L) {
     const char* arg = luaL_checkstring(L, 1);
     lua_pop(L, 1);
@@ -59,15 +62,40 @@ static const luaL_Reg g_engine_lib[] = {
 }
 namespace Entity {
 
-static int position(lua_State* L) {
+static void throw_error(lua_State* L, const std::string& message) {
+    lua_pushstring(L, message.c_str());
+    lua_error(L);
+}
 
-    lua_pushnumber(L, 5.0);
-    lua_pushnumber(L, 6.0);
+static ::Entity* identify_entity(lua_State* L, long long i) {
+    if (i == 0) {
+        // we understand that we want the currently attached-to entity
+        // which is stored in g_parent
+        lua_getglobal(L, "g_parent");
+        i = luaL_checkinteger(L, 1);
+        lua_pop(L, 1);
+    }
+    return reinterpret_cast<::Entity*>(i);
+}
+
+// number,number position()
+static int position(lua_State* L) {
+    ::Entity* entity = identify_entity(L, 0);
+    lua_pushnumber(L, entity->transform().position().x);
+    lua_pushnumber(L, entity->transform().position().y);
     return 2;
+}
+
+// number rotation()
+static int rotation(lua_State* L) {
+    ::Entity* entity = identify_entity(L, 0);
+    lua_pushnumber(L, entity->transform().rotation());
+    return 1;
 }
 
 static const luaL_Reg g_entity_lib[] = {
     { "position", Entity::position },
+    { "rotation", Entity::rotation },
 };
 
 }
@@ -138,6 +166,7 @@ void ScriptableComponent::initialize_script() {
             lua_pop(m_lua_state, top);
         } else {
             report_error("lua_pcall failed: {}", luaL_checkstring(m_lua_state, 0));
+            lua_pop(m_lua_state, 1);
             return;
         }
     } else {

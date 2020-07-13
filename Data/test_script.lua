@@ -1,6 +1,7 @@
 function update()
     local x, y = Entity.position()
-    Engine.log_info(x .. ", " .. y .. GGG)
+    local r = Entity.rotation()
+    Engine.log_info(x .. ", " .. y .. " @ " .. r)
 end
 
 function on_mouse_down(mb, x, y)
