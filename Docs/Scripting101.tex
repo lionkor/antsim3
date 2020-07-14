@@ -1,9 +1,13 @@
 \documentclass[12pt,a4paper]{article}
 
+% \hyperref[TAG]{\texttt{NAME} (\ref{TAG})}
+
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage[colorlinks=true]{hyperref}
 \usepackage{makeidx}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
 
 \definecolor{color_keyword}{rgb}{0,0.6,0}
 \definecolor{color_comment}{rgb}{0.5,0.5,0.5}
@@ -47,6 +51,7 @@
 \pagebreak
 
 \begin{abstract}
+
 This engine lets you script behavior in \href{https://www.lua.org/about.html}{Lua}. 
 In order for this to be useful, the engine provides a number of functions and globals, which are documented in this PDF. Further, it will show how to use Lua to script some basic behavior by providing some examples.
 
@@ -57,6 +62,23 @@ In order for this to be useful, the engine provides a number of functions and gl
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
+\section{Notes}
+
+Beginners as well as experienced programmers should keep the following notes in mind, both while reading this documentation and when writing code. It does not hurt to re-read relevant parts while implementing features.
+
+\subsection{Performance}
+
+As always, write code that is readable first, and worry about performance once you see bottlenecks. Still, write fast code where it does not inhibit readability.
+
+Almost all API functions are implemented in fairly optimized \texttt{C} or \texttt{C++}. This means that, when considering different ways to implement a feature, one should prefer the way with more functionality moved to the API. This is usually many times faster.
+
+For math, Lua's builtin \texttt{math} library is the preferred way. For vector maths, API calls to the engine are usually best.
+
+\subsection{Debugging \& Logging}
+
+Due to the nature of Lua being embedded, debugging using printing is the only viable way (as of now). For this, The methods \hyperref[EngineLogInfo]{\texttt{Engine.log\_info} (\ref{EngineLogInfo})} and its variants (see \ref{EngineLogWarning} and \ref{EngineLogError}) are preferred to simple \texttt{print} or \texttt{io.write} calls. The latter do work and are guaranteed to stay enabled, but should not be used for production. The engine internal logging will always work properly and as expected, even in release builds.
+
+\pagebreak
 \section{Setup}
 
 For scripts to be read by the engine, an \texttt{Entity} needs to have a  \texttt{ScriptableComponent}. The constructor of the latter accepts a scriptfile name, like \texttt{example.lua}. For the file to be loaded it needs to be in the \texttt{Data/} directory and listed in the \texttt{Data/res.list} of your project.
@@ -129,7 +151,7 @@ The \texttt{Entity} namespace provides access to the entity that this component 
 \subsubsection{Entity.move\_by(dx, dy)}\label{EntityMoveBy}
 \begin{itemize}
 	\item[]{\bf Description}
-		\\ Moves the entity by a specific amount of units. Use \texttt{Entity.set\_position} (see \ref{EntitySetPosition}) to set the position directly.
+		\\ Moves the entity by a specific amount of units. Use \hyperref[EntitySetPosition]{\texttt{Entity.set\_position} (\ref{EntitySetPosition})} to set the position directly.
 	\item[]{\bf Arguments}
 		\begin{enumerate}
 			\item{\texttt{dx - number}} 
@@ -144,7 +166,7 @@ The \texttt{Entity} namespace provides access to the entity that this component 
 \subsubsection{Entity.set\_position(x, y)}\label{EntitySetPosition}
 \begin{itemize}
 	\item[]{\bf Description}
-		\\ Moves the entity to a specific position. Use \texttt{Entity.move\_by} (see \ref{EntityMoveBy}) to move the entity by an amount.
+		\\ Moves the entity to a specific position. Use \hyperref[EntityMoveBy]{\texttt{Entity.move\_by} (\ref{EntityMoveBy})} to move the entity by an amount.
 	\item[]{\bf Arguments}
 		\begin{enumerate}
 			\item{\texttt{x - number}} 
@@ -161,7 +183,7 @@ The \texttt{Entity} namespace provides access to the entity that this component 
 The \texttt{Engine} namespace provides general engine functionality, mostly used for debugging and core engine functionalities.
 
 
-\subsubsection{Engine.log\_info(message)}
+\subsubsection{Engine.log\_info(message)}\label{EngineLogInfo}
 \begin{itemize}
 	\item[]{\bf Description}
 		\\ Prints an info message to the debug output.
@@ -174,7 +196,7 @@ The \texttt{Engine} namespace provides general engine functionality, mostly used
 		\\ Nothing
 \end{itemize}
 
-\subsubsection{Engine.log\_warning(message)}
+\subsubsection{Engine.log\_warning(message)}\label{EngineLogWarning}
 \begin{itemize}
 	\item[]{\bf Description}
 		\\ Prints a yellow warning message to the debug output.
@@ -187,7 +209,7 @@ The \texttt{Engine} namespace provides general engine functionality, mostly used
 		\\ Nothing
 \end{itemize}
 
-\subsubsection{Engine.log\_error(message)}
+\subsubsection{Engine.log\_error(message)}\label{EngineLogError}
 \begin{itemize}
 	\item[]{\bf Description}
 		\\ Prints a red error message to the debug output.
@@ -200,13 +222,33 @@ The \texttt{Engine} namespace provides general engine functionality, mostly used
 		\\ Nothing
 \end{itemize}
 
+\subsubsection{Engine.world\_to\_screen\_pos(world\_x, world\_y)}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Converts the given position $(x, y)$ from a world position into a screen position. In other words, it tells you where on the screen the given world position is. Usually only useful for GUI scripting.
+	\item[]{\bf Arguments}
+	\begin{enumerate}
+		\item{\texttt{world\_x - number}} 
+			\\ The x-coordinate of the position.
+		\item{\texttt{world\_y - number}} 
+			\\ The y-coordinate of the position.
+	\end{enumerate}
+	\item[]{\bf Returns}
+	\begin{enumerate}
+		\item{\texttt{screen\_x - number}} 
+			\\ The x-coordinate on the screen.
+		\item{\texttt{screen\_y - number}} 
+			\\ The y-coordinate on the screen.
+	\end{enumerate}
+\end{itemize}
+
 \pagebreak
 \section{Constants}
 
 The engine exposes several constant values and tables to all scripts. These are read-only.
 \subsection{Tables}
 
-\subsubsection{MouseButton}
+\subsubsection{MouseButton}\label{MouseButton}
 
 \begin{itemize}
 	\item[]{\bf Description}
@@ -248,7 +290,7 @@ If they do not exist, a warning is printed into the debug output once and any fu
 
 These functions are called periodically. It is advised not to put any heavy calculations in any of these, unless absolutely unavoidable. Any "power-hungry" code in these functions will cause a slowdown.
 
-\subsubsection{update()}
+\subsubsection{update()}\label{Update}
 \begin{itemize}
 	\item[]{\bf Description}
 		\\ Called every frame from the moment the \texttt{ScriptableComponent} is created until it or the \texttt{Entity} is destroyed.
@@ -269,21 +311,14 @@ end
 
 These functions are called when a specific event occurs, for example a mouse click.
 
-\subsubsection{on\_mouse\_down(mouse\_button, x, y)}
+\subsubsection{on\_mouse\_down(mouse\_button, x, y)}\label{OnMouseDown}
 \begin{itemize}
 	\item[]{\bf Description}
 		\\ Called when the user presses any mouse button.
 	\item[]{\bf Arguments}
 		\begin{enumerate}
 			\item{\texttt{mouse\_button - integer}} 
-				\\ The mouse button that has been pressed. The buttons are represented as integers, but the engine provides global \texttt{MouseButton} table to compare against:
-				\begin{itemize}
-					\item[-]\texttt{MouseButton.LMB} - The left mouse button
-					\item[-]\texttt{MouseButton.RMB} - The right mouse button
-					\item[-]\texttt{MouseButton.MMB} - The middle mouse button
-					\item[-]\texttt{MouseButton.XB1} - The extra button 1 (only exists on some mice)
-					\item[-]\texttt{MouseButton.XB2} - The extra button 1 (only exists on some mice)
-				\end{itemize}
+				\\ The mouse button that has been pressed. Compare against values in the \texttt{MouseButton} table (see \ref{MouseButton}) to find out \textit{which} button.
 			\item{\texttt{x - number}}
 				\\ The x-position of the mouse in the world.
 			\item{\texttt{y - number}}
@@ -292,7 +327,7 @@ These functions are called when a specific event occurs, for example a mouse cli
 	\item[]{\bf Returns}
 		\\ Nothing
 	\item[]{\bf Example}
-	\\ This example prints "\texttt{lmb left mouse pressed!}" in the debug output whenever the user presses the left mouse button.
+	\\ This example prints "\texttt{left mouse pressed!}" in the debug output whenever the user presses the left mouse button.
 \begin{lstlisting}[language={[5.0]Lua}]
 function on_mouse_down(mb, x, y)
     if mb == MouseButton.LMB then
@@ -300,6 +335,49 @@ function on_mouse_down(mb, x, y)
     end
 end
 \end{lstlisting}
+\end{itemize}
+
+\subsubsection{on\_mouse\_up(mouse\_button, x, y)}\label{OnMouseUp}
+\begin{itemize}
+	\item[]{\bf Description}
+		\\ Called when the user releases any previously pressed mouse button. To be safe, it should generally not be assumed that \hyperref[OnMouseDown]{\texttt{on\_mouse\_down} (\ref{OnMouseDown})} has been triggered beforehand, as the OS won't forward button presses when the window is out-of-focus.
+	\item[]{\bf Arguments}
+		\begin{enumerate}
+			\item{\texttt{mouse\_button - integer}} 
+				\\ The mouse button that has been released. Compare against values in the \hyperref[MouseButton]{\texttt{MouseButton} table (\ref{MouseButton})} to find out \textit{which} button.
+			\item{\texttt{x - number}}
+				\\ The x-position of the mouse in the world.
+			\item{\texttt{y - number}}
+				\\ The y-position of the mouse in the world.
+		\end{enumerate}
+	\item[]{\bf Returns}
+		\\ Nothing
+	\item[]{\bf Example}
+	\\ This example prints "\texttt{left mouse released!}" in the debug output whenever the user releases the left mouse button.
+\begin{lstlisting}[language={[5.0]Lua}]
+function on_mouse_up(mb, x, y)
+    if mb == MouseButton.LMB then
+        Engine.log_info("left mouse released!")
+    end
+end
+\end{lstlisting}
+\end{itemize}
+
+\subsubsection{on\_mouse\_move(x, y)}\label{OnMouseMove}
+\begin{itemize}
+	\item[]{\bf Description}
+			\\ Called every time the mouse is moved. It is advised not to do expensive calculations in this callback, as it can get called as much as \hyperref[Update]{\texttt{update} (\ref{Update})}.
+	\item[]{\bf Arguments}
+		\begin{enumerate}
+			\item{\texttt{x - number}}
+				\\ The x-position of the mouse in the world.
+			\item{\texttt{y - number}}
+				\\ The y-position of the mouse in the world.
+		\end{enumerate}
+	\item[]{\bf Returns}
+		\\ Nothing
+	\item[]{\bf Example}
+		\\ (todo) 
 \end{itemize}
 
 \end{document}

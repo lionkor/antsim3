@@ -6,6 +6,33 @@
 
 namespace LuaLib {
 
+static Entity* get_entity(lua_State* L, long long i) {
+    if (i == 0) {
+        // we understand that we want the currently attached-to entity
+        // which is stored in g_parent
+        lua_getglobal(L, "g_parent");
+        i = luaL_checkinteger(L, 1);
+        lua_pop(L, 1);
+    }
+    return reinterpret_cast<Entity*>(i);
+}
+
+static Component* get_component(lua_State* L, long long i) {
+    if (i == 0) {
+        // we understand that we want the currently attached-to entity
+        // which is stored in g_parent
+        lua_getglobal(L, "g_this");
+        i = luaL_checkinteger(L, 1);
+        lua_pop(L, 1);
+    }
+    return reinterpret_cast<Component*>(i);
+}
+
+static void throw_error(lua_State* L, const std::string& message) {
+    lua_pushstring(L, message.c_str());
+    lua_error(L);
+}
+
 void begin_table(lua_State* L) {
     lua_newtable(L);
 }
@@ -53,30 +80,32 @@ static int log_info(lua_State* L) {
     return 0;
 }
 
+// number,number world_to_screen_pos(number, number)
+static int world_to_screen_pos(lua_State* L) {
+    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+        double x = luaL_checknumber(L, 1);
+        double y = luaL_checknumber(L, 2);
+        lua_pop(L, 2);
+        Component* comp = get_component(L, 0);
+        auto vec = comp->window().mapCoordsToPixel(sf::Vector2f(x, y));
+        lua_pushnumber(L, vec.x);
+        lua_pushnumber(L, vec.y);
+        return 2;
+    } else {
+        throw_error(L, "Engine.world_to_screen_pos expects two numbers as arguments");
+    }
+    return 0;
+}
+
 static const luaL_Reg g_engine_lib[] = {
     { "log_error", log_error },
     { "log_warning", log_warning },
     { "log_info", log_info },
+    { "world_to_screen_pos", world_to_screen_pos },
 };
 
 }
 namespace Entity {
-
-static void throw_error(lua_State* L, const std::string& message) {
-    lua_pushstring(L, message.c_str());
-    lua_error(L);
-}
-
-static ::Entity* get_entity(lua_State* L, long long i) {
-    if (i == 0) {
-        // we understand that we want the currently attached-to entity
-        // which is stored in g_parent
-        lua_getglobal(L, "g_parent");
-        i = luaL_checkinteger(L, 1);
-        lua_pop(L, 1);
-    }
-    return reinterpret_cast<::Entity*>(i);
-}
 
 // number,number position()
 static int position(lua_State* L) {
@@ -124,8 +153,8 @@ static int set_position(lua_State* L) {
 static const luaL_Reg g_entity_lib[] = {
     { "position", Entity::position },
     { "rotation", Entity::rotation },
-    { "move_by", Entity::move_by }, 
-    { "set_position", Entity::set_position }, 
+    { "move_by", Entity::move_by },
+    { "set_position", Entity::set_position },
 };
 
 }
@@ -181,6 +210,7 @@ void ScriptableComponent::setup_globals() {
     // sets up constant runtime globals
     register_global(m_scriptfile_name, "g_scriptfile_name");
     register_global(reinterpret_cast<std::uintptr_t>(&parent()), "g_parent");
+    register_global(reinterpret_cast<std::uintptr_t>(this), "g_this");
 
     setup_table_MouseButton();
 
@@ -278,6 +308,7 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
     */
 
     on_mouse_down = [&](GameWindow& window, const HID::MouseAction& ma) {
+        report("mouse down");
         auto pos = ma.world_position(window);
         load_global("on_mouse_down");
         lua_pushinteger(m_lua_state, ma.button);
@@ -288,12 +319,23 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
     };
 
     on_mouse_up = [&](GameWindow& window, const HID::MouseAction& ma) {
+        report("mouse up");
         auto pos = ma.world_position(window);
         load_global("on_mouse_up");
         lua_pushinteger(m_lua_state, ma.button);
         lua_pushnumber(m_lua_state, pos.x);
         lua_pushnumber(m_lua_state, pos.y);
         call_function("on_mouse_up", 3, 0);
+        pop_stack();
+    };
+
+    on_mouse_move = [&](GameWindow& window, const HID::MouseAction& ma) {
+        report("mouse move");
+        auto pos = ma.world_position(window);
+        load_global("on_mouse_move");
+        lua_pushnumber(m_lua_state, pos.x);
+        lua_pushnumber(m_lua_state, pos.y);
+        call_function("on_mouse_move", 2, 0);
         pop_stack();
     };
 

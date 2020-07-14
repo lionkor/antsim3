@@ -53,8 +53,8 @@ void Entity::on_mouse_up(GameWindow& window, const HID::MouseAction& action) {
 
 void Entity::on_mouse_move(GameWindow& window, const HID::MouseAction& action) {
     for (auto& comp : m_comps) {
-        if (comp->on_mouse_up)
-            comp->on_mouse_up(window, action);
+        if (comp->on_mouse_move)
+            comp->on_mouse_move(window, action);
     }
 }
 
