@@ -105,6 +105,33 @@ static const luaL_Reg g_engine_lib[] = {
 };
 
 }
+
+namespace Vec {
+
+// number,number normalize(number,number)
+static int normalize(lua_State* L) {
+    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+        double x = luaL_checknumber(L, 1);
+        double y = luaL_checknumber(L, 2);
+        lua_pop(L, 2);
+        vecd v(x, y);
+        v.normalize();
+        lua_pushnumber(L, v.x);
+        lua_pushnumber(L, v.y);
+        return 2;
+    } else {
+        throw_error(L, "Vec.normalize expects two numbers as arguments");
+    }
+    return 0;
+    return 2;
+}
+
+static const luaL_Reg g_vec_lib[] = {
+    { "normalize", normalize },
+};
+
+}
+
 namespace Entity {
 
 // number,number position()
@@ -184,7 +211,39 @@ static inline int internal_pcall(lua_State* L, int nargs, int nret) {
     return ret;
 }
 
+static inline void dump_stack(lua_State* L) {
+    int i;
+    int top = lua_gettop(L);
+    for (i = 1; i <= top; i++) { /* repeat for each level */
+        int t = lua_type(L, i);
+        switch (t) {
+
+        case LUA_TSTRING: /* strings */
+            printf("`%s'", lua_tostring(L, i));
+            break;
+
+        case LUA_TBOOLEAN: /* booleans */
+            printf(lua_toboolean(L, i) ? "true" : "false");
+            break;
+
+        case LUA_TNUMBER: /* numbers */
+            printf("%g", lua_tonumber(L, i));
+            break;
+
+        default: /* other values */
+            printf("%s", lua_typename(L, t));
+            break;
+        }
+        printf("  "); /* put a separator */
+    }
+    printf("\n"); /* end the listing */
 }
+
+}
+
+#define DUMP_STACK()  \
+    report("STACK:"); \
+    LuaLib::dump_stack(m_lua_state)
 
 void ScriptableComponent::setup_table_MouseButton() {
     begin_table();
@@ -217,6 +276,7 @@ void ScriptableComponent::setup_globals() {
     // setup global engine namespace function table
     register_global(LuaLib::Engine::g_engine_lib, "Engine");
     register_global(LuaLib::Entity::g_entity_lib, "Entity");
+    register_global(LuaLib::Vec::g_vec_lib, "Vec");
 }
 
 void ScriptableComponent::initialize_script() {
@@ -232,6 +292,7 @@ void ScriptableComponent::initialize_script() {
     } else {
         report_error("luaL_loadstring failed");
     }
+    DUMP_STACK();
 }
 
 void ScriptableComponent::register_global(const luaL_Reg* value, const std::string& name) {
@@ -241,6 +302,7 @@ void ScriptableComponent::register_global(const luaL_Reg* value, const std::stri
 }
 
 void ScriptableComponent::call_function(const std::string& name, int nargs, int nresults) {
+    DUMP_STACK();
     static std::vector<std::string> undefined_functions;
     if (stl_ext::contains(undefined_functions, name)) {
         // already figured out that this function does not exist
@@ -308,7 +370,7 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
     */
 
     on_mouse_down = [&](GameWindow& window, const HID::MouseAction& ma) {
-        report("mouse down");
+        DUMP_STACK();
         auto pos = ma.world_position(window);
         load_global("on_mouse_down");
         lua_pushinteger(m_lua_state, ma.button);
@@ -316,10 +378,11 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
         lua_pushnumber(m_lua_state, pos.y);
         call_function("on_mouse_down", 3, 0);
         pop_stack();
+        DUMP_STACK();
     };
 
     on_mouse_up = [&](GameWindow& window, const HID::MouseAction& ma) {
-        report("mouse up");
+        DUMP_STACK();
         auto pos = ma.world_position(window);
         load_global("on_mouse_up");
         lua_pushinteger(m_lua_state, ma.button);
@@ -327,16 +390,18 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
         lua_pushnumber(m_lua_state, pos.y);
         call_function("on_mouse_up", 3, 0);
         pop_stack();
+        DUMP_STACK();
     };
 
     on_mouse_move = [&](GameWindow& window, const HID::MouseAction& ma) {
-        report("mouse move");
+        DUMP_STACK();
         auto pos = ma.world_position(window);
         load_global("on_mouse_move");
         lua_pushnumber(m_lua_state, pos.x);
         lua_pushnumber(m_lua_state, pos.y);
         call_function("on_mouse_move", 2, 0);
         pop_stack();
+        DUMP_STACK();
     };
 
     setup_globals();
