@@ -21,6 +21,7 @@ HID::MouseAction HID::from_sf_mouse_action(sf::Event event) {
     case sf::Event::MouseButtonReleased: {
         action.button = from_sf_mouse_button(event.mouseButton.button);
         action.screen_position = vec<int>(event.mouseButton.x, event.mouseButton.y);
+        report("{}", action.screen_position);
         break;
     }
     default:

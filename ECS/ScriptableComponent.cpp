@@ -108,6 +108,7 @@ static const luaL_Reg g_engine_lib[] = {
 
 namespace Vec {
 
+
 // number,number normalize(number,number)
 static int normalize(lua_State* L) {
     if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
@@ -123,11 +124,26 @@ static int normalize(lua_State* L) {
         throw_error(L, "Vec.normalize expects two numbers as arguments");
     }
     return 0;
-    return 2;
+}
+
+// number length(number,number)
+static int length(lua_State* L) {
+    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+        double x = luaL_checknumber(L, 1);
+        double y = luaL_checknumber(L, 2);
+        lua_pop(L, 2);
+        vecd v(x, y);
+        lua_pushnumber(L, v.length());
+        return 1;
+    } else {
+        throw_error(L, "Vec.length expects two numbers as arguments");
+    }
+    return 0;
 }
 
 static const luaL_Reg g_vec_lib[] = {
     { "normalize", normalize },
+    { "length", length },
 };
 
 }
@@ -302,7 +318,6 @@ void ScriptableComponent::register_global(const luaL_Reg* value, const std::stri
 }
 
 void ScriptableComponent::call_function(const std::string& name, int nargs, int nresults) {
-    DUMP_STACK();
     static std::vector<std::string> undefined_functions;
     if (stl_ext::contains(undefined_functions, name)) {
         // already figured out that this function does not exist
@@ -370,19 +385,17 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
     */
 
     on_mouse_down = [&](GameWindow& window, const HID::MouseAction& ma) {
-        DUMP_STACK();
         auto pos = ma.world_position(window);
+        report("{}", pos);
         load_global("on_mouse_down");
         lua_pushinteger(m_lua_state, ma.button);
         lua_pushnumber(m_lua_state, pos.x);
         lua_pushnumber(m_lua_state, pos.y);
         call_function("on_mouse_down", 3, 0);
         pop_stack();
-        DUMP_STACK();
     };
 
     on_mouse_up = [&](GameWindow& window, const HID::MouseAction& ma) {
-        DUMP_STACK();
         auto pos = ma.world_position(window);
         load_global("on_mouse_up");
         lua_pushinteger(m_lua_state, ma.button);
@@ -390,18 +403,16 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
         lua_pushnumber(m_lua_state, pos.y);
         call_function("on_mouse_up", 3, 0);
         pop_stack();
-        DUMP_STACK();
     };
 
     on_mouse_move = [&](GameWindow& window, const HID::MouseAction& ma) {
-        DUMP_STACK();
         auto pos = ma.world_position(window);
+        report("{}", pos);
         load_global("on_mouse_move");
         lua_pushnumber(m_lua_state, pos.x);
         lua_pushnumber(m_lua_state, pos.y);
         call_function("on_mouse_move", 2, 0);
         pop_stack();
-        DUMP_STACK();
     };
 
     setup_globals();
