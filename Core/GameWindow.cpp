@@ -50,17 +50,17 @@ void GameWindow::handle_events() {
             handle_mouse_button_release();
             break;
         case sf::Event::MouseMoved: {
-            HID::MouseAction action = HID::from_sf_mouse_action(m_event);
-            m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
-                entity_ptr->on_mouse_move(*this, action);
-                return true;
-            });
             if (m_mmb_pressed) {
                 auto diff = mapPixelToCoords(sf::Mouse::getPosition(*this)) - mapPixelToCoords(m_mouse_pos);
                 auto view = getView();
                 view.move(-sf::Vector2f(diff));
                 setView(view);
             }
+            HID::MouseAction action = HID::from_sf_mouse_action(m_event);
+            m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
+                entity_ptr->on_mouse_move(*this, action);
+                return true;
+            });
             break;
         }
         case sf::Event::MouseWheelScrolled: {

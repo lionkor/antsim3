@@ -13,15 +13,15 @@ static inline HID::MouseButton from_sf_mouse_button(sf::Mouse::Button button) {
 
 HID::MouseAction HID::from_sf_mouse_action(sf::Event event) {
     HID::MouseAction action;
+    action.button = from_sf_mouse_button(event.mouseButton.button);
     switch (event.type) {
     case sf::Event::MouseMoved:
-        [[fallthrough]];
+        action.screen_position = { event.mouseMove.x, event.mouseMove.y };
+        break;
     case sf::Event::MouseButtonPressed:
         [[fallthrough]];
     case sf::Event::MouseButtonReleased: {
-        action.button = from_sf_mouse_button(event.mouseButton.button);
-        action.screen_position = vec<int>(event.mouseButton.x, event.mouseButton.y);
-        report("{}", action.screen_position);
+        action.screen_position = { event.mouseButton.x, event.mouseButton.y };
         break;
     }
     default:

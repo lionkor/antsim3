@@ -386,7 +386,7 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
 
     on_mouse_down = [&](GameWindow& window, const HID::MouseAction& ma) {
         auto pos = ma.world_position(window);
-        report("{}", pos);
+        report("mouse down: {}", pos);
         load_global("on_mouse_down");
         lua_pushinteger(m_lua_state, ma.button);
         lua_pushnumber(m_lua_state, pos.x);
@@ -397,6 +397,7 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
 
     on_mouse_up = [&](GameWindow& window, const HID::MouseAction& ma) {
         auto pos = ma.world_position(window);
+        report("mouse up: {}", pos);
         load_global("on_mouse_up");
         lua_pushinteger(m_lua_state, ma.button);
         lua_pushnumber(m_lua_state, pos.x);
@@ -407,7 +408,6 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
 
     on_mouse_move = [&](GameWindow& window, const HID::MouseAction& ma) {
         auto pos = ma.world_position(window);
-        report("{}", pos);
         load_global("on_mouse_move");
         lua_pushnumber(m_lua_state, pos.x);
         lua_pushnumber(m_lua_state, pos.y);
