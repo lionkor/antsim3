@@ -56,6 +56,7 @@ void GameWindow::handle_events() {
                 view.move(-sf::Vector2f(diff));
                 setView(view);
             }
+            m_mouse_pos = sf::Mouse::getPosition(*this);
             HID::MouseAction action = HID::from_sf_mouse_action(m_event);
             m_application.world().for_each_entity([&](SharedPtr<Entity>& entity_ptr) -> bool {
                 entity_ptr->on_mouse_move(*this, action);
