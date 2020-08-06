@@ -137,3 +137,10 @@ add_executable(mpgame-client
 )
 
 target_link_libraries(mpgame-client Engine boost_serialization boost_system)
+
+
+project(2dgame)
+
+add_executable(2dgame 2dgame.cpp)
+
+target_link_libraries(2dgame Engine boost_system)
