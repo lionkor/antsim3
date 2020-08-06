@@ -165,7 +165,7 @@ static inline void report_error_impl(const std::experimental::source_location& l
 #define ASSERT_NOT_REACHABLE() _assert(__FILE__, __PRETTY_FUNCTION__, __LINE__, "reached unreachable code", false)
 
 #define DEBUG 1 // TODO: CHANGE ME!
-inline void _assert(const char* file, const char* function, unsigned line,
+inline void _assert(const char* file, const char* function, [[maybe_unused]] unsigned line,
     const char* condition_string, bool result) {
     if (!result) {
 #if DEBUG
@@ -179,9 +179,12 @@ inline void _assert(const char* file, const char* function, unsigned line,
         abort();
 #else
         fprintf(stderr,
-            "%s=> ASSERTION `%s` FAILED IN RELEASE BUILD%s%s -> IGNORING FAILED ASSERTION "
-            "& HOPING IT WON'T CRASH%s\n",
+            "%s=> ASSERTION `%s` FAILED IN RELEASE BUILD%s%s -> "
+            "THROWING INSTEAD AND HOPING IT WON'T CRASH%s\n",
             ANSI_RED_BOLD, condition_string, ANSI_RESET, ANSI_RED, ANSI_RESET);
+        char filename[1024];
+        std::strncpy(filename, file, sizeof(filename));
+        throw std::runtime_error(fmt::format("{}:{} ({}): \"{}\" failed.", basename(filename), line, function, condition_string));
 #endif
     }
 }
