@@ -32,7 +32,7 @@ public:
     /// \param title Title of the window
     /// \param size Size of the window
     /// \param res_file_path path for the res.list, empty for none
-    Application(const std::string& title, sf::Vector2u size, const std::string& res_file_path = "Data/res.list");
+    Application(const std::string& title, sf::Vector2u size, bool fullscreen = false, const std::string& res_file_path = "Data/res.list");
 
     GameWindow& window() { return *m_window; }
     const GameWindow& window() const { return *m_window; }

@@ -217,16 +217,16 @@ public:
                         case Tile::Type::Rock:
                             color = sf::Color::White;
                             tex_coords[0] = { 0, 0 };
-                            tex_coords[1] = { 16, 0 };
-                            tex_coords[2] = { 16, 16 };
-                            tex_coords[3] = { 0, 16 };
+                            tex_coords[1] = { 32, 0 };
+                            tex_coords[2] = { 32, 32 };
+                            tex_coords[3] = { 0, 32 };
                             break;
                         case Tile::Type::Air:
                             draw = true;
-                            tex_coords[0] = { 16, 0 };
-                            tex_coords[1] = { 32, 0 };
-                            tex_coords[2] = { 32, 16 };
-                            tex_coords[3] = { 16, 16 };
+                            tex_coords[0] = { 32, 0 };
+                            tex_coords[1] = { 64, 0 };
+                            tex_coords[2] = { 64, 32 };
+                            tex_coords[3] = { 32, 32 };
                             break;
                         default:
                             ASSERT_NOT_REACHABLE();
@@ -265,9 +265,17 @@ public:
     }
 };
 
-int main() {
+int main(int argc, char** argv) {
     try {
-        Application app("2dgame", { 960, 540 }, "Data/2dgame_res.list");
+        bool fullscreen = false;
+        if (argc >= 2) {
+            auto argstr = std::string(argv[1]);
+            if (argstr == "-f" || argstr == "--fullscreen") {
+                fullscreen = true;
+            }
+        }
+
+        Application app("2dgame", { 960, 540 }, fullscreen, "Data/2dgame_res.list");
         World& world = app.world();
         [[maybe_unused]] GameWindow& window = app.window();
 

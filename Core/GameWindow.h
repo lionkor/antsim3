@@ -64,7 +64,7 @@ protected:
     void zoom_view_at(sf::Vector2i pixel, float zoom);
 
 public:
-    GameWindow(Application& app, const std::string& title, sf::Vector2u size);
+    GameWindow(Application& app, const std::string& title, sf::Vector2u size, bool fullscreen = false);
 
     void handle_events();
     void handle_mouse_button_press();

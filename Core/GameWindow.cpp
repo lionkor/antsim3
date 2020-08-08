@@ -9,8 +9,8 @@
 #include "Application.h"
 #include "ECS/Entity.h"
 
-GameWindow::GameWindow(Application& app, const std::string& title, sf::Vector2u size)
-    : sf::RenderWindow(sf::VideoMode(size.x, size.y), title, sf::Style::Fullscreen, sf::ContextSettings(0, 0, 0, 3, 1))
+GameWindow::GameWindow(Application& app, const std::string& title, sf::Vector2u size, bool fullscreen)
+    : sf::RenderWindow(sf::VideoMode(size.x, size.y), title, fullscreen ? sf::Style::Fullscreen : sf::Style::Default, sf::ContextSettings(0, 0, 0))
     , m_surface(*this)
     , m_fps_logger("fps.csv")
     , m_title(title)
@@ -23,10 +23,13 @@ void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {
     const sf::Vector2f beforeCoord { mapPixelToCoords(pixel) };
     sf::View view { getView() };
     view.zoom(zoom);
+    auto center = view.getCenter();
+    view.setCenter((center.x * zoom), (center.y * zoom));
     setView(view);
     const sf::Vector2f afterCoord { mapPixelToCoords(pixel) };
     const sf::Vector2f offsetCoords { beforeCoord - afterCoord };
-    view.move(offsetCoords);
+    view.move(sf::Vector2f(offsetCoords));
+    report("{} , {}", view.getCenter().x, view.getCenter().y);
     setView(view);
 }
 
@@ -54,6 +57,7 @@ void GameWindow::handle_events() {
                 auto diff = mapPixelToCoords(sf::Mouse::getPosition(*this)) - mapPixelToCoords(m_mouse_pos);
                 auto view = getView();
                 view.move(-sf::Vector2f(diff));
+                report("{} , {}", view.getCenter().x, view.getCenter().y);
                 setView(view);
             }
             m_mouse_pos = sf::Mouse::getPosition(*this);
