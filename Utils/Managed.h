@@ -13,7 +13,7 @@
 template<typename... Args>
 using Managed = std::unique_ptr<Args...>;
 
-#define make_managed std::make_unique;
+#define make_managed std::make_unique
 
 template<typename... Args>
 using SharedPtr = std::shared_ptr<Args...>;

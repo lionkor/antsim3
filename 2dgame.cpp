@@ -63,10 +63,15 @@ private:
     bool m_redraw { false };
     SimpleDrawable m_drawable;
 
+    Managed<sf::Texture> m_atlas;
+
 public:
     WorldComponent(Entity& e)
         : Component(e) {
         add_chunk({ 0, 0 });
+
+        m_atlas = resource_manager().load_texture("atlas.png");
+        m_atlas->generateMipmap();
 
         on_mouse_move = [&](GameWindow& _window, const HID::MouseAction& _ma) -> void {
             auto chunk_pos = chunk_pos_from_world_pos(_ma.world_position(_window));
@@ -196,6 +201,7 @@ public:
             // rendering
             m_drawable.resize(chunk_type::tile_count() * m_chunks.size() * 4);
             m_drawable.set_primitive(SimpleDrawable::PrimitiveType::Quads);
+            m_drawable.set_texture(m_atlas.get());
             report("resized to {}", m_drawable.size());
             size_t i = 0;
             for (auto& pair : m_chunks) {
@@ -205,13 +211,22 @@ public:
                     for (size_t y = 0; y < chunk.size(); ++y) {
                         vec<float> pos = chunk.pos * chunk_size() + vec<float>(x, y) * TILE_SIZE;
                         sf::Color color = sf::Color::Magenta;
+                        sf::Vector2f tex_coords[4];
                         bool draw = true;
                         switch (chunk.at(x, y).type) {
                         case Tile::Type::Rock:
                             color = sf::Color::White;
+                            tex_coords[0] = { 0, 0 };
+                            tex_coords[1] = { 16, 0 };
+                            tex_coords[2] = { 16, 16 };
+                            tex_coords[3] = { 0, 16 };
                             break;
                         case Tile::Type::Air:
-                            draw = false;
+                            draw = true;
+                            tex_coords[0] = { 16, 0 };
+                            tex_coords[1] = { 32, 0 };
+                            tex_coords[2] = { 32, 16 };
+                            tex_coords[3] = { 16, 16 };
                             break;
                         default:
                             ASSERT_NOT_REACHABLE();
@@ -225,6 +240,10 @@ public:
                             m_drawable[i + 1].color = color;
                             m_drawable[i + 2].color = color;
                             m_drawable[i + 3].color = color;
+                            m_drawable[i].texCoords = tex_coords[0];
+                            m_drawable[i + 1].texCoords = tex_coords[1];
+                            m_drawable[i + 2].texCoords = tex_coords[2];
+                            m_drawable[i + 3].texCoords = tex_coords[3];
                             i += 4;
                         }
                     }

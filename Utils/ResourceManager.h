@@ -10,7 +10,9 @@
 #include "DebugTools.h"
 #include "LazyFile.h"
 #include "Common.h"
+#include "Managed.h"
 #include <map>
+#include <SFML/Graphics.hpp>
 
 class ResourceManager
     : Object
@@ -30,6 +32,8 @@ public:
     void reload_resfile();
 
     Result<Ref<LazyFile>> get_resource_by_name(const std::string& name);
+
+    Managed<sf::Texture> load_texture(const std::string& name);
 
     void operator()() {
     }

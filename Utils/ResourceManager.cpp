@@ -4,6 +4,7 @@
 // with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "ResourceManager.h"
+#include "stl_ext.h"
 
 ResourceManager::ResourceManager(const std::filesystem::path& res_file_path)
     : m_res_file(res_file_path)
@@ -68,4 +69,25 @@ Result<Ref<LazyFile>> ResourceManager::get_resource_by_name(const std::string& n
     }
     result.set_value(m_resources.at(name));
     return result;
+}
+
+Managed<sf::Texture> ResourceManager::load_texture(const std::string& name) {
+    if (m_resources.contains(name)) {
+        Managed<sf::Texture> texture = make_managed<sf::Texture>();
+        LazyFile& file = m_resources.at(name);
+        if (file.is_valid()) {
+            auto data = file.load();
+            if (texture->loadFromMemory(data->data(), data->size())) {
+                return texture;
+            } else {
+                report_error("an error occured loading texture from memory");
+            }
+        } else {
+            report_error("error: {}", file.validation_error_message());
+            // expensive bailout, as we dealloc the texture
+        }
+    } else {
+        report_error("resource \"{}\" not found", name);
+    }
+    return nullptr;
 }
