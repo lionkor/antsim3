@@ -36,7 +36,7 @@ private:
     // FIXME: This should really be a map, but maybe one that isn't slow?
     std::vector<SharedPtr<Entity>> m_entities;
     std::vector<SharedPtr<Entity>> m_entities_to_add;
-    std::size_t m_update_interval_ms;
+    std::size_t m_update_interval_ms { 0 };
 
     class Application& m_application;
 
@@ -47,7 +47,7 @@ private:
 
 public:
     World(Application& app);
-    virtual ~World() { }
+    virtual ~World() {}
 
     /// Takes ownership of the passed (new-allocated) pointer `obj`.
     WeakPtr<Entity> add_entity(const vecd& pos = {});

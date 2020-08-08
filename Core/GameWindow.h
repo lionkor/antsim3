@@ -89,8 +89,8 @@ public:
     template<typename T>
     T height() const { return static_cast<T>(getSize().y); }
 
-    veci mouse_screen_pos() const { return m_mouse_pos; }
-    vecd mouse_world_pos() const { return mapPixelToCoords(m_mouse_pos); }
+    veci mouse_screen_pos() const { return veci(m_mouse_pos); }
+    vecd mouse_world_pos() const { return vecd(mapPixelToCoords(m_mouse_pos)); }
 
     /// Callback that is called whenever the left mouse button has been clicked.
     std::function<void(const vecd&)> on_left_click { nullptr };

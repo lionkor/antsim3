@@ -27,11 +27,14 @@ public:
 
     SimpleDrawable() = default;
     SimpleDrawable(PrimitiveType primitive, size_t size)
-        : m_varray(primitive, size) { }
+        : m_varray(primitive, size) {}
 
     void set_texture(sf::Texture* texture);
     void set_primitive(PrimitiveType primitive) { m_varray.setPrimitiveType(primitive); }
-    Vertex& operator[](size_t index) { return m_varray[index]; }
+    Vertex& operator[](size_t index) {
+        ASSERT(index < m_varray.getVertexCount());
+        return m_varray[index];
+    }
     const Vertex& operator[](size_t index) const { return m_varray[index]; }
     void resize(size_t size);
     void clear();

@@ -8,9 +8,11 @@
 
 #include "Utils/DebugTools.h"
 #include "Core/Object.h"
+#include "Core/Math.h"
 #include <type_traits>
 #include <tuple>
 #include <ostream>
+#include <SFML/Graphics.hpp>
 
 /// Minimal 2D-vector struct.
 template<typename T>
@@ -29,15 +31,24 @@ struct vec {
         v.y = 0;
     }
 
-    template<typename Vector2DT>
-    vec(const Vector2DT& v)
-        : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)) { }
+    explicit vec(const sf::Vector2f& other)
+        : x(other.x), y(other.y) {
+    }
+
+    explicit vec(const sf::Vector2i& other)
+        : x(other.x), y(other.y) {
+    }
+
+    template<class OtherT>
+    vec(const vec<OtherT>& other)
+        : x(other.x), y(other.y) {
+    }
 
     vec(T _x, T _y)
-        : x(static_cast<T>(_x)), y(static_cast<T>(_y)) { }
+        : x(static_cast<T>(_x)), y(static_cast<T>(_y)) {}
 
     explicit vec(T val)
-        : x(static_cast<T>(val)), y(static_cast<T>(val)) { }
+        : x(static_cast<T>(val)), y(static_cast<T>(val)) {}
 
     inline std::tuple<T, T> get() const { return std::tie(x, y); }
 
@@ -59,6 +70,7 @@ struct vec {
     inline vec<T> operator-(const vec& v) const { return vec<T>(x - v.x, y - v.y); }
     inline vec<T> operator*(const T& i) const { return vec<T>(x * i, y * i); }
     inline vec<T> operator/(const T& i) const { return vec<T>(x / i, y / i); }
+    inline vec<T> operator%(const T& i) const { return vec<T>(x % i, y % i); }
 
     inline vec<T> operator-() const { return vec<T>(-x, -y); }
 
@@ -93,6 +105,10 @@ struct vec {
         vec v = *this;
         v.normalize();
         return v;
+    }
+
+    inline vec abs() const noexcept {
+        return vec(Math::abs(x), Math::abs(y));
     }
 
     static constexpr T distance_squared(const vec<T>& a, const vec<T>& b) noexcept {

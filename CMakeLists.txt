@@ -143,4 +143,4 @@ project(2dgame)
 
 add_executable(2dgame 2dgame.cpp)
 
-target_link_libraries(2dgame Engine boost_system)
+target_link_libraries(2dgame Engine boost_system tbb)

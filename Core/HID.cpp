@@ -31,5 +31,5 @@ HID::MouseAction HID::from_sf_mouse_action(sf::Event event) {
 }
 
 vecd HID::MouseAction::world_position(GameWindow& window) const {
-    return window.mapPixelToCoords(sf::Vector2i { screen_position.x, screen_position.y });
+    return vecd(window.mapPixelToCoords(sf::Vector2i { screen_position.x, screen_position.y }));
 }

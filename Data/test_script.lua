@@ -4,7 +4,7 @@ bx = 0
 by = 0
 move = false
 
-speed = 0.5
+speed = 5.5
 
 function update()
     if not move then
@@ -13,7 +13,7 @@ function update()
     ax, ay = Entity.position()
     local dirx = bx - ax
     local diry = by - ay
-    if Vec.length(dirx, diry) ~= 0 then
+    if Vec.length(dirx, diry) > speed then
         dirx, diry = Vec.normalize(dirx, diry)
         dirx = dirx * speed
         diry = diry * speed

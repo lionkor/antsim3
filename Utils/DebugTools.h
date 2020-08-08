@@ -61,6 +61,7 @@ static const char* const ANSI_UNDERLINE = "\u001b[4m";
 
 namespace impl {
 
+
 #ifndef STRIP_ALL
 
 template<typename... Args>
