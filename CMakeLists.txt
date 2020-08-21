@@ -57,6 +57,7 @@ add_library(Engine STATIC
 )
 
 target_link_libraries(Engine
+    tbb
     sfml-graphics 
     sfml-window 
     sfml-system 

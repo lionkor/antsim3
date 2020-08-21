@@ -8,8 +8,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include <fstream>
 #include <chrono>
+#include <fstream>
+
+#include <limits>
 
 #include "Core/Object.h"
 #include "Physics/Ray.h"
