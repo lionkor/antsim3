@@ -50,6 +50,7 @@ add_library(Engine STATIC
     Utils/ResourceManager.cpp
     Utils/stl_ext.cpp
     Core/Math.cpp
+    Modules/GenericModuleComponent.cpp
 
     # fmt
     fmt/src/format.cc
@@ -63,6 +64,7 @@ target_link_libraries(Engine
     sfml-system 
     pthread
     stdc++fs
+    dl
 )
 
 if(DEBIAN_PATHS)

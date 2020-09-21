@@ -10,5 +10,6 @@
 #include "Utils.h"
 #include "Rendering.h"
 #include "ECS.h"
+#include "Modules.h"
 
 #endif // ENGINE_H
