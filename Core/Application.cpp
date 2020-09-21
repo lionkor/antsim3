@@ -18,7 +18,7 @@ int Application::run() {
         while (m_window->isOpen()) {
             m_world->update(*m_window);
         }
-    } catch (std::exception& e) {
+    } catch (const std::exception& e) {
         report_error("fatal exception: {}", e.what());
         throw;
     }

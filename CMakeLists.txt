@@ -2,9 +2,12 @@
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wextra -Wpedantic -pedantic-errors -Wformat -Wformat-overflow -Wnull-dereference -Wimplicit-fallthrough -Wmisleading-indentation -Wparentheses -Wunused-parameter -Wuninitialized -Wstringop-overflow -Wsuggest-attribute=const -Wconversion -Wduplicated-branches -Wduplicated-cond -Wfloat-equal -Wshadow -Wcast-qual -Wparentheses")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fconcepts")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fconcepts -rdynamic")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Wall -Wextra --pedantic")
 
 #add_definitions(-DCPP_20)
 
@@ -51,6 +54,7 @@ add_library(Engine STATIC
     Utils/stl_ext.cpp
     Core/Math.cpp
     Modules/GenericModuleComponent.cpp
+    Modules/GenericModule.cpp
 
     # fmt
     fmt/src/format.cc
@@ -147,3 +151,4 @@ project(2dgame)
 add_executable(2dgame 2dgame.cpp)
 
 target_link_libraries(2dgame Engine boost_system tbb)
+

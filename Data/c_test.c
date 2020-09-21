@@ -1,14 +1,11 @@
 #include "../Modules/GenericModule.h"
-#include <stdio.h>
 
-void on_create() {
-    puts(__func__);
+void on_create(C_Entity* entity) {
+    o_warning("yay!");
 }
 
-void on_destroy() {
-    puts(__func__);
-}
+static const char* version_str = "v0.1";
 
-void on_update() {
-    puts(__func__);
+const char* version() {
+    return version_str;
 }
