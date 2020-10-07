@@ -24,7 +24,6 @@ void GameWindow::zoom_view_at(sf::Vector2i pixel, float zoom) {
     const sf::Vector2f afterCoord { mapPixelToCoords(pixel) };
     const sf::Vector2f offsetCoords { beforeCoord - afterCoord };
     view.move(sf::Vector2f(offsetCoords));
-    report("{} , {}", view.getCenter().x, view.getCenter().y);
     setView(view);
 }
 
@@ -52,7 +51,6 @@ void GameWindow::handle_events() {
                 auto diff = mapPixelToCoords(sf::Mouse::getPosition(*this)) - mapPixelToCoords(m_mouse_pos);
                 auto view = getView();
                 view.move(-sf::Vector2f(diff));
-                report("{} , {}", view.getCenter().x, view.getCenter().y);
                 setView(view);
             }
             m_mouse_pos = sf::Mouse::getPosition(*this);

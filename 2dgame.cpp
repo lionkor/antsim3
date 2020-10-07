@@ -75,6 +75,7 @@ public:
         m_atlas->generateMipmap();
 
         on_mouse_move = [&](GameWindow& _window, const HID::MouseAction& _ma) -> void {
+            return;
             auto chunk_pos = chunk_pos_from_world_pos(_ma.world_position(_window));
             if (!m_chunks.contains(chunk_pos)) {
                 add_chunk(chunk_pos);
