@@ -32,8 +32,8 @@ typedef struct {
 // public API
 /// Gets the position of the entity in the world
 EXPORT extern C_vec_d get_position(C_Entity*);
-/// gets the class name of the entity
-EXPORT extern size_t get_name(C_Entity*, char*);
+/// gets the class name of the entity, 'buf' must have enough space allocated
+EXPORT extern size_t get_name(C_Entity*, char* buf);
 /// Moves the entity by `delta` and returns the new position
 EXPORT extern C_vec_d move_by(C_Entity*, C_vec_d delta);
 /// Prints (o = output) a message as "INFO"

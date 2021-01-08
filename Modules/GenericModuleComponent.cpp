@@ -13,6 +13,7 @@
 #include <functional>
 #include <chrono>
 #include <sys/stat.h>
+#include <debug/debug.h>
 
 GenericModuleComponent::GenericModuleComponent(Entity& e, const std::string& dll_name)
     : Component(e) {
@@ -24,31 +25,38 @@ GenericModuleComponent::GenericModuleComponent(Entity& e, const std::string& dll
     DLERROR();
     on_create_fn = (void (*)(C_Entity*))DLSYM(m_dll_handle, "on_create");
     if (!on_create_fn) {
+        report("module {} did not implement {}", dll_name, "on_create");
         on_create_fn = [&](C_Entity*) {};
     }
     on_destroy_fn = (void (*)())DLSYM(m_dll_handle, "on_destroy");
     if (!on_destroy_fn) {
+        report("module {} did not implement {}", dll_name, "on_destroy");
         on_destroy_fn = [&] {};
     }
     on_update_fn = (void (*)())DLSYM(m_dll_handle, "on_update");
     if (!on_update_fn) {
+        report("module {} did not implement {}", dll_name, "on_update");
         on_update_fn = [&] {};
     }
     version_fn = (const char* (*)())DLSYM(m_dll_handle, "version");
     if (!version_fn) {
+        report("module {} did not implement {}", dll_name, "version");
         static const char* default_version = "v0.0";
         version_fn = [] { return default_version; };
     }
     on_mouse_down_fn = (void (*)(C_vec_d))DLSYM(m_dll_handle, "on_mouse_down");
     if (!on_mouse_down_fn) {
+        report("module {} did not implement {}", dll_name, "on_mouse_down");
         on_mouse_down_fn = [&](C_vec_d) {};
     }
     on_mouse_up_fn = (void (*)(C_vec_d))DLSYM(m_dll_handle, "on_mouse_up");
     if (!on_mouse_up_fn) {
+        report("module {} did not implement {}", dll_name, "on_mouse_up");
         on_mouse_up_fn = [&](C_vec_d) {};
     }
     on_mouse_move_fn = (void (*)(C_vec_d))DLSYM(m_dll_handle, "on_mouse_move");
     if (!on_mouse_move_fn) {
+        report("module {} did not implement {}", dll_name, "on_mouse_move");
         on_mouse_move_fn = [&](C_vec_d) {};
     }
 
@@ -59,8 +67,10 @@ GenericModuleComponent::GenericModuleComponent(Entity& e, const std::string& dll
         return;
     }
 
-    auto last_changed = std::ctime(&meta.st_mtim.tv_sec);
-    o_info(fmt::format("loaded dynamic module \"{}\" version {} (last changed: {})", dll_name, version_fn(), last_changed).c_str());
+    std::string last_changed = std::ctime(&meta.st_mtim.tv_sec);
+    // ctime puts \n at the end, lets remove it
+    last_changed.erase(last_changed.size() - 1);
+    report(fmt::format("loaded dynamic module \"{}\" version {} (last changed: {})", dll_name, version_fn(), last_changed).c_str());
 
     on_create_fn(&parent());
 
@@ -76,6 +86,7 @@ GenericModuleComponent::GenericModuleComponent(Entity& e, const std::string& dll
         auto pos = action.world_position(window);
         on_mouse_move_fn({ pos.x, pos.y });
     };
+    //o_info("hello");
 }
 
 GenericModuleComponent::~GenericModuleComponent() {

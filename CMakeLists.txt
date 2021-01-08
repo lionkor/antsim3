@@ -27,7 +27,7 @@ if(DEBIAN_PATHS)
     link_directories("/usr/lib/lua5.3")
 endif()
 
-add_library(Engine STATIC
+add_library(Engine SHARED
     Cellular/Cell.cpp
     Core/Application.cpp
     Core/GameWindow.cpp
@@ -54,6 +54,7 @@ add_library(Engine STATIC
     Utils/stl_ext.cpp
     Core/Math.cpp
     Modules/GenericModuleComponent.cpp
+    Modules/GenericModule.cpp
 
     # fmt
     fmt/src/format.cc
