@@ -27,7 +27,7 @@ private:
     void validate();
 
 public:
-    LazyFile(const std::string&);
+    explicit LazyFile(const std::string&);
     LazyFile(LazyFile&&) = default;
     LazyFile& operator=(LazyFile&&) = default;
 

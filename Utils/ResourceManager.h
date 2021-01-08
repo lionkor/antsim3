@@ -22,7 +22,7 @@ private:
     std::map<std::string, LazyFile> m_resources;
 
 public:
-    ResourceManager(const std::filesystem::path& res_file_path);
+    explicit ResourceManager(const std::filesystem::path& res_file_path);
 
     void reload_resfile();
 

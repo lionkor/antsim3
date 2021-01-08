@@ -15,7 +15,7 @@ private:
     EventDispatcher& m_dispatcher;
 
 public:
-    IEventReceiver(EventDispatcher& dispatcher);
+    explicit IEventReceiver(EventDispatcher& dispatcher);
     virtual ~IEventReceiver();
 
     bool operator==(const IEventReceiver&) const;

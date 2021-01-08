@@ -13,7 +13,7 @@ void EventDispatcher::register_receiver(IEventReceiver& recv) {
 }
 
 void EventDispatcher::unregister_receiver(IEventReceiver& recv) {
-    boost::remove_erase_if(m_receivers, [&](auto& refwrap) { return *refwrap == recv; });
+    boost::remove_erase_if(m_receivers, [&](const auto& refwrap) { return *refwrap == recv; });
 }
 
 void EventDispatcher::dispatch(Event& event) {

@@ -20,8 +20,8 @@ private:
     std::ofstream m_file;
 
 public:
-    FpsLogger(const std::string& filename) {
-        m_file = std::ofstream(filename);
+    explicit FpsLogger(const std::string& filename)
+        : m_file(std::ofstream(filename)) {
     }
     ~FpsLogger() {
         m_file << std::flush << std::endl;

@@ -41,7 +41,7 @@ private:
     void add_new_entities();
 
 public:
-    World(Application& app);
+    explicit World(Application& app);
     virtual ~World() {}
 
     /// Takes ownership of the passed (new-allocated) pointer `obj`.

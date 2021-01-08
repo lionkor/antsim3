@@ -20,7 +20,7 @@ private:
     std::mutex m_mutex;
 
 public:
-    CsvLogger(const std::string& filename);
+    explicit CsvLogger(const std::string& filename);
     ~CsvLogger();
 
     bool ok() const { return m_os.is_open(); }

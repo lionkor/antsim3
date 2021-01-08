@@ -21,6 +21,7 @@ void ResourceManager::reload_resfile() {
     auto contents = m_res_file.load();
     if (!contents) {
         ASSERT_NOT_REACHABLE();
+        exit(-1);
     }
     // clear previously loaded resources
     m_resources.clear();

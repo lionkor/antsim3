@@ -4,6 +4,7 @@
 PhysicalObject::PhysicalObject(const vecd pos, const vecd size, World& world)
     : m_pos(pos)
     , m_size(size)
+    , m_index(0)
     , m_world(world) {
 }
 
