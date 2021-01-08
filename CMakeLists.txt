@@ -54,7 +54,6 @@ add_library(Engine STATIC
     Utils/stl_ext.cpp
     Core/Math.cpp
     Modules/GenericModuleComponent.cpp
-    Modules/GenericModule.cpp
 
     # fmt
     fmt/src/format.cc
