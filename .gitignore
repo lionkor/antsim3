@@ -1,2 +1,7 @@
 antsim3.*
 build/*
+*tags
+.tags
+*.csv
+*.user
+nohup.*
