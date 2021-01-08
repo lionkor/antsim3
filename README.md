@@ -80,4 +80,4 @@ Make sure to run all demos from the antsim3 directory and *not* from the build d
 
 All it will be is a simple lightweight hobby project engine.
 
-This project is under GPLv3. See the "LICENSE" file for more information.
+This project is under MIT. See the "LICENSE" file for more information.
