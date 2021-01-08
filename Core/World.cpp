@@ -60,7 +60,7 @@ RayHit World::try_hit(const vec<double>& pos) {
     return hit;
 }
 
-void World::update(GameWindow& window) {
+void World::update(GameWindow& window, float dt) {
     auto& surface = window.surface();
 
     add_new_entities();
@@ -72,7 +72,7 @@ void World::update(GameWindow& window) {
     auto ms = std::size_t(m_update_timer.getElapsedTime().asMilliseconds());
     if (m_update_interval_ms == 0 || ms >= m_update_interval_ms) {
         for (auto& entity : m_entities) {
-            entity->on_update();
+            entity->on_update(dt);
         }
         m_update_timer.restart();
     }
@@ -83,7 +83,7 @@ void World::update(GameWindow& window) {
 
     auto& gui_elems = m_application.gui_elements();
     for (auto& element : gui_elems) {
-        element->update();
+        element->update(dt);
         element->draw(surface);
     }
 

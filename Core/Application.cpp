@@ -10,8 +10,9 @@ int Application::run() {
     report("starting application with \n\tWorld: {}\n\tWindow: ", *m_world, *m_window);
 
     try {
+        sf::Clock dt_clock;
         while (m_window->isOpen()) {
-            m_world->update(*m_window);
+            m_world->update(*m_window, dt_clock.restart().asSeconds());
         }
     } catch (const std::exception& e) {
         report_error("fatal exception: {}", e.what());

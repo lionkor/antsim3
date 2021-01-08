@@ -26,7 +26,7 @@ public:
         };
     }
 
-    virtual void on_update() override {
+    virtual void on_update(float) override {
         auto& transform = parent().transform();
         transform.move_by({ 0.05, 0 });
     }
@@ -50,8 +50,8 @@ int main(int, char**) {
     child.lock()->add_component<SpriteComponent>(vecd { 120, 0 }, vecd { 90, 90 }, Color::Red, "sprite1.png");
 
     auto label_ptr = app.add_gui_element(vecu(20, 20), vecd(0.4, 0.4), "Hello, World!").lock();
-    label_ptr->on_update = [&]() {
-        label_ptr->set_text(fmt::format("screen pos: {}\nworld  pos: {}", window.mouse_screen_pos(), window.mouse_world_pos()));
+    label_ptr->on_update = [&](float dt) {
+        label_ptr->set_text(fmt::format("screen pos: {}\nworld  pos: {}\nfps: {}", window.mouse_screen_pos(), window.mouse_world_pos(), 1.0f / dt));
     };
 
     std::cout << window << std::endl;

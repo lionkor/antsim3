@@ -15,7 +15,7 @@ private:
 protected:
     std::function<void(C_Entity*)> on_create_fn { nullptr };
     std::function<void()> on_destroy_fn { nullptr };
-    std::function<void()> on_update_fn { nullptr };
+    std::function<void(float)> on_update_fn { nullptr };
     std::function<const char*()> version_fn { nullptr };
     std::function<void(C_vec_d)> on_mouse_down_fn { nullptr };
     std::function<void(C_vec_d)> on_mouse_up_fn { nullptr };
@@ -25,7 +25,7 @@ public:
     GenericModuleComponent(Entity& e, const std::string& dll_name);
     ~GenericModuleComponent();
 
-    virtual void on_update() override;
+    virtual void on_update(float dt) override;
 };
 
 #endif // GENERICMODULECOMPONENT_H

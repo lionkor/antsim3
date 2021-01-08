@@ -45,7 +45,7 @@ public:
 
     virtual bool is_unique() const { return true; }
 
-    virtual void on_update() { }
+    virtual void on_update(float) { }
     virtual void on_draw(DrawSurface&) { }
 
     Entity& parent() noexcept { return m_parent; }
@@ -136,7 +136,7 @@ public:
 
     // Component interface
 public:
-    virtual void on_update() override;
+    virtual void on_update(float) override;
     virtual void on_draw(DrawSurface&) override;
 
     virtual bool is_unique() const override { return false; }

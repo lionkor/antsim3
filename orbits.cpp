@@ -62,7 +62,7 @@ public:
         m_drawable.set_texture(m_planet_texture.get());
     }
 
-    virtual void on_update() override {
+    virtual void on_update(float) override {
         // FIXME: dont call this every time :/
         m_drawable.resize(m_bodies.size() * 4);
         m_bodies_old = m_bodies;
@@ -178,7 +178,7 @@ static void init(Application& app) {
     comp.load_texture();
 
     auto count_label = app.add_gui_element(vecu(10, 10), vecd(.4, .4), "PLACEHOLDER").lock();
-    count_label->on_update = [&]() {
+    count_label->on_update = [&](float) {
         count_label->set_text(fmt::format("bodies: {}", comp.body_count()));
     };
 }

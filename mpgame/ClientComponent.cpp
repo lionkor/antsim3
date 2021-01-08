@@ -98,7 +98,7 @@ void ClientComponent::send_packet(const UpdatePacket& packet) {
     // report("sent _{}_", std::string(array.begin(), array.end()));
 }
 
-void ClientComponent::on_update() {
+void ClientComponent::on_update(float) {
     update_other_players_from_server();
 }
 

@@ -37,7 +37,7 @@ SpriteComponent::SpriteComponent(Entity& e, const vecd& parent_position, const v
     , m_drawable(SimpleDrawable::PrimitiveType::Quads, 4) {
 }
 
-void SpriteComponent::on_update() {
+void SpriteComponent::on_update(float) {
     if (!m_initialized && !m_texture_name.empty()) {
         report("loading texture {}", m_texture_name);
         auto& resman = parent().world().application().resource_manager();

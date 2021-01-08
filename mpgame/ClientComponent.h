@@ -40,7 +40,7 @@ public:
     sf::Font& font() { return m_font; }
 
     const std::string& name() const { return m_name; }
-    virtual void on_update() override;
+    virtual void on_update(float) override;
     virtual void on_draw(DrawSurface& surface) override;
 
     std::vector<Entity*>::iterator find_player_with_name(const std::string& name);

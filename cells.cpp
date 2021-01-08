@@ -130,7 +130,7 @@ public:
         return x < m_size.x && y < m_size.y;
     }
 
-    virtual void on_update() override {
+    virtual void on_update(float) override {
         m_do_update = true;
     }
 

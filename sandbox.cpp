@@ -164,7 +164,7 @@ public:
         std::fill(m_updated_cells.begin(), m_updated_cells.end(), false);
     }
 
-    virtual void on_update() override {
+    virtual void on_update(float) override {
         m_old_cells = m_new_cells;
 
         for (std::size_t x = 0; x < m_size.x; ++x) {
@@ -269,9 +269,8 @@ int main() {
 
     auto fps_counter = app.add_gui_element(vecu(10, 10), vecd(0.4, 0.4), "... FPS").lock();
     sf::Clock clock;
-    fps_counter->on_update = [&]() {
-        auto time = clock.restart().asSeconds();
-        fps_counter->set_text(fmt::format("{} FPS", size_t(1.0 / time)));
+    fps_counter->on_update = [&](float dt) {
+        fps_counter->set_text(fmt::format("{} FPS", size_t(1.0 / dt)));
     };
 
     return app.run();

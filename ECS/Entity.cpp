@@ -20,9 +20,9 @@ Entity::Entity(World& world, const vecd& pos)
     , m_transform(add_component<TransformComponent>(pos)) { }
 
 
-void Entity::on_update() {
+void Entity::on_update(float dt) {
     for (auto& comp : m_comps) {
-        comp->on_update();
+        comp->on_update(dt);
     }
 }
 

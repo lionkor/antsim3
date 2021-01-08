@@ -50,7 +50,7 @@ public:
     template<class DerivedComponentT, typename... Args>
     DerivedComponentT& add_component(Args&&...);
 
-    void on_update();
+    void on_update(float dt);
     void on_draw(DrawSurface&);
     void on_mouse_down(GameWindow&, const HID::MouseAction&);
     void on_mouse_up(GameWindow&, const HID::MouseAction&);

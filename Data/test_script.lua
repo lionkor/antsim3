@@ -6,7 +6,7 @@ move = false
 
 speed = 5.5
 
-function update()
+function update(dt)
     if not move then
         return
     end

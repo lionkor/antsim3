@@ -74,7 +74,7 @@ void PlayerComponent::key_pressed(HID::Key key) {
     }
 }
 
-void PlayerComponent::on_update() {
+void PlayerComponent::on_update(float) {
     if (!m_is_initialized) {
         m_is_initialized = true;
         ASSERT(parent().parent()->has_component<ClientComponent>());

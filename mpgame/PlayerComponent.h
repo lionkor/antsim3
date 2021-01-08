@@ -27,7 +27,7 @@ public:
     PlayerComponent(Entity& e, const std::string& name);
     ~PlayerComponent();
 
-    virtual void on_update() override;
+    virtual void on_update(float) override;
 
     virtual void on_draw(DrawSurface& surface) override {
         auto pos = parent().transform().position();

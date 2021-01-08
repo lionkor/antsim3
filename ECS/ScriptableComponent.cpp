@@ -425,9 +425,10 @@ ScriptableComponent::~ScriptableComponent() {
     }
 }
 
-void ScriptableComponent::on_update() {
+void ScriptableComponent::on_update(float dt) {
     load_global("update");
-    call_function("update", 0, 0);
+    lua_pushnumber(m_lua_state, dt);
+    call_function("update", 1, 0);
     pop_stack();
 }
 

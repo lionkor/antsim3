@@ -27,10 +27,9 @@ GuiElement::GuiElement(Application& app, const vecu& screen_pos, const vecd& sca
     m_text_obj.setFont(m_font);
 }
 
-void GuiElement::update() {
-
+void GuiElement::update(float dt) {
     if (on_update)
-        on_update();
+        on_update(dt);
 }
 
 void GuiElement::draw(DrawSurface& surface) {

@@ -70,7 +70,7 @@ public:
     }
 
     /// Updates the world and calls into the window to update, too.
-    void update(GameWindow&);
+    void update(GameWindow&, float);
 
     // Object interface
 public:

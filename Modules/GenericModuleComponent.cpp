@@ -33,10 +33,10 @@ GenericModuleComponent::GenericModuleComponent(Entity& e, const std::string& dll
         report("module {} did not implement {}", dll_name, "on_destroy");
         on_destroy_fn = [&] {};
     }
-    on_update_fn = (void (*)())DLSYM(m_dll_handle, "on_update");
+    on_update_fn = (void (*)(float))DLSYM(m_dll_handle, "on_update");
     if (!on_update_fn) {
         report("module {} did not implement {}", dll_name, "on_update");
-        on_update_fn = [&] {};
+        on_update_fn = [&](float) {};
     }
     version_fn = (const char* (*)())DLSYM(m_dll_handle, "version");
     if (!version_fn) {
@@ -94,6 +94,6 @@ GenericModuleComponent::~GenericModuleComponent() {
     DLCLOSE(m_dll_handle);
 }
 
-void GenericModuleComponent::on_update() {
-    on_update_fn();
+void GenericModuleComponent::on_update(float dt) {
+    on_update_fn(dt);
 }

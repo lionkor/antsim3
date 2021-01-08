@@ -193,7 +193,7 @@ public:
         return chunk_type::size() * TILE_SIZE;
     }
 
-    virtual void on_update() override {
+    virtual void on_update(float) override {
         auto iter = std::find_if(std::execution::par_unseq, m_chunks.begin(), m_chunks.end(), WorldComponent::chunk_has_changed);
         if (iter != m_chunks.end()) {
             m_redraw = true;
