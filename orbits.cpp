@@ -15,7 +15,7 @@ struct Body {
     Body(const vecd& _pos = { 0, 0 }, const vecd& _vel = { 0, 0 }, double _mass = 0, sf::Color _color = sf::Color::White)
         : pos(_pos), vel(_vel), mass(_mass), id(++s_id_counter) {
         if (_color == sf::Color::White) {
-            color = sf::Color(Random::random(64, 255), Random::random(64, 255), Random::random(64, 255));
+            color = sf::Color(Random::random<uint8_t>(64, 255), Random::random<uint8_t>(64, 255), Random::random<uint8_t>(64, 255));
         } else {
             color = _color;
         }
@@ -87,11 +87,10 @@ public:
                     if (body_1.mass >= body_2_old.mass) {
                         // collision!
                         //report("collision!");
-
                         //if (body_1.color != body_2_old.color) {
-                        body_1.color.r = lerp<unsigned char>(body_1.color.r, (body_1.color.r + body_2_old.color.r) / 2.0, body_2_old.mass / body_1.mass);
-                        body_1.color.g = lerp<unsigned char>(body_1.color.g, (body_1.color.g + body_2_old.color.g) / 2.0, body_2_old.mass / body_1.mass);
-                        body_1.color.b = lerp<unsigned char>(body_1.color.b, (body_1.color.b + body_2_old.color.b) / 2.0, body_2_old.mass / body_1.mass);
+                        body_1.color.r = static_cast<uint8_t>(lerp<double>(body_1.color.r, (body_1.color.r + body_2_old.color.r) / 2.0, body_2_old.mass / body_1.mass));
+                        body_1.color.g = static_cast<uint8_t>(lerp<double>(body_1.color.g, (body_1.color.g + body_2_old.color.g) / 2.0, body_2_old.mass / body_1.mass));
+                        body_1.color.b = static_cast<uint8_t>(lerp<double>(body_1.color.b, (body_1.color.b + body_2_old.color.b) / 2.0, body_2_old.mass / body_1.mass));
                         //}
                         body_2.dead = true;
                         auto c = body_2_old.mass / double(s_pieces) * 0.25;
@@ -110,23 +109,21 @@ public:
             }
             body_1.pos += body_1.vel;
             auto offset = s1;
-            m_drawable[i * 4 + 0].position.x = body_1.pos.x - offset;
-            m_drawable[i * 4 + 0].position.y = body_1.pos.y - offset;
-            m_drawable[i * 4 + 1].position.x = body_1.pos.x + offset;
-            m_drawable[i * 4 + 1].position.y = body_1.pos.y - offset;
-            m_drawable[i * 4 + 2].position.x = body_1.pos.x + offset;
-            m_drawable[i * 4 + 2].position.y = body_1.pos.y + offset;
-            m_drawable[i * 4 + 3].position.x = body_1.pos.x - offset;
-            m_drawable[i * 4 + 3].position.y = body_1.pos.y + offset;
+            m_drawable[i * 4 + 0].position = ext::sf::to_sf_vec2f(body_1.pos - offset);
+            m_drawable[i * 4 + 1].position.x = float(body_1.pos.x + offset);
+            m_drawable[i * 4 + 1].position.y = float(body_1.pos.y - offset);
+            m_drawable[i * 4 + 2].position = ext::sf::to_sf_vec2f(body_1.pos + offset);
+            m_drawable[i * 4 + 3].position.x = float(body_1.pos.x - offset);
+            m_drawable[i * 4 + 3].position.y = float(body_1.pos.y + offset);
             m_drawable[i * 4 + 0].color = body_1.color;
             m_drawable[i * 4 + 1].color = body_1.color;
             m_drawable[i * 4 + 2].color = body_1.color;
             m_drawable[i * 4 + 3].color = body_1.color;
             auto tex_size = m_planet_texture->getSize();
             m_drawable[i * 4 + 0].texCoords = SimpleDrawable::Vector2f(0, 0);
-            m_drawable[i * 4 + 1].texCoords = SimpleDrawable::Vector2f(tex_size.x, 0);
-            m_drawable[i * 4 + 2].texCoords = SimpleDrawable::Vector2f(tex_size.x, tex_size.y);
-            m_drawable[i * 4 + 3].texCoords = SimpleDrawable::Vector2f(0, tex_size.y);
+            m_drawable[i * 4 + 1].texCoords = SimpleDrawable::Vector2f(float(tex_size.x), 0);
+            m_drawable[i * 4 + 2].texCoords = SimpleDrawable::Vector2f(float(tex_size.x), float(tex_size.y));
+            m_drawable[i * 4 + 3].texCoords = SimpleDrawable::Vector2f(0, float(tex_size.y));
             m_drawable.set_changed();
         }
 
@@ -167,6 +164,8 @@ public:
     }
 };
 
+SharedPtr<GuiElement> s_count_label;
+
 static void init(Application& app) {
     GameWindow& window = app.window();
     World& world = app.world();
@@ -174,12 +173,13 @@ static void init(Application& app) {
     window.set_framerate_limit(400);
 
     auto solar_system = world.add_entity().lock();
-    auto& comp = solar_system->add_component<NBodySystemComponent>(900);
+    auto& comp = solar_system->add_component<NBodySystemComponent>(300);
     comp.load_texture();
 
-    auto count_label = app.add_gui_element(vecu(10, 10), vecd(.4, .4), "PLACEHOLDER").lock();
-    count_label->on_update = [&](float) {
-        count_label->set_text(fmt::format("bodies: {}", comp.body_count()));
+    auto count_label = app.add_gui_element(vecu(10, 10), vecd(.4, .4), "PLACEHOLDER");
+    s_count_label = count_label.lock();
+    s_count_label->on_update = [&](float) {
+        s_count_label->set_text(fmt::format("bodies: {}", comp.body_count()));
     };
 }
 

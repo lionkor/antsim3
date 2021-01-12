@@ -40,10 +40,10 @@ struct vec {
     }
 
     vec(T _x, T _y)
-        : x(static_cast<T>(_x)), y(static_cast<T>(_y)) {}
+        : x(static_cast<T>(_x)), y(static_cast<T>(_y)) { }
 
     explicit vec(T val)
-        : x(static_cast<T>(val)), y(static_cast<T>(val)) {}
+        : x(static_cast<T>(val)), y(static_cast<T>(val)) { }
 
     inline std::tuple<T, T> get() const { return std::tie(x, y); }
 
@@ -124,7 +124,22 @@ vec<T> operator*(T val, const vec<T>& vec) {
 
 template<typename T>
 vec<T> operator+(T val, const vec<T>& vec) {
-    return vec + val;
+    return { vec.x + val, vec.y + val };
+}
+
+template<typename T>
+vec<T> operator+(const vec<T>& vec, T val) {
+    return { vec.x + val, vec.y + val };
+}
+
+template<typename T>
+vec<T> operator-(T val, const vec<T>& vec) {
+    return { val - vec.x, val - vec.y };
+}
+
+template<typename T>
+vec<T> operator-(const vec<T>& vec, T val) {
+    return { vec.x - val, vec.y - val };
 }
 
 using vecd = vec<double>;

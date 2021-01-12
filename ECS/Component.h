@@ -4,7 +4,7 @@
 #include "Core/Object.h"
 #include "Physics/vec.h"
 #include "Rendering/Draw.h"
-#include "Rendering/SimpleDrawable.h"
+#include "Rendering/Drawable.h"
 #include "Core/HID.h"
 
 class Entity;
@@ -118,16 +118,9 @@ class SpriteComponent
 {
     OBJNAME(SpriteComponent)
 private:
-    vecd m_sprite_pos;
-    vecd m_sprite_size;
-    Color m_sprite_background_color;
     std::string m_texture_name;
-    sf::Texture m_texture;
-    bool m_texture_loaded { false };
-    bool m_initialized { false };
-    vecd m_cached_pos;
-    SimpleDrawable m_drawable;
-    // TODO sprite / texture
+    Managed<sf::Texture> m_texture;
+    Rectangle m_drawable;
 
 public:
     SpriteComponent(Entity& e, const vecd& parent_position, const vecd& sprite_size, const Color& color = Color::Green, const std::string& texture_name = "");

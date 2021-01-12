@@ -2,9 +2,7 @@
 #include "Core/World.h"
 
 PhysicalObject::PhysicalObject(const vecd pos, const vecd size, World& world)
-    : m_pos(pos)
-    , m_size(size)
-    , m_index(0)
+    : m_rectangle(pos, size)
     , m_world(world) {
 }
 
@@ -28,13 +26,11 @@ void PhysicalObject::try_draw(DrawSurface& surface) {
 }
 
 void PhysicalObject::set_position(const vecd& pos) {
-    m_pos = pos;
-    m_has_changed = true;
+    m_rectangle.set_position(pos);
 }
 
 void PhysicalObject::set_size(const vecd& size) {
-    m_size = size;
-    m_has_changed = true;
+    m_rectangle.set_size(size);
 }
 
 void PhysicalObject::update() {
@@ -42,32 +38,18 @@ void PhysicalObject::update() {
 
 void PhysicalObject::draw(DrawSurface& surface) {
     // TODO: Abstract this away somehow
-    if (!m_has_index) {
-        m_index = surface.draw_new_rectangle(Rectangle(m_pos, m_size));
-        m_has_index = true;
-    }
-    if (m_has_changed) {
-        surface.update_rectangle(m_index, Rectangle(m_pos, m_size));
-        m_has_changed = false;
-    }
+    m_rectangle.draw(surface.window());
 }
 
 bool PhysicalObject::is_hit(const vecd& pos) const {
-    return pos.x >= m_pos.x && pos.x <= m_pos.x + m_size.x && pos.y >= m_pos.y && pos.y <= m_pos.y + m_size.y;
+    return pos.x >= position().x && pos.x <= position().x + size().x && pos.y >= position().y && pos.y <= position().y + size().y;
 }
 
 void PhysicalObject::on_hit(const vecd&) {
     report_trace("HIT!");
-    m_has_changed = true;
 }
 
 std::stringstream PhysicalObject::to_stream() const {
     auto ss = Object::to_stream();
-    ss << "pos=" << m_pos << ";"
-       << "size=" << m_size << ";"
-       << "has_index=" << m_has_index << ";"
-       << "index=" << m_index << ";"
-       << "changed=" << m_has_changed << ";"
-       << "world=" << m_world << ";";
     return ss;
 }

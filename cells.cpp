@@ -150,7 +150,7 @@ int main(int, char**) {
     world.set_update_interval(200);
 
     auto grid = world.add_entity();
-    grid.lock()->add_component<GridComponent>(320 * 5, 180 * 5);
+    (void)grid.lock()->add_component<GridComponent>(320 * 3, 180 * 3);
 
     auto ret = app.run();
     report("---  END  ---");

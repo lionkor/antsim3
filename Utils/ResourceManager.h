@@ -28,7 +28,7 @@ public:
 
     Result<Ref<LazyFile>> get_resource_by_name(const std::string& name);
 
-    Managed<sf::Texture> load_texture(const std::string& name);
+    [[nodiscard]] Managed<sf::Texture> load_texture(const std::string& name);
 
     void operator()() {
     }

@@ -31,30 +31,31 @@ add_library(Engine SHARED
     Cellular/Cell.cpp
     Core/Application.cpp
     Core/GameWindow.cpp
-    Core/World.cpp
     Core/HID.cpp
+    Core/Math.cpp
+    Core/World.cpp
     ECS/Component.cpp
     ECS/Entity.cpp
     ECS/ScriptableComponent.cpp
     Events/Event.cpp
     Events/EventDispatcher.cpp
     Events/IEventReceiver.cpp
+    Modules/GenericModule.cpp
+    Modules/GenericModuleComponent.cpp
     Physics/Collider.cpp
     Physics/PhysicalObject.cpp
     Physics/PhysicsObject.cpp
     Physics/Ray.cpp
     Rendering/Draw.cpp
+    Rendering/Drawable.cpp
+    Rendering/GuiElement.cpp
     Rendering/SimpleDrawable.cpp
     Rendering/ext_sf.cpp
-    Rendering/GuiElement.cpp
     Unused/Tool.cpp
     Utils/CsvLogger.cpp
     Utils/LazyFile.cpp
     Utils/ResourceManager.cpp
     Utils/stl_ext.cpp
-    Core/Math.cpp
-    Modules/GenericModuleComponent.cpp
-    Modules/GenericModule.cpp
 
     # fmt
     fmt/src/format.cc

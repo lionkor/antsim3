@@ -118,14 +118,15 @@ DerivedComponentT* Entity::fetch_component() {
 }
 
 template<class DerivedComponentT, typename... Args>
-DerivedComponentT& Entity::add_component(Args&&... args) {
-    auto comp = std::make_shared<DerivedComponentT>(*this, std::forward<Args>(args)...);
+[[nodiscard]] DerivedComponentT& Entity::add_component(Args&&... args) {
+    auto raw_ptr = new DerivedComponentT(*this, std::forward<Args>(args)...);
+    auto comp = SharedPtr<DerivedComponentT>(std::move(raw_ptr));
     if (comp->is_unique() && has_component<DerivedComponentT>()) {
         report_error(cst_error_multiple_unique_components_fmt, comp->uuid(), this->uuid(), comp->class_name());
         throw std::runtime_error(fmt::format(cst_error_multiple_unique_components));
     }
-    m_comps.push_back(std::move(comp));
-    auto& ref = *m_comps.back();
+    m_comps.emplace_back(std::move(comp));
+    Component& ref = *m_comps.back();
     //report("Added component: {}", ref);
     return dynamic_cast<DerivedComponentT&>(ref);
 }

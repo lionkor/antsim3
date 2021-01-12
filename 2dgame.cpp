@@ -71,6 +71,7 @@ public:
         add_chunk({ 0, 0 });
 
         m_atlas = resource_manager().load_texture("atlas.png");
+        ASSERT(m_atlas != nullptr);
         m_atlas->generateMipmap();
 
         on_mouse_move = [&](GameWindow& _window, const HID::MouseAction& _ma) -> void {
@@ -185,10 +186,6 @@ public:
         m_redraw = true;
     }
 
-    static sf::Vector2f to_sf_vec2f(const vec<float>& f) {
-        return sf::Vector2f(f.x, f.y);
-    }
-
     static size_t chunk_size() {
         return chunk_type::size() * TILE_SIZE;
     }
@@ -232,10 +229,10 @@ public:
                             ASSERT_NOT_REACHABLE();
                         }
                         if (draw) {
-                            m_drawable[i].position = to_sf_vec2f(pos);
-                            m_drawable[i + 1].position = to_sf_vec2f(pos + vec<float>(TILE_SIZE, 0));
-                            m_drawable[i + 2].position = to_sf_vec2f(pos + vec<float>(TILE_SIZE, TILE_SIZE));
-                            m_drawable[i + 3].position = to_sf_vec2f(pos + vec<float>(0, TILE_SIZE));
+                            m_drawable[i].position = ext::sf::to_sf_vec2f(pos);
+                            m_drawable[i + 1].position = ext::sf::to_sf_vec2f(pos + vec<float>(TILE_SIZE, 0));
+                            m_drawable[i + 2].position = ext::sf::to_sf_vec2f(pos + vec<float>(TILE_SIZE, TILE_SIZE));
+                            m_drawable[i + 3].position = ext::sf::to_sf_vec2f(pos + vec<float>(0, TILE_SIZE));
                             m_drawable[i].color = color;
                             m_drawable[i + 1].color = color;
                             m_drawable[i + 2].color = color;

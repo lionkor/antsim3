@@ -20,11 +20,7 @@ private:
     bool m_is_destroyed { false };
 
 protected:
-    vecd m_pos;
-    vecd m_size;
-    std::size_t m_index;
-    bool m_has_index { false };
-    mutable bool m_has_changed { true };
+    Rectangle m_rectangle;
     World& m_world;
 
     /// An update is 1 tick in the engine.
@@ -50,13 +46,9 @@ public:
     virtual void try_draw(DrawSurface& surface) final;
 
     /// Position in the World.
-    vecd& position() { return m_pos; }
+    vecd position() const { return m_rectangle.position(); }
     /// Physical size of the object.
-    vecd& size() { return m_size; }
-    /// Position in the World.
-    const vecd& position() const { return m_pos; }
-    /// Physical size of the object.
-    const vecd& size() const { return m_size; }
+    vecd size() const { return m_rectangle.size(); }
 
     /// Sets the position within the world.
     void set_position(const vecd& pos);
