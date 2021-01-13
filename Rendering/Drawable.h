@@ -21,8 +21,10 @@ struct Color final {
     static const Color Transparent;
 };
 
+// pointer to Drawable, with operator== which compares by Drawable::ID
 struct DrawablePointerWrapper {
     const class Drawable* ptr;
+    bool operator==(const DrawablePointerWrapper& wrapper) const;
 };
 
 class Drawable : public Object
@@ -76,9 +78,9 @@ public:
 
 namespace std {
 template<>
-struct hash<const Drawable*> {
-    std::size_t operator()(const Drawable* s) const noexcept {
-        return s->id().value;
+struct hash<DrawablePointerWrapper> {
+    std::size_t operator()(DrawablePointerWrapper s) const noexcept {
+        return s.ptr->id().value;
     }
 };
 }

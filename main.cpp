@@ -92,7 +92,7 @@ int main(int, char**) {
 
     auto entity = world.add_entity({ 100, 200 });
     auto shared_entity = entity.lock();
-    (void)shared_entity->add_component<SpriteComponent>(vecd { 10, 10 }, vecd { 100, 100 }, Color::White);
+    (void)shared_entity->add_component<SpriteComponent>(vecd { 10, 10 }, vecd { 100, 100 }, Color::White, "sprite1.png");
 
     return app.run();
 }

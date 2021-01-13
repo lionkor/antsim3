@@ -23,9 +23,9 @@ void Rectangle::update_internal_shape() {
         tex_coords = sf::Vector2f(m_texture->getSize());
     }
     m_shape[0] = sf::Vertex(ext::sf::to_sf_vec2f(m_pos), { m_color.r, m_color.g, m_color.b, m_color.a }, { 0.0f, 0.0f });
-    m_shape[1] = sf::Vertex(ext::sf::to_sf_vec2f(m_pos) + sf::Vector2f(m_size.x, 0), { m_color.r, m_color.g, m_color.b, m_color.a }, sf::Vector2f(tex_coords.x, 0.0f));
-    m_shape[2] = sf::Vertex(ext::sf::to_sf_vec2f(m_pos) + sf::Vector2f(m_size.x, m_size.y), { m_color.r, m_color.g, m_color.b, m_color.a }, tex_coords);
-    m_shape[3] = sf::Vertex(ext::sf::to_sf_vec2f(m_pos) + sf::Vector2f(0, m_size.y), { m_color.r, m_color.g, m_color.b, m_color.a }, sf::Vector2f(0.0f, tex_coords.y));
+    m_shape[1] = sf::Vertex(ext::sf::to_sf_vec2f(m_pos) + sf::Vector2f(m_size.x, 0), { m_color.r, m_color.g, m_color.b, m_color.a }, sf::Vector2f(tex_coords.x - 1, 0.0f));
+    m_shape[2] = sf::Vertex(ext::sf::to_sf_vec2f(m_pos) + sf::Vector2f(m_size.x, m_size.y), { m_color.r, m_color.g, m_color.b, m_color.a }, tex_coords + sf::Vector2f(-1, -1));
+    m_shape[3] = sf::Vertex(ext::sf::to_sf_vec2f(m_pos) + sf::Vector2f(0, m_size.y), { m_color.r, m_color.g, m_color.b, m_color.a }, sf::Vector2f(0.0f, tex_coords.y - 1));
 }
 
 Rectangle::Rectangle(vecd pos, vecd size, double rotation)
@@ -39,11 +39,15 @@ Rectangle::Rectangle(vecd pos, vecd size, double rotation)
 void Rectangle::set_texture(sf::Texture* texture) {
     ASSERT(texture);
     m_texture = texture;
+    update_internal_shape();
 }
 
 void Rectangle::draw(GameWindow& window) const {
-    report("drawing in Rectangle");
-    window.draw(m_shape);
+    if (m_texture) {
+        window.draw(m_shape, sf::RenderStates(m_texture));
+    } else {
+        window.draw(m_shape);
+    }
 }
 
 Drawable::Drawable()
@@ -57,4 +61,8 @@ Drawable::Drawable(const Drawable&)
 Drawable& Drawable::operator=(const Drawable&) {
     m_id = generate_new_id();
     return *this;
+}
+
+bool DrawablePointerWrapper::operator==(const DrawablePointerWrapper& wrapper) const {
+    return ptr->id() == wrapper.ptr->id();
 }

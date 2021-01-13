@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 #include <stack>
-#include <set>
+#include <unordered_set>
 
 #include "Core/Object.h"
 #include "Utils/DebugTools.h"
@@ -18,11 +18,12 @@ class GameWindow;
 class DrawSurface
 {
     GameWindow& m_window;
+    
 
     std::vector<Ref<sf::Text>> m_texts;
     sf::Color m_clear_color { sf::Color::Black };
     sf::View m_gui_view;
-    std::set<const Drawable*> m_drawables;
+    std::unordered_set<DrawablePointerWrapper> m_drawables;
 
 public:
     DrawSurface(GameWindow& window);

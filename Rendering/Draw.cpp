@@ -8,17 +8,16 @@ DrawSurface::DrawSurface(GameWindow& window)
 }
 
 void DrawSurface::draw(const Drawable& drawable) {
-    m_drawables.insert(&drawable);
+    m_drawables.insert(drawable.get_pointer());
     drawable.set_disable_fn([this](Drawable& drawable) {
         report("drawable released");
-        m_drawables.erase(&drawable);
+        m_drawables.erase(drawable.get_pointer());
     });
 }
 
 void DrawSurface::finalize() {
     for (const auto& drawable : m_drawables) {
-        report("drawing");
-        drawable->draw(m_window);
+        drawable.ptr->draw(m_window);
     }
 
     /*
