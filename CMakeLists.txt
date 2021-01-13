@@ -54,7 +54,6 @@ add_library(Engine SHARED
     Rendering/Draw.cpp
     Rendering/Drawable.cpp
     Rendering/GuiElement.cpp
-    Rendering/SimpleDrawable.cpp
     Rendering/ext_sf.cpp
     Unused/Tool.cpp
     Utils/CsvLogger.cpp

@@ -2,7 +2,9 @@ antsim3.*
 build/*
 *tags
 .tags
+*.orig
 *.csv
 *.user
 nohup.*
 bin/*
+.idea/*
