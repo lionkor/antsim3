@@ -60,6 +60,7 @@ add_library(Engine SHARED
     Utils/LazyFile.cpp
     Utils/ResourceManager.cpp
     Utils/stl_ext.cpp
+    Network/UDPServer.cpp
 
     # fmt
     fmt/src/format.cc
