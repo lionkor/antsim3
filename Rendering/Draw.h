@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <stack>
+#include <set>
 
 #include "Core/Object.h"
 #include "Utils/DebugTools.h"
@@ -21,7 +22,7 @@ class DrawSurface
     std::vector<Ref<sf::Text>> m_texts;
     sf::Color m_clear_color { sf::Color::Black };
     sf::View m_gui_view;
-    std::stack<const Drawable*> m_drawables;
+    std::set<const Drawable*> m_drawables;
 
 public:
     DrawSurface(GameWindow& window);

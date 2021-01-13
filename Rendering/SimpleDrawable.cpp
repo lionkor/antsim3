@@ -16,11 +16,11 @@ void SimpleDrawable::clear() {
 
 void SimpleDrawable::draw(DrawSurface& surface) const {
     if (!m_initialized) {
-        m_index = surface.submit_custom_varray(m_varray, m_texture);
+        //m_index = surface.submit_custom_varray(m_varray, m_texture);
         m_initialized = true;
     }
     if (m_changed) {
-        surface.update_custom_varray(m_index, m_varray, m_texture);
+        //surface.update_custom_varray(m_index, m_varray, m_texture);
         m_changed = false;
     }
 }

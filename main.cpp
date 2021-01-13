@@ -89,27 +89,10 @@ int main(int, char**) {
     Application app("AntSim3", { 1280, 720 });
 
     auto& world = app.world();
-    auto& window = app.window();
-    static_cast<void>(window);
 
     auto entity = world.add_entity({ 100, 200 });
     auto shared_entity = entity.lock();
-    auto& comp1 = shared_entity->add_component<SpriteComponent>(vecd { 10, 10 }, vecd { 100, 100 }, Color::Blue);
-    auto& comp2 = shared_entity->add_component<SpriteComponent>(vecd { 50, 50 }, vecd { 50, 50 }, Color::Blue, "sprite1.png");
-    report("has SpriteComponent? {}", shared_entity->has_component<SpriteComponent>());
-    auto comp3 = shared_entity->add_component<SimpleMovementComponent>();
-    //auto comp5 = shared_entity->add_component<GuiElementComponent>("parent", "mono.ttf", Color::Green);
-
-    auto child = shared_entity->add_child().lock();
-    auto& comp4 = child->add_component<SpriteComponent>(vecd { 120, 0 }, vecd { 90, 90 }, Color::Red, "sprite1.png");
-    //auto comp6 = child->add_component<GuiElementComponent>("child", "mono.ttf", Color::Green);
-
-    auto label_ptr = app.add_gui_element(vecu(20, 20), vecd(0.4, 0.4), "Hello, World!").lock();
-    label_ptr->on_update = [&](float dt) {
-        label_ptr->set_text(fmt::format("screen pos: {}\nworld  pos: {}\nfps: {}", window.mouse_screen_pos(), window.mouse_world_pos(), 1.0f / dt));
-    };
-
-    std::cout << window << std::endl;
+    (void)shared_entity->add_component<SpriteComponent>(vecd { 10, 10 }, vecd { 100, 100 }, Color::White);
 
     return app.run();
 }

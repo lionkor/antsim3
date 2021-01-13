@@ -34,7 +34,8 @@ void GuiElement::update(float dt) {
 }
 
 void GuiElement::draw(DrawSurface& surface) {
-    surface.draw_text(m_text_obj);
+// TODO: No longer implemented
+    //surface.draw_text(m_text_obj);
 
     if (on_draw)
         on_draw(surface);
