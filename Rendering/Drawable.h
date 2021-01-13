@@ -101,7 +101,7 @@ private:
     void update_internal_shape();
 
 public:
-    Rectangle(vecd pos, vecd size, double rotation = 0);
+    Rectangle(vecd pos = { 0, 0 }, vecd size = { 10, 10 }, double rotation = 0);
 
     virtual void set_position(vecd new_pos) override {
         m_pos = new_pos;

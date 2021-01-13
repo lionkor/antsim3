@@ -3,8 +3,8 @@
 
 #include "Rendering/Draw.h"
 #include "Rendering/ext_sf.h"
-#include "Rendering/SimpleDrawable.h"
 #include "Rendering/GuiElement.h"
+#include "Rendering/Drawable.h"
 
 using std::size_t;
 
