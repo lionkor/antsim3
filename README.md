@@ -5,9 +5,8 @@ Building a simple modern 2D engine for simulation projects like simulating ants 
 * Super simple 2D rendering (WIP)
 * Entity-Component-System (ECS)
 * Lua scriptable component
+* C scriptable component (runtime loading of mods as DLL)
 * Entity Hierarchy (almost a Scene Graph), parent-child relationships between Entities
-* Tests for the major modules
-* Mouse events at component-level
 
 Demos included:
 * cells, a multithreaded Conway's game of life
