@@ -185,6 +185,18 @@ inline void _assert(const char* file, const char* function, [[maybe_unused]] uns
     }
 }
 
+inline void dump_hex(const char* data, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
+        if (i % 16 == 0) {
+            printf("\n");
+        } else if (i % 8 == 0) {
+            printf("  ");
+        }
+        printf("%02X ", data[i] & 0xff);
+    }
+    printf("\n");
+}
+
 #endif
 
 #endif // DEBUGTOOLS_H
