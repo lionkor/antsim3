@@ -91,6 +91,7 @@ WeakPtr<Entity> Entity::add_child(Args&&... args) {
     ptr->m_parent = this;
     ptr->m_transform.m_parent_transform = &m_transform;
     m_children.push_back(ptr.get());
+    report("added child {}", *ptr);
     return weak_ptr;
 }
 void remove_child(Entity* entity);
@@ -127,7 +128,7 @@ template<class DerivedComponentT, typename... Args>
     }
     m_comps.emplace_back(std::move(comp));
     Component& ref = *m_comps.back();
-    //report("Added component: {}", ref);
+    report("Added component: {}", ref);
     return dynamic_cast<DerivedComponentT&>(ref);
 }
 

@@ -5,8 +5,8 @@
 #include "ECS/Entity.h"
 #include "Core/World.h"
 #include "Core/Object.h"
+#include "Network/UDPClient.h"
 #include "mpgame-common.h"
-#include "UDPClient.h"
 
 struct PlayerInfo {
     std::string name;
@@ -21,7 +21,6 @@ class ClientComponent : public Component
 {
     OBJNAME(ClientComponent)
 private:
-    boost::asio::io_service m_io_service;
     UDPClient m_backend;
     std::string m_name;
     double m_speed { 0.7 };

@@ -1,22 +1,20 @@
 ﻿#include "PlayerComponent.h"
 #include "ClientComponent.h"
 
+#include "Utils/Random.h"
+
 PlayerComponent::PlayerComponent(Entity& e, const std::string& name)
     : Component(e)
     , m_name(name)
-    , m_drawable(SimpleDrawable::PrimitiveType::Quads, 4)
     , m_last_position(parent().transform().position()) {
     ASSERT(parent().has_parent());
 
     // init drawable
     auto transform_pos = parent().transform().position();
     sf::Vector2f pos = sf::Vector2f(transform_pos.x, transform_pos.y);
-    sf::Color random_color(Random::random(64, 255), Random::random(64, 255), Random::random(64, 255));
-    m_drawable[0] = sf::Vertex(pos, random_color);
-    m_drawable[1] = sf::Vertex(sf::Vector2f(pos.x + m_size.x, pos.y), random_color);
-    m_drawable[2] = sf::Vertex(pos + sf::Vector2f(m_size.x, m_size.y), random_color);
-    m_drawable[3] = sf::Vertex(sf::Vector2f(pos.x, pos.y + m_size.y), random_color);
-    m_drawable.set_changed();
+    Color random_color(Random::random(64, 255), Random::random(64, 255), Random::random(64, 255), 255);
+    m_drawable.set_position(transform_pos);
+    m_drawable.set_color(random_color);
 
     on_key_down = [&](GameWindow&, const HID::Key& key) {
         key_pressed(key);
@@ -80,7 +78,12 @@ void PlayerComponent::on_update(float) {
         ASSERT(parent().parent()->has_component<ClientComponent>());
         auto* client_comp = parent().parent()->fetch_component<ClientComponent>();
         m_text = sf::Text(m_name, client_comp->font(), 10);
+        m_heartbeat_clock.restart();
         m_update_clock.restart();
+        // send first update packet
+        auto pos = parent().transform().position();
+        auto* comp = parent().parent()->fetch_component<ClientComponent>();
+        comp->send_packet(UpdatePacket { m_name, pos.x, pos.y });
     }
     if (m_is_player_controlled) {
         vecd vel(0, 0);
@@ -102,21 +105,31 @@ void PlayerComponent::on_update(float) {
         parent().transform().move_by(vel);
     }
 
-    if (m_update_clock.getElapsedTime().asMilliseconds() > 40) {
+    if (m_heartbeat_clock.getElapsedTime().asSeconds() > 1.0f) {
+        m_heartbeat_clock.restart();
         auto pos = parent().transform().position();
         auto* comp = parent().parent()->fetch_component<ClientComponent>();
-        comp->send_packet(UpdatePacket { m_name, pos.x, pos.y });
-        m_update_clock.restart();
+        comp->send_packet(UpdatePacket(m_name, pos.x, pos.y, UpdatePacket::Heartbeat));
     }
 
     auto transform_pos = parent().transform().position();
-    if (transform_pos != m_last_position) {
+    if (transform_pos != m_last_position && m_update_clock.getElapsedTime().asMilliseconds() >= 15 /* a bit more than 60 Hz */) {
+        m_update_clock.restart();
+        m_drawable.set_position(transform_pos);
         m_last_position = transform_pos;
-        sf::Vector2f pos = sf::Vector2f(transform_pos.x, transform_pos.y);
-        m_drawable[0].position = pos;
-        m_drawable[1].position = sf::Vector2f(pos.x + m_size.x, pos.y);
-        m_drawable[2].position = pos + sf::Vector2f(m_size.x, m_size.y);
-        m_drawable[3].position = sf::Vector2f(pos.x, pos.y + m_size.y);
-        m_drawable.set_changed();
+        auto pos = parent().transform().position();
+        auto* comp = parent().parent()->fetch_component<ClientComponent>();
+        comp->send_packet(UpdatePacket { m_name, pos.x, pos.y });
     }
+}
+
+void PlayerComponent::on_draw(DrawSurface& surface) {
+    auto pos = parent().transform().position();
+    sf::Vector2f sf_pos = sf::Vector2f(pos.x, pos.y);
+    sf::Vector2f real_position(sf_pos.x, sf_pos.y);
+    sf::Vector2i screen_pos = surface.window().mapCoordsToPixel(real_position);
+    m_text.setPosition(screen_pos.x, screen_pos.y);
+    //surface.draw_text(m_text);
+    //m_drawable.draw(surface);
+    surface.draw(m_drawable);
 }

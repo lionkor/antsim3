@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-void UDPServer::insert_client(const UDPClient& client) {
+void UDPServer::insert_client(const ServerSideUDPClient& client) {
     auto iter = std::find(m_clients.begin(), m_clients.end(), client);
     if (iter == m_clients.end()) {
         m_clients.push_back(client);
@@ -13,7 +13,7 @@ void UDPServer::insert_client(const UDPClient& client) {
 
 void UDPServer::start_receive() {
     SharedPtr<std::array<char, s_max_message_size>> ptr(new std::array<char, s_max_message_size> { 0 });
-    UDPClient client(new udp::endpoint);
+    ServerSideUDPClient client(new udp::endpoint);
     m_socket.async_receive_from(boost::asio::buffer(*ptr),
         *client.endpoint,
         boost::bind(&UDPServer::handle_receive,
@@ -28,17 +28,16 @@ void UDPServer::handle_send(SharedPtr<std::array<char, s_max_message_size>> msg,
     const boost::system::error_code& error,
     size_t) {
     ASSERT(!error);
-    report("sent: _{}_", std::string(msg->data()));
+    // report("sent: _{}_", std::string(msg->data(), strlen(msg->data())));
 }
 
 void UDPServer::handle_receive(SharedPtr<std::array<char, s_max_message_size>> msg,
-    UDPClient client,
+    ServerSideUDPClient client,
     const boost::system::error_code& error,
     size_t size) {
     if (!error) {
-        ++m_pps;
         insert_client(client);
-        report("got msg from {}, {}", client.endpoint->address(), client.endpoint->port());
+        // report("got msg from {}, {}: _{}_", client.endpoint->address(), client.endpoint->port(), std::string(msg->data()));
         SharedPtr<std::array<char, s_max_message_size>> message(new std::array<char, s_max_message_size> { 0 });
         if (on_receive) {
             auto maybe_msg = on_receive(client, msg, size);
@@ -70,23 +69,12 @@ void UDPServer::handle_receive(SharedPtr<std::array<char, s_max_message_size>> m
     }
 }
 
-UDPServer::UDPServer(boost::asio::io_context& io, uint16_t port)
-    : m_socket(io, udp::endpoint(udp::v4(), port)) {
+UDPServer::UDPServer(uint16_t port)
+    : m_socket(m_io, udp::endpoint(udp::v4(), port)) {
     start_receive();
-    std::thread monitor([&] {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            double New = m_pps;
-            m_pps = 0;
-            if (!m_clients.empty()) {
-                std::cout << "PPS: " << New / m_clients.size() << " @ " << m_clients.size() << " clients" << std::endl;
-            }
-        }
-    });
-    monitor.detach();
 }
 
-void UDPServer::send(SharedPtr<std::array<char, s_max_message_size>> data, size_t) {
+void UDPServer::send_to_all(SharedPtr<std::array<char, s_max_message_size>> data, size_t) {
     report("i know of {} client(s).", m_clients.size());
     for (auto& client : m_clients) {
         m_socket.async_send_to(boost::asio::buffer(*data),
@@ -98,7 +86,7 @@ void UDPServer::send(SharedPtr<std::array<char, s_max_message_size>> data, size_
     }
 }
 
-void UDPServer::send(SharedPtr<std::array<char, s_max_message_size>> data, size_t, UDPClient ignore) {
+void UDPServer::send_to_all(SharedPtr<std::array<char, s_max_message_size>> data, size_t, ServerSideUDPClient ignore) {
     report("i know of {} client(s).", m_clients.size());
     for (auto& client : m_clients) {
         if (client == ignore) {
@@ -111,4 +99,18 @@ void UDPServer::send(SharedPtr<std::array<char, s_max_message_size>> data, size_
                 boost::asio::placeholders::error,
                 boost::asio::placeholders::bytes_transferred));
     }
+}
+
+void UDPServer::send_to(SharedPtr<std::array<char, s_max_message_size>> data, size_t, ServerSideUDPClient target) {
+    m_socket.async_send_to(boost::asio::buffer(*data),
+        *target.endpoint,
+        boost::bind(&UDPServer::handle_send, this,
+            data,
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::bytes_transferred));
+}
+
+void UDPServer::run() {
+    std::thread processing([&] { m_io.run(); });
+    processing.join();
 }

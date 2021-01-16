@@ -3,11 +3,9 @@
 
 ClientComponent::ClientComponent(Entity& e, const std::string& address, uint16_t port, const std::string& name)
     : Component(e)
-    , m_io_service()
-    , m_backend(m_io_service, address, port)
+    , m_backend(address, std::to_string(port))
     , m_name(name) {
-
-    auto& resman = parent().world().application().resource_manager();
+    /*auto& resman = resource_manager();
     auto res_maybe = resman.get_resource_by_name("mono.ttf");
     if (res_maybe.ok()) {
         auto* data = res_maybe.value().get().load();
@@ -23,12 +21,17 @@ ClientComponent::ClientComponent(Entity& e, const std::string& address, uint16_t
         report_error(res_maybe.message());
     }
 
+    */
     // add playable player
     { // shared_ptr lock scope
         auto playable = parent().add_child().lock();
         auto& comp = playable->add_component<PlayerComponent>(name);
         comp.set_is_player_controlled(true);
     }
+    UpdatePacket conn_packet;
+    conn_packet.name = m_name;
+    conn_packet.type = UpdatePacket::Connect;
+    send_packet(conn_packet);
 }
 
 ClientComponent::~ClientComponent() {
@@ -45,57 +48,57 @@ std::vector<Entity*>::iterator ClientComponent::find_player_with_name(const std:
             if (cmp) {
                 return name == cmp->name();
             }
+            return false;
         });
 }
 
 void ClientComponent::update_other_players_from_server() {
     // whatever
-    auto raw_packets = m_backend.receive();
-    std::vector<UpdatePacket> packets;
-    packets.reserve(raw_packets.size());
-    for (auto& str : raw_packets) {
-        if (str.empty()) {
-            report_error("received empty packet from server (bad!)");
-            continue;
-        }
-        // FIXME: this might throw, handle please!
-        packets.push_back(deserialize_from_string<UpdatePacket>(str));
+    auto raw_packet = m_backend.recv();
+    if (std::all_of(raw_packet.begin(), raw_packet.end(), [](char c) { return c == 0; })) {
+        return;
+    } else {
+        //report("got _{}_", raw_packet);
+    }
+    auto packet = UpdatePacket::from_binary(raw_packet);
+
+    if (packet.name == m_name) {
+        //return;
     }
 
-    if (packets.size() != 0) {
-        // we know that stuff MUST have changed, so we can already tell the drawable to redraw later
-        for (auto& packet : packets) {
-            if (packet.name == m_name)
-                continue;
-            // find player with packet.name as name
-            auto player_iter = find_player_with_name(packet.name);
-            if (packet.type == UpdatePacket::Disconnect) {
-                // someone's disconnecting gracefully, apparently!
-                // TODO have some console or something that says who connects/disconnects
-                report("player {} disconnected gracefully", packet.name);
-                // m_other_players.erase(player_iter);
-                if (player_iter != parent().children().end()) {
-                    (*player_iter)->destroy();
-                }
-                continue;
-            }
-            if (player_iter != parent().children().end()) {
-                (*player_iter)->transform().set_position(vecd(packet.x, packet.y));
-
-            } else {
-                report("got a new connection!");
-                auto player = parent().add_child().lock();
-                player->transform().set_position(vecd(packet.x, packet.y));
-                player->add_component<PlayerComponent>(packet.name);
-            }
+    // find player with packet.name as name
+    auto player_iter = find_player_with_name(packet.name);
+    if (packet.type == UpdatePacket::Disconnect) {
+        report("player {} disconnected gracefully", packet.name);
+        if (player_iter != parent().children().end()) {
+            (*player_iter)->destroy();
         }
+    } else if (packet.type == UpdatePacket::Connect) {
+        report("got a new connection!");
+        auto player = parent().add_child().lock();
+        player->transform().set_position(vecd(packet.x, packet.y));
+        (void)player->add_component<PlayerComponent>(packet.name);
+    } else if (packet.type == UpdatePacket::Update) {
+        if (player_iter != parent().children().end()) {
+            (*player_iter)->transform().set_position(vecd(packet.x, packet.y));
+        } else {
+            report_warning("got update packet from player that doesn't exist, adding player");
+            auto player = parent().add_child().lock();
+            player->transform().set_position(vecd(packet.x, packet.y));
+            (void)player->add_component<PlayerComponent>(packet.name);
+        }
+    } else if (packet.type == UpdatePacket::Heartbeat && player_iter == parent().children().end()) {
+        // heartbeat from unknown player, must have missed something!
+        report("got heartbeat from unknown player, must have missed something... adding that player now");
+        auto player = parent().add_child().lock();
+        player->transform().set_position(vecd(packet.x, packet.y));
+        (void)player->add_component<PlayerComponent>(packet.name);
     }
 }
 
 void ClientComponent::send_packet(const UpdatePacket& packet) {
-    auto array = serialize_into_array<UpdatePacket, PACKET_SIZE>(packet);
-    m_backend.send(array);
-    // report("sent _{}_", std::string(array.begin(), array.end()));
+    auto raw = packet.to_binary();
+    m_backend.send(std::move(raw));
 }
 
 void ClientComponent::on_update(float) {
@@ -103,4 +106,5 @@ void ClientComponent::on_update(float) {
 }
 
 void ClientComponent::on_draw(DrawSurface& surface) {
+    (void)surface;
 }

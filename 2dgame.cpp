@@ -61,7 +61,8 @@ public:
 private:
     std::map<veci, chunk_type> m_chunks;
     bool m_redraw { false };
-    SimpleDrawable m_drawable;
+    //  TODO: further implement this
+    std::vector<Rectangle> m_rects;
 
     Managed<sf::Texture> m_atlas;
 
