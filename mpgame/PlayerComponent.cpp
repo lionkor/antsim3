@@ -103,24 +103,24 @@ void PlayerComponent::on_update(float) {
             vel.normalize();
         }
         parent().transform().move_by(vel);
-    }
 
-    if (m_heartbeat_clock.getElapsedTime().asSeconds() > 1.0f) {
-        m_heartbeat_clock.restart();
-        auto pos = parent().transform().position();
-        auto* comp = parent().parent()->fetch_component<ClientComponent>();
-        comp->send_packet(UpdatePacket(m_name, pos.x, pos.y, UpdatePacket::Heartbeat));
+        if (m_heartbeat_clock.getElapsedTime().asSeconds() > 1.0f) {
+            m_heartbeat_clock.restart();
+            auto pos = parent().transform().position();
+            auto* comp = parent().parent()->fetch_component<ClientComponent>();
+            comp->send_packet(UpdatePacket(m_name, pos.x, pos.y, UpdatePacket::Heartbeat));
+        }
+        auto transform_pos = parent().transform().position();
+        if (transform_pos != m_last_position && m_update_clock.getElapsedTime().asMilliseconds() >= 50) {
+            m_update_clock.restart();
+            m_last_position = transform_pos;
+            auto pos = parent().transform().position();
+            auto* comp = parent().parent()->fetch_component<ClientComponent>();
+            comp->send_packet(UpdatePacket { m_name, pos.x, pos.y });
+        }
     }
-
     auto transform_pos = parent().transform().position();
-    if (transform_pos != m_last_position && m_update_clock.getElapsedTime().asMilliseconds() >= 15 /* a bit more than 60 Hz */) {
-        m_update_clock.restart();
-        m_drawable.set_position(transform_pos);
-        m_last_position = transform_pos;
-        auto pos = parent().transform().position();
-        auto* comp = parent().parent()->fetch_component<ClientComponent>();
-        comp->send_packet(UpdatePacket { m_name, pos.x, pos.y });
-    }
+    m_drawable.set_position(transform_pos);
 }
 
 void PlayerComponent::on_draw(DrawSurface& surface) {

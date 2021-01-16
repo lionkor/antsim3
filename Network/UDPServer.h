@@ -19,7 +19,10 @@ static constexpr size_t s_max_message_size = 128;
 struct ServerSideUDPClient {
     SharedPtr<udp::endpoint> endpoint;
     ServerSideUDPClient(udp::endpoint*&& ep = nullptr) {
-        ASSERT(ep);
+        if (!ep) {
+            report_warning("ep is nullptr");
+            return;
+        }
         endpoint = SharedPtr<udp::endpoint>(ep);
     }
     bool operator==(const ServerSideUDPClient& c) const {

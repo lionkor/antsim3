@@ -5,6 +5,9 @@
 #include "Utils/DebugTools.h"
 #include "Physics/vec.h"
 
+#include <msgpack.hpp>
+#include <sstream>
+
 struct UpdatePacket {
     enum Type : uint8_t
     {
@@ -18,39 +21,30 @@ struct UpdatePacket {
 
     UpdatePacket() { }
     UpdatePacket(const std::string& s, double x, double y, Type type = Type::Update)
-        : name(s), x(x), y(y), type(type) { }
-
+        : type(type), name(s), x(x), y(y) { }
 
     std::string name;
     double x;
     double y;
 
     std::array<char, 128> to_binary() const {
-        std::array<char, 128> array;
-        std::fill(array.begin(), array.end(), 0);
-        std::memcpy(&array[0], &x, 8);
-        std::memcpy(&array[8], &y, 8);
-        std::memcpy(&array[16], &type, 1);
-        std::strcpy(&array[17], name.data());
-        //report("made packet: _{}_ _{}_ _{}_ _{}_", x, y, type, name);
-        //dump_hex(array.data(), 128);
-        ASSERT(name[0] != 0);
-        return array;
+        msgpack::type::tuple<uint8_t, std::string, double, double> src(type, name, x, y);
+        std::stringstream buffer;
+        msgpack::pack(buffer, src);
+        auto str = buffer.str();
+        std::array<char, 128> arr;
+        std::move(str.begin(), str.end(), arr.begin());
+        return arr;
     }
 
     static UpdatePacket from_binary(const std::array<char, 128>& array) {
-        UpdatePacket packet;
-        packet.name.resize(128, ' ');
-        std::memcpy(&packet.x, &array[0], 8);
-        std::memcpy(&packet.y, &array[8], 8);
-        std::memcpy(&packet.type, &array[16], 1);
-        std::strcpy(&packet.name[0], &array[17]);
-        packet.name = packet.name.substr(0, packet.name.find_first_of(' '));
-        //report("got packet: _{}_ _{}_ _{}_ _{}_", packet.x, packet.y, int(packet.type), packet.name);
-        //dump_hex(array.data(), 128);
-        // dump_hex((char*)&packet.type, 1);
-        ASSERT(packet.name[0] != 0);
-        return packet;
+        std::string str(array.begin(), array.end());
+        std::stringstream ss(str);
+        msgpack::object_handle oh = msgpack::unpack(str.data(), str.size());
+        msgpack::object deserialized = oh.get();
+        msgpack::type::tuple<uint8_t, std::string, double, double> dst;
+        deserialized.convert(dst);
+        return UpdatePacket { dst.get<1>(), dst.get<2>(), dst.get<3>(), Type(dst.get<0>()) };
     }
 };
 

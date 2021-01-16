@@ -63,7 +63,7 @@ void ClientComponent::update_other_players_from_server() {
     auto packet = UpdatePacket::from_binary(raw_packet);
 
     if (packet.name == m_name) {
-        //return;
+        return;
     }
 
     // find player with packet.name as name
@@ -83,9 +83,9 @@ void ClientComponent::update_other_players_from_server() {
             (*player_iter)->transform().set_position(vecd(packet.x, packet.y));
         } else {
             report_warning("got update packet from player that doesn't exist, adding player");
-            auto player = parent().add_child().lock();
-            player->transform().set_position(vecd(packet.x, packet.y));
-            (void)player->add_component<PlayerComponent>(packet.name);
+            //auto player = parent().add_child().lock();
+            //player->transform().set_position(vecd(packet.x, packet.y));
+            //(void)player->add_component<PlayerComponent>(packet.name);
         }
     } else if (packet.type == UpdatePacket::Heartbeat && player_iter == parent().children().end()) {
         // heartbeat from unknown player, must have missed something!

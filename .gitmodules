@@ -13,3 +13,6 @@
 [submodule "boost"]
 	path = boost
 	url = https://github.com/boostorg/boost
+[submodule "bitsery"]
+	path = bitsery
+	url = https://github.com/fraillt/bitsery
