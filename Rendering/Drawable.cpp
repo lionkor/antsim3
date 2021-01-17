@@ -71,10 +71,12 @@ static constexpr size_t index_3to1(size_t x, size_t y, size_t z, size_t width, s
     return x * depth + y * width * depth + z;
 }
 
-Grid::Grid(vec<size_t> grid_size, double tile_size)
+Grid::Grid(vec<size_t> grid_size, double tile_size, SharedPtr<TextureAtlas> atlas)
     : m_varray(sf::PrimitiveType::Quads, grid_size.x * grid_size.y * 4) // x * y * (4 vertices)
     , m_grid_size(grid_size)
-    , m_tile_size(tile_size) {
+    , m_tile_size(tile_size)
+    , m_atlas(atlas) {
+    ASSERT(m_atlas.get() != nullptr);
     for (size_t x = 0; x < grid_size.x; ++x) {
         for (size_t y = 0; y < grid_size.y; ++y) {
             m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].position = { float(x * m_tile_size), float(y * m_tile_size) };
@@ -96,11 +98,8 @@ void Grid::set_tile_color(vec<size_t> tile_index, Color color) {
     m_varray[index_3to1(tile_index.x, tile_index.y, 3, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
 }
 
-void Grid::set_texture(sf::Texture* texture) {
-    m_texture = texture;
-}
-
-void Grid::set_tile_texture(vec<size_t> tile_index, vec<float> top_left, vec<float> bottom_right) {
+void Grid::set_tile_texture(vec<size_t> tile_index, vec<size_t> atlas_index) {
+    auto [top_left, bottom_right] = m_atlas->subtexture_coords(atlas_index);
     m_varray[index_3to1(tile_index.x, tile_index.y, 0, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, top_left.y };
     m_varray[index_3to1(tile_index.x, tile_index.y, 1, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, top_left.y };
     m_varray[index_3to1(tile_index.x, tile_index.y, 2, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, bottom_right.y };
@@ -108,9 +107,5 @@ void Grid::set_tile_texture(vec<size_t> tile_index, vec<float> top_left, vec<flo
 }
 
 void Grid::draw(GameWindow& window) const {
-    if (m_texture) {
-        window.draw(m_varray, sf::RenderStates(sf::BlendAlpha, {}, m_texture, nullptr));
-    } else {
-        window.draw(m_varray);
-    }
+    window.draw(m_varray, sf::RenderStates(m_atlas->texture()));
 }

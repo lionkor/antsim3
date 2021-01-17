@@ -55,6 +55,7 @@ add_library(Engine SHARED
     Rendering/Drawable.cpp
     Rendering/GuiElement.cpp
     Rendering/ext_sf.cpp
+    Rendering/TextureAtlas.cpp
     Unused/Tool.cpp
     Utils/CsvLogger.cpp
     Utils/LazyFile.cpp

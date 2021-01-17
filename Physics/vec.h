@@ -16,8 +16,16 @@ struct vec {
     T y;
 
     vec() = default;
-    vec(const vec&) = default;
-    vec& operator=(const vec&) = default;
+
+    vec(const vec& other)
+        : x(other.x), y(other.y) {
+    }
+
+    vec& operator=(const vec& other) {
+        x = other.x;
+        y = other.y;
+        return *this;
+    }
 
     vec(vec&& v)
         : x(std::move(v.x))
@@ -38,6 +46,14 @@ struct vec {
     vec(const vec<OtherT>& other)
         : x(other.x), y(other.y) {
     }
+
+    template<class OtherT>
+    vec& operator=(const vec<OtherT>& other) {
+        x = other.x;
+        y = other.y;
+        return *this;
+    }
+
 
     vec(T _x, T _y)
         : x(static_cast<T>(_x)), y(static_cast<T>(_y)) { }

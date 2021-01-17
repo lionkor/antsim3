@@ -3,6 +3,7 @@
 
 #include "Physics/vec.h"
 #include "Core/Object.h"
+#include "TextureAtlas.h"
 
 #include <SFML/Graphics.hpp>
 #include <functional>
@@ -136,13 +137,13 @@ class Grid : public Drawable
     OBJNAME(Grid)
 private:
     sf::VertexArray m_varray;
-    const vec<size_t> m_grid_size;
-    const double m_tile_size;
+    vec<size_t> m_grid_size;
+    double m_tile_size;
     vecd m_position;
-    sf::Texture* m_texture { nullptr };
+    SharedPtr<TextureAtlas> m_atlas;
 
 public:
-    Grid(vec<size_t> grid_size, double tile_size);
+    Grid(vec<size_t> grid_size, double tile_size, SharedPtr<TextureAtlas> atlas);
 
     virtual void set_position(vecd new_pos) override { m_position = new_pos; }
     virtual void set_rotation(double new_rot) override { NOTIMPL; }
@@ -155,9 +156,8 @@ public:
 
     vec<size_t> grid_size() const { return m_grid_size; }
 
-    void set_tile_color(vec<size_t> tile_index, Color color);
-    void set_tile_texture(vec<size_t> tile_index, vec<float> top_left, vec<float> bottom_right);
-    void set_texture(sf::Texture* texture);
+    [[deprecated]] void set_tile_color(vec<size_t> tile_index, Color color);
+    void set_tile_texture(vec<size_t> tile_index, vec<size_t> atlas_index);
 
     virtual void draw(GameWindow&) const override;
 };

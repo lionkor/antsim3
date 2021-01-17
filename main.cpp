@@ -9,9 +9,7 @@
 #include <cmath>
 #include <chrono>
 
-#include "Core.h"
-#include "Utils.h"
-#include "ECS/Entity.h"
+#include "Engine.h"
 
 class SimpleMovementComponent
     : public Component
@@ -90,17 +88,15 @@ class GridComponent : public Component
 {
     OBJNAME(GridComponent)
 private:
+    SharedPtr<TextureAtlas> m_atlas;
     Grid m_grid;
-    Managed<sf::Texture> m_texture;
 
 public:
-    GridComponent(Entity& e)
+    GridComponent(Entity& e, vec<size_t> grid_size, double tile_size, const std::string& texture_atlas_name, size_t subtexture_size)
         : Component(e)
-        , m_grid({ 1000, 1000 }, 15)
-        , m_texture(resource_manager().load_texture("sprite1.png")) {
-        m_grid.set_texture(m_texture.get());
-        m_grid.set_tile_color({ 6, 5 }, Color::Blue);
-        m_grid.set_tile_texture({ 2, 2 }, { 0, 0 }, { float(m_texture->getSize().x), float(m_texture->getSize().y) });
+        , m_atlas(make_shared<TextureAtlas>(resource_manager().load_texture(texture_atlas_name), subtexture_size))
+        , m_grid(grid_size, tile_size, m_atlas) {
+        m_grid.set_tile_texture({ 2, 2 }, { 2, 1 });
     }
 
     virtual void on_draw(DrawSurface& surface) override {
@@ -116,7 +112,7 @@ int main(int, char**) {
     auto entity = world.add_entity({ 100, 200 });
     auto shared_entity = entity.lock();
     //(void)shared_entity->add_component<SpriteComponent>(vecd { 0 }, vecd { 100, 100 }, Color::White, "planet.png");
-    (void)shared_entity->add_component<GridComponent>();
+    (void)shared_entity->add_component<GridComponent>(vec<size_t> { 20, 20 }, 10.0, "atlas1.png", 32);
 
     return app.run();
 }
