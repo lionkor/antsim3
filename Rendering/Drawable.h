@@ -139,6 +139,7 @@ private:
     const vec<size_t> m_grid_size;
     const double m_tile_size;
     vecd m_position;
+    sf::Texture* m_texture { nullptr };
 
 public:
     Grid(vec<size_t> grid_size, double tile_size);
@@ -152,7 +153,11 @@ public:
     virtual Color color() const override { NOTIMPL; }
     virtual double scale() const override { }
 
+    vec<size_t> grid_size() const { return m_grid_size; }
+
     void set_tile_color(vec<size_t> tile_index, Color color);
+    void set_tile_texture(vec<size_t> tile_index, vec<float> top_left, vec<float> bottom_right);
+    void set_texture(sf::Texture* texture);
 
     virtual void draw(GameWindow&) const override;
 };

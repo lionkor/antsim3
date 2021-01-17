@@ -77,28 +77,40 @@ Grid::Grid(vec<size_t> grid_size, double tile_size)
     , m_tile_size(tile_size) {
     for (size_t x = 0; x < grid_size.x; ++x) {
         for (size_t y = 0; y < grid_size.y; ++y) {
-            /*
-             *   |     |
-         *  -----+-----+
-         *       |     |
-         *       |     |
-         *  -----+-----+
-         */
             m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].position = { float(x * m_tile_size), float(y * m_tile_size) };
             m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].position = { float(x * m_tile_size + m_tile_size), float(y * m_tile_size) };
             m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].position = { float(x * m_tile_size + m_tile_size), float(y * m_tile_size + m_tile_size) };
             m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].position = { float(x * m_tile_size), float(y * m_tile_size + m_tile_size) };
-            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].color = sf::Color(random(), random(), random(), 255);
-            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].color = sf::Color(random(), random(), random(), 255);
-            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].color = sf::Color(random(), random(), random(), 255);
-            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].color = sf::Color(random(), random(), random(), 255);
+            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].color = sf::Color::White;
+            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].color = sf::Color::White;
+            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].color = sf::Color::White;
+            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].color = sf::Color::White;
         }
     }
 }
 
 void Grid::set_tile_color(vec<size_t> tile_index, Color color) {
+    m_varray[index_3to1(tile_index.x, tile_index.y, 0, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
+    m_varray[index_3to1(tile_index.x, tile_index.y, 1, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
+    m_varray[index_3to1(tile_index.x, tile_index.y, 2, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
+    m_varray[index_3to1(tile_index.x, tile_index.y, 3, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
+}
+
+void Grid::set_texture(sf::Texture* texture) {
+    m_texture = texture;
+}
+
+void Grid::set_tile_texture(vec<size_t> tile_index, vec<float> top_left, vec<float> bottom_right) {
+    m_varray[index_3to1(tile_index.x, tile_index.y, 0, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, top_left.y };
+    m_varray[index_3to1(tile_index.x, tile_index.y, 1, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, top_left.y };
+    m_varray[index_3to1(tile_index.x, tile_index.y, 2, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, bottom_right.y };
+    m_varray[index_3to1(tile_index.x, tile_index.y, 3, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, bottom_right.y };
 }
 
 void Grid::draw(GameWindow& window) const {
-    window.draw(m_varray);
+    if (m_texture) {
+        window.draw(m_varray, sf::RenderStates(sf::BlendAlpha, {}, m_texture, nullptr));
+    } else {
+        window.draw(m_varray);
+    }
 }

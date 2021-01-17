@@ -91,12 +91,18 @@ class GridComponent : public Component
     OBJNAME(GridComponent)
 private:
     Grid m_grid;
+    Managed<sf::Texture> m_texture;
 
 public:
     GridComponent(Entity& e)
         : Component(e)
-        , m_grid({ 10, 10 }, 15) { }
-        
+        , m_grid({ 1000, 1000 }, 15)
+        , m_texture(resource_manager().load_texture("sprite1.png")) {
+        m_grid.set_texture(m_texture.get());
+        m_grid.set_tile_color({ 6, 5 }, Color::Blue);
+        m_grid.set_tile_texture({ 2, 2 }, { 0, 0 }, { float(m_texture->getSize().x), float(m_texture->getSize().y) });
+    }
+
     virtual void on_draw(DrawSurface& surface) override {
         surface.draw(m_grid);
     }
