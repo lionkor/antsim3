@@ -19,6 +19,11 @@ public:
     std::pair<vec<float> /* top left */, vec<float> /* bottom right */> subtexture_coords(vec<size_t> subtexture_index) const;
 
     sf::Texture* texture() { return m_atlas.get(); }
+
+    vec<size_t> atlas_size() const {
+        auto size = m_atlas->getSize();
+        return vec<size_t>(size.x / m_subtexture_size, size.y / m_subtexture_size);
+    }
 };
 
 #endif // TEXTUREATLAS_H

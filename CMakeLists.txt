@@ -42,6 +42,7 @@ add_library(Engine SHARED
     ECS/Component.cpp
     ECS/Entity.cpp
     ECS/ScriptableComponent.cpp
+    ECS/TileMapComponent.cpp
     Events/Event.cpp
     Events/EventDispatcher.cpp
     Events/IEventReceiver.cpp

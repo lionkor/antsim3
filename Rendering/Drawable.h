@@ -132,9 +132,9 @@ public:
     virtual void draw(class GameWindow& window) const override;
 };
 
-class Grid : public Drawable
+class TileMap : public Drawable
 {
-    OBJNAME(Grid)
+    OBJNAME(TileMap)
 private:
     sf::VertexArray m_varray;
     vec<size_t> m_grid_size;
@@ -143,7 +143,7 @@ private:
     SharedPtr<TextureAtlas> m_atlas;
 
 public:
-    Grid(vec<size_t> grid_size, double tile_size, SharedPtr<TextureAtlas> atlas);
+    TileMap(vec<size_t> grid_size, double tile_size, SharedPtr<TextureAtlas> atlas);
 
     virtual void set_position(vecd new_pos) override { m_position = new_pos; }
     virtual void set_rotation(double new_rot) override { NOTIMPL; }
@@ -158,6 +158,12 @@ public:
 
     [[deprecated]] void set_tile_color(vec<size_t> tile_index, Color color);
     void set_tile_texture(vec<size_t> tile_index, vec<size_t> atlas_index);
+
+    vec<size_t> atlas_size() const {
+        return m_atlas->atlas_size();
+    }
+    
+    void randomize_textures();
 
     virtual void draw(GameWindow&) const override;
 };

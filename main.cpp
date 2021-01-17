@@ -9,6 +9,8 @@
 #include <cmath>
 #include <chrono>
 
+#include <functional>
+
 #include "Engine.h"
 
 class SimpleMovementComponent
@@ -19,9 +21,13 @@ class SimpleMovementComponent
 public:
     SimpleMovementComponent(Entity& e)
         : Component(e) {
+        
+        
         on_mouse_down = [](GameWindow& window, const HID::MouseAction& action) {
             report("button {} was pressed at {}, which is {} in world coords!", action.button, action.screen_position, action.world_position(window));
         };
+        
+        
     }
 
     virtual void on_update(float) override {
@@ -84,25 +90,6 @@ public:
 };
 */
 
-class GridComponent : public Component
-{
-    OBJNAME(GridComponent)
-private:
-    SharedPtr<TextureAtlas> m_atlas;
-    Grid m_grid;
-
-public:
-    GridComponent(Entity& e, vec<size_t> grid_size, double tile_size, const std::string& texture_atlas_name, size_t subtexture_size)
-        : Component(e)
-        , m_atlas(make_shared<TextureAtlas>(resource_manager().load_texture(texture_atlas_name), subtexture_size))
-        , m_grid(grid_size, tile_size, m_atlas) {
-        m_grid.set_tile_texture({ 2, 2 }, { 2, 1 });
-    }
-
-    virtual void on_draw(DrawSurface& surface) override {
-        surface.draw(m_grid);
-    }
-};
 
 int main(int, char**) {
     Application app("AntSim3", { 1280, 720 });
@@ -112,7 +99,9 @@ int main(int, char**) {
     auto entity = world.add_entity({ 100, 200 });
     auto shared_entity = entity.lock();
     //(void)shared_entity->add_component<SpriteComponent>(vecd { 0 }, vecd { 100, 100 }, Color::White, "planet.png");
-    (void)shared_entity->add_component<GridComponent>(vec<size_t> { 20, 20 }, 10.0, "atlas1.png", 32);
+    shared_entity->add_component<SimpleMovementComponent>();
+    auto& tilemap_comp = shared_entity->add_component<TileMapComponent>(vec<size_t> { 20, 20 }, 10.0, "atlas1.png", 32);
+    tilemap_comp.tilemap().randomize_textures();
 
     return app.run();
 }

@@ -28,12 +28,12 @@ private:
 
 
 public:
-    virtual ~GridComponent() {
+    virtual ~TileMapComponent() {
         m_kill_thread = true;
         m_thread.join();
     }
 
-    GridComponent(Entity& e, std::size_t w, std::size_t h)
+    TileMapComponent(Entity& e, std::size_t w, std::size_t h)
         : Component(e)
         , m_cells(w * h)
         , m_size(w, h)
@@ -150,7 +150,7 @@ int main(int, char**) {
     world.set_update_interval(200);
 
     auto grid = world.add_entity();
-    (void)grid.lock()->add_component<GridComponent>(320 * 3, 180 * 3);
+    (void)grid.lock()->add_component<TileMapComponent>(320 * 3, 180 * 3);
 
     auto ret = app.run();
     report("---  END  ---");

@@ -2,6 +2,8 @@
 
 #include "Core/GameWindow.h"
 
+#include "Utils/Random.h"
+
 #include "ext_sf.h"
 
 const Color Color::Red(255, 0, 0, 255);
@@ -71,12 +73,13 @@ static constexpr size_t index_3to1(size_t x, size_t y, size_t z, size_t width, s
     return x * depth + y * width * depth + z;
 }
 
-Grid::Grid(vec<size_t> grid_size, double tile_size, SharedPtr<TextureAtlas> atlas)
+TileMap::TileMap(vec<size_t> grid_size, double tile_size, SharedPtr<TextureAtlas> atlas)
     : m_varray(sf::PrimitiveType::Quads, grid_size.x * grid_size.y * 4) // x * y * (4 vertices)
     , m_grid_size(grid_size)
     , m_tile_size(tile_size)
     , m_atlas(atlas) {
     ASSERT(m_atlas.get() != nullptr);
+    auto [top_left, bottom_right] = m_atlas->subtexture_coords({ 0, 0 });
     for (size_t x = 0; x < grid_size.x; ++x) {
         for (size_t y = 0; y < grid_size.y; ++y) {
             m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].position = { float(x * m_tile_size), float(y * m_tile_size) };
@@ -87,18 +90,22 @@ Grid::Grid(vec<size_t> grid_size, double tile_size, SharedPtr<TextureAtlas> atla
             m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].color = sf::Color::White;
             m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].color = sf::Color::White;
             m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].color = sf::Color::White;
+            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, top_left.y };
+            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, top_left.y };
+            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, bottom_right.y };
+            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, bottom_right.y };
         }
     }
 }
 
-void Grid::set_tile_color(vec<size_t> tile_index, Color color) {
+void TileMap::set_tile_color(vec<size_t> tile_index, Color color) {
     m_varray[index_3to1(tile_index.x, tile_index.y, 0, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
     m_varray[index_3to1(tile_index.x, tile_index.y, 1, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
     m_varray[index_3to1(tile_index.x, tile_index.y, 2, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
     m_varray[index_3to1(tile_index.x, tile_index.y, 3, m_grid_size.x, 4)].color = ext::sf::to_sf_color(color);
 }
 
-void Grid::set_tile_texture(vec<size_t> tile_index, vec<size_t> atlas_index) {
+void TileMap::set_tile_texture(vec<size_t> tile_index, vec<size_t> atlas_index) {
     auto [top_left, bottom_right] = m_atlas->subtexture_coords(atlas_index);
     m_varray[index_3to1(tile_index.x, tile_index.y, 0, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, top_left.y };
     m_varray[index_3to1(tile_index.x, tile_index.y, 1, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, top_left.y };
@@ -106,6 +113,17 @@ void Grid::set_tile_texture(vec<size_t> tile_index, vec<size_t> atlas_index) {
     m_varray[index_3to1(tile_index.x, tile_index.y, 3, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, bottom_right.y };
 }
 
-void Grid::draw(GameWindow& window) const {
-    window.draw(m_varray, sf::RenderStates(m_atlas->texture()));
+void TileMap::randomize_textures() {
+    auto random_index = [&]() -> vec<size_t> {
+        return { Random::random<size_t>(0, atlas_size().x - 1), Random::random<size_t>(0, atlas_size().y - 1) };
+    };
+    for (size_t x = 0; x < m_grid_size.x; ++x) {
+        for (size_t y = 0; y < m_grid_size.y; ++y) {
+            set_tile_texture({ x, y }, random_index());
+        }
+    }
+}
+
+void TileMap::draw(GameWindow& window) const {
+    window.draw(m_varray, sf::RenderStates(sf::BlendAlpha, sf::Transform().translate(m_position.x, m_position.y), m_atlas->texture(), nullptr));
 }
