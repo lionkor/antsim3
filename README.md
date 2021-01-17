@@ -8,6 +8,7 @@ Building a simple modern 2D engine for simulation projects like simulating ants 
 * C scriptable component (runtime loading of mods as DLL)
 * Entity Hierarchy (almost a Scene Graph), parent-child relationships between Entities
 * Simple UDP server and client
+* Texture atlas
 
 Demos included:
 * cells, a multithreaded Conway's game of life
