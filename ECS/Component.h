@@ -119,11 +119,12 @@ class SpriteComponent
     OBJNAME(SpriteComponent)
 private:
     std::string m_texture_name;
+    vecd m_sprite_offset;
     Managed<sf::Texture> m_texture;
     Rectangle m_drawable;
 
 public:
-    SpriteComponent(Entity& e, const vecd& parent_position, const vecd& sprite_size, const Color& color = Color::Green, const std::string& texture_name = "");
+    SpriteComponent(Entity& e, const vecd& sprite_offset, const vecd& sprite_size, const Color& color = Color::Green, const std::string& texture_name = "");
 
     std::string texture_name() const { return m_texture_name; }
 

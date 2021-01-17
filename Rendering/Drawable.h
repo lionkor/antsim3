@@ -61,7 +61,6 @@ public:
     virtual void set_rotation(double new_rot) = 0;
     virtual void set_color(Color color) = 0;
     virtual void set_scale(double) = 0;
-
     virtual vecd position() const = 0;
     virtual double rotation() const = 0;
     virtual Color color() const = 0;
@@ -130,6 +129,32 @@ public:
     void set_texture(sf::Texture* texture);
 
     virtual void draw(class GameWindow& window) const override;
+};
+
+class Grid : public Drawable
+{
+    OBJNAME(Grid)
+private:
+    sf::VertexArray m_varray;
+    const vec<size_t> m_grid_size;
+    const double m_tile_size;
+    vecd m_position;
+
+public:
+    Grid(vec<size_t> grid_size, double tile_size);
+
+    virtual void set_position(vecd new_pos) override { m_position = new_pos; }
+    virtual void set_rotation(double new_rot) override { NOTIMPL; }
+    virtual void set_color(Color color) override { NOTIMPL; }
+    virtual void set_scale(double) override { }
+    virtual vecd position() const override { return m_position; }
+    virtual double rotation() const override { NOTIMPL; }
+    virtual Color color() const override { NOTIMPL; }
+    virtual double scale() const override { }
+
+    void set_tile_color(vec<size_t> tile_index, Color color);
+
+    virtual void draw(GameWindow&) const override;
 };
 
 #endif // DRAWABLE_H

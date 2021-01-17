@@ -28,7 +28,7 @@ public:
 
     virtual void on_update(float) override {
         auto& transform = parent().transform();
-        transform.move_by({ 0.05, 0 });
+        transform.move_by({ 0.1, 0 });
     }
 };
 /*
@@ -85,6 +85,23 @@ public:
     }
 };
 */
+
+class GridComponent : public Component
+{
+    OBJNAME(GridComponent)
+private:
+    Grid m_grid;
+
+public:
+    GridComponent(Entity& e)
+        : Component(e)
+        , m_grid({ 10, 10 }, 15) { }
+        
+    virtual void on_draw(DrawSurface& surface) override {
+        surface.draw(m_grid);
+    }
+};
+
 int main(int, char**) {
     Application app("AntSim3", { 1280, 720 });
 
@@ -92,7 +109,8 @@ int main(int, char**) {
 
     auto entity = world.add_entity({ 100, 200 });
     auto shared_entity = entity.lock();
-    (void)shared_entity->add_component<SpriteComponent>(vecd { 10, 10 }, vecd { 100, 100 }, Color::White, "sprite1.png");
+    //(void)shared_entity->add_component<SpriteComponent>(vecd { 0 }, vecd { 100, 100 }, Color::White, "planet.png");
+    (void)shared_entity->add_component<GridComponent>();
 
     return app.run();
 }

@@ -66,3 +66,39 @@ Drawable& Drawable::operator=(const Drawable&) {
 bool DrawablePointerWrapper::operator==(const DrawablePointerWrapper& wrapper) const {
     return ptr->id() == wrapper.ptr->id();
 }
+
+static constexpr size_t index_3to1(size_t x, size_t y, size_t z, size_t width, size_t depth) {
+    return x * depth + y * width * depth + z;
+}
+
+Grid::Grid(vec<size_t> grid_size, double tile_size)
+    : m_varray(sf::PrimitiveType::Quads, grid_size.x * grid_size.y * 4) // x * y * (4 vertices)
+    , m_grid_size(grid_size)
+    , m_tile_size(tile_size) {
+    for (size_t x = 0; x < grid_size.x; ++x) {
+        for (size_t y = 0; y < grid_size.y; ++y) {
+            /*
+             *   |     |
+         *  -----+-----+
+         *       |     |
+         *       |     |
+         *  -----+-----+
+         */
+            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].position = { float(x * m_tile_size), float(y * m_tile_size) };
+            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].position = { float(x * m_tile_size + m_tile_size), float(y * m_tile_size) };
+            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].position = { float(x * m_tile_size + m_tile_size), float(y * m_tile_size + m_tile_size) };
+            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].position = { float(x * m_tile_size), float(y * m_tile_size + m_tile_size) };
+            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].color = sf::Color(random(), random(), random(), 255);
+            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].color = sf::Color(random(), random(), random(), 255);
+            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].color = sf::Color(random(), random(), random(), 255);
+            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].color = sf::Color(random(), random(), random(), 255);
+        }
+    }
+}
+
+void Grid::set_tile_color(vec<size_t> tile_index, Color color) {
+}
+
+void Grid::draw(GameWindow& window) const {
+    window.draw(m_varray);
+}

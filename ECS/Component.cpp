@@ -28,10 +28,11 @@ std::stringstream TransformComponent::to_stream() const {
     TS_END();
 }
 
-SpriteComponent::SpriteComponent(Entity& e, const vecd& parent_position, const vecd& sprite_size, const Color& color, const std::string& name)
+SpriteComponent::SpriteComponent(Entity& e, const vecd& sprite_offset, const vecd& sprite_size, const Color& color, const std::string& name)
     : Component(e)
     , m_texture_name(name)
-    , m_drawable(parent_position, sprite_size, 0) {
+    , m_sprite_offset(sprite_offset)
+    , m_drawable(sprite_offset, sprite_size, 0) {
     m_drawable.set_color(color);
     if (!name.empty()) {
         m_texture = resource_manager().load_texture(name);
@@ -42,6 +43,7 @@ SpriteComponent::SpriteComponent(Entity& e, const vecd& parent_position, const v
 }
 
 void SpriteComponent::on_update(float) {
+    m_drawable.set_position(parent().transform().position() + m_sprite_offset);
 }
 
 void SpriteComponent::on_draw(DrawSurface& surface) {
