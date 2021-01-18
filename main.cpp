@@ -2,32 +2,27 @@
  * Main program, where the actual antsim will go
  */
 
-#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/smart_ptr.hpp>
-#include <cmath>
 #include <chrono>
+#include <cmath>
+#include <iostream>
 
 #include <functional>
 
 #include "Engine.h"
 
 class SimpleMovementComponent
-    : public Component
-{
+    : public Component {
     OBJNAME(SimpleMovementComponent)
 
 public:
     SimpleMovementComponent(Entity& e)
         : Component(e) {
-        
-        
         on_mouse_down = [](GameWindow& window, const HID::MouseAction& action) {
             report("button {} was pressed at {}, which is {} in world coords!", action.button, action.screen_position, action.world_position(window));
         };
-        
-        
     }
 
     virtual void on_update(float) override {
@@ -89,7 +84,6 @@ public:
     }
 };
 */
-
 
 int main(int, char**) {
     Application app("AntSim3", { 1280, 720 });

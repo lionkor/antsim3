@@ -84,18 +84,18 @@ TileMap::TileMap(const vec<size_t>& grid_size, double tile_size, SharedPtr<Textu
     auto [top_left, bottom_right] = m_atlas->subtexture_coords({ 0, 0 });
     for (size_t x = 0; x < grid_size.x; ++x) {
         for (size_t y = 0; y < grid_size.y; ++y) {
-            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].position = { float(x) * float(m_tile_size), float(y) * float(m_tile_size) };
-            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].position = { float(x) * float(m_tile_size + m_tile_size), float(y) * float(m_tile_size) };
-            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].position = { float(x) * float(m_tile_size + m_tile_size), float(y) * float(m_tile_size + m_tile_size) };
-            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].position = { float(x) * float(m_tile_size), float(y) * float(m_tile_size + m_tile_size) };
+            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].position = ext::sf::to_sf_vec2f(double(x) * m_tile_size, double(y) * m_tile_size);
+            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].position = ext::sf::to_sf_vec2f(double(x) * m_tile_size + m_tile_size, double(y) * m_tile_size);
+            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].position = ext::sf::to_sf_vec2f(double(x) * m_tile_size + m_tile_size, double(y) * m_tile_size + m_tile_size);
+            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].position = ext::sf::to_sf_vec2f(double(x) * m_tile_size, double(y) * m_tile_size + m_tile_size);
             m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].color = sf::Color::White;
             m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].color = sf::Color::White;
             m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].color = sf::Color::White;
             m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].color = sf::Color::White;
-            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, top_left.y };
-            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, top_left.y };
-            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, bottom_right.y };
-            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, bottom_right.y };
+            m_varray[index_3to1(x, y, 0, m_grid_size.x, 4)].texCoords = ext::sf::to_sf_vec2f(top_left.x, top_left.y);
+            m_varray[index_3to1(x, y, 1, m_grid_size.x, 4)].texCoords = ext::sf::to_sf_vec2f(bottom_right.x, top_left.y);
+            m_varray[index_3to1(x, y, 2, m_grid_size.x, 4)].texCoords = ext::sf::to_sf_vec2f(bottom_right.x, bottom_right.y);
+            m_varray[index_3to1(x, y, 3, m_grid_size.x, 4)].texCoords = ext::sf::to_sf_vec2f(top_left.x, bottom_right.y);
         }
     }
 }
@@ -109,10 +109,10 @@ void TileMap::set_tile_color(const vec<size_t>& tile_index, Color color) {
 
 void TileMap::set_tile_texture(const vec<size_t>& tile_index, const vec<size_t>& atlas_index) {
     auto [top_left, bottom_right] = m_atlas->subtexture_coords(atlas_index);
-    m_varray[index_3to1(tile_index.x, tile_index.y, 0, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, top_left.y };
-    m_varray[index_3to1(tile_index.x, tile_index.y, 1, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, top_left.y };
-    m_varray[index_3to1(tile_index.x, tile_index.y, 2, m_grid_size.x, 4)].texCoords = sf::Vector2f { bottom_right.x, bottom_right.y };
-    m_varray[index_3to1(tile_index.x, tile_index.y, 3, m_grid_size.x, 4)].texCoords = sf::Vector2f { top_left.x, bottom_right.y };
+    m_varray[index_3to1(tile_index.x, tile_index.y, 0, m_grid_size.x, 4)].texCoords = ext::sf::to_sf_vec2f(top_left.x, top_left.y);
+    m_varray[index_3to1(tile_index.x, tile_index.y, 1, m_grid_size.x, 4)].texCoords = ext::sf::to_sf_vec2f(bottom_right.x, top_left.y);
+    m_varray[index_3to1(tile_index.x, tile_index.y, 2, m_grid_size.x, 4)].texCoords = ext::sf::to_sf_vec2f(bottom_right.x, bottom_right.y);
+    m_varray[index_3to1(tile_index.x, tile_index.y, 3, m_grid_size.x, 4)].texCoords = ext::sf::to_sf_vec2f(top_left.x, bottom_right.y);
 }
 
 void TileMap::randomize_textures() {
