@@ -11,8 +11,8 @@
 struct Color final {
     uint8_t r, g, b, a;
     Color() = default;
-    Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-        : r(r), g(g), b(b), a(a) {
+    Color(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a)
+        : r(_r), g(_g), b(_b), a(_a) {
     }
     static const Color Red;
     static const Color Green;
@@ -25,7 +25,7 @@ struct Color final {
 // pointer to Drawable, with operator== which compares by Drawable::ID
 struct DrawablePointerWrapper {
     const class Drawable* ptr;
-    bool operator==(const DrawablePointerWrapper& wrapper) const;
+    bool operator==(DrawablePointerWrapper wrapper) const;
 };
 
 class Drawable : public Object
@@ -34,9 +34,7 @@ class Drawable : public Object
 public:
     struct ID {
         size_t value;
-        bool operator==(const ID& id) {
-            return value == id.value;
-        }
+        auto operator<=>(const ID& rhs) const = default;
     };
 
 protected:
@@ -58,7 +56,7 @@ public:
         }
     }
 
-    virtual void set_position(vecd new_pos) = 0;
+    virtual void set_position(const vecd& new_pos) = 0;
     virtual void set_rotation(double new_rot) = 0;
     virtual void set_color(Color color) = 0;
     virtual void set_scale(double) = 0;
@@ -101,9 +99,9 @@ private:
     void update_internal_shape();
 
 public:
-    Rectangle(vecd pos = { 0, 0 }, vecd size = { 10, 10 }, double rotation = 0);
+    Rectangle(const vecd& pos = { 0, 0 }, const vecd& size = { 10, 10 }, double rotation = 0);
 
-    virtual void set_position(vecd new_pos) override {
+    virtual void set_position(const vecd& new_pos) override {
         m_pos = new_pos;
         update_internal_shape();
     }
@@ -143,26 +141,26 @@ private:
     SharedPtr<TextureAtlas> m_atlas;
 
 public:
-    TileMap(vec<size_t> grid_size, double tile_size, SharedPtr<TextureAtlas> atlas);
+    TileMap(const vec<size_t> &grid_size, double tile_size, SharedPtr<TextureAtlas> atlas);
 
-    virtual void set_position(vecd new_pos) override { m_position = new_pos; }
-    virtual void set_rotation(double new_rot) override { NOTIMPL; }
-    virtual void set_color(Color color) override { NOTIMPL; }
-    virtual void set_scale(double) override { }
+    virtual void set_position(const vecd& new_pos) override { m_position = new_pos; }
+    virtual void set_rotation(double) override { NOTIMPL; }
+    virtual void set_color(Color) override { NOTIMPL; }
+    virtual void set_scale(double) override { NOTIMPL; }
     virtual vecd position() const override { return m_position; }
-    virtual double rotation() const override { NOTIMPL; }
-    virtual Color color() const override { NOTIMPL; }
-    virtual double scale() const override { }
+    virtual double rotation() const override { return 0; }
+    virtual Color color() const override { return Color::Black; }
+    virtual double scale() const override { return 1; }
 
     vec<size_t> grid_size() const { return m_grid_size; }
 
-    [[deprecated]] void set_tile_color(vec<size_t> tile_index, Color color);
-    void set_tile_texture(vec<size_t> tile_index, vec<size_t> atlas_index);
+    [[deprecated]] void set_tile_color(const vec<size_t>& tile_index, Color color);
+    void set_tile_texture(const vec<size_t>& tile_index, const vec<size_t>& atlas_index);
 
     vec<size_t> atlas_size() const {
         return m_atlas->atlas_size();
     }
-    
+
     void randomize_textures();
 
     virtual void draw(GameWindow&) const override;

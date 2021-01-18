@@ -6,10 +6,9 @@ void Ray::try_intersect(PhysicalObject& obj) {
         m_hit.add_hit(static_cast<IHittable*>(&obj));
 }
 
-RayHit&& Ray::result() {
-    return std::move(m_hit);
+RayHit Ray::result() const {
+    return m_hit;
 }
-
 
 std::stringstream Ray::to_stream() const {
     auto ss = Object::to_stream();

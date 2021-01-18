@@ -1,13 +1,13 @@
 ﻿#ifndef VEC_H
 #define VEC_H
 
-#include "Utils/DebugTools.h"
-#include "Core/Object.h"
 #include "Core/Math.h"
-#include <type_traits>
-#include <tuple>
-#include <ostream>
+#include "Core/Object.h"
+#include "Utils/DebugTools.h"
 #include <SFML/Graphics.hpp>
+#include <ostream>
+#include <tuple>
+#include <type_traits>
 
 /// Minimal 2D-vector struct.
 template<typename T>
@@ -18,7 +18,8 @@ struct vec {
     vec() = default;
 
     vec(const vec& other)
-        : x(other.x), y(other.y) {
+        : x(other.x)
+        , y(other.y) {
     }
 
     vec& operator=(const vec& other) {
@@ -35,31 +36,35 @@ struct vec {
     }
 
     explicit vec(const sf::Vector2f& other)
-        : x(other.x), y(other.y) {
+        : x(other.x)
+        , y(other.y) {
     }
 
     explicit vec(const sf::Vector2i& other)
-        : x(other.x), y(other.y) {
+        : x(other.x)
+        , y(other.y) {
     }
 
     template<class OtherT>
     vec(const vec<OtherT>& other)
-        : x(other.x), y(other.y) {
+        : x(T(other.x))
+        , y(T(other.y)) {
     }
 
     template<class OtherT>
     vec& operator=(const vec<OtherT>& other) {
-        x = other.x;
-        y = other.y;
+        x = T(other.x);
+        y = T(other.y);
         return *this;
     }
 
-
     vec(T _x, T _y)
-        : x(static_cast<T>(_x)), y(static_cast<T>(_y)) { }
+        : x(static_cast<T>(_x))
+        , y(static_cast<T>(_y)) { }
 
     explicit vec(T val)
-        : x(static_cast<T>(val)), y(static_cast<T>(val)) { }
+        : x(static_cast<T>(val))
+        , y(static_cast<T>(val)) { }
 
     inline std::tuple<T, T> get() const { return std::tie(x, y); }
 
@@ -124,7 +129,7 @@ struct vec {
 
     static constexpr T distance_squared(const vec<T>& a, const vec<T>& b) noexcept {
         return (a.x - b.x) * (a.x - b.x)
-               + (a.y - b.y) * (a.y - b.y);
+            + (a.y - b.y) * (a.y - b.y);
     }
 };
 

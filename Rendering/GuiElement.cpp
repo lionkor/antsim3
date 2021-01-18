@@ -3,8 +3,8 @@
 
 GuiElement::GuiElement(Application& app, const vecu& screen_pos, const vecd& scale, const std::string& text, sf::Color color)
     : m_app(app) {
-    m_text_obj.setPosition(screen_pos.x, screen_pos.y);
-    m_text_obj.setScale(scale.x, scale.y);
+    m_text_obj.setPosition(float(screen_pos.x), float(screen_pos.y));
+    m_text_obj.setScale(float(scale.x), float(scale.y));
     m_text_obj.setFillColor(color);
     m_text_obj.setString(text);
     auto result = m_app.resource_manager().get_resource_by_name("mono.ttf");

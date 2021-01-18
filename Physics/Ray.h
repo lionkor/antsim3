@@ -49,7 +49,7 @@ public:
     /// to the internal RayHit instance.
     void try_intersect(PhysicalObject& obj);
     /// Get the results of the raycast operation. Invalidates this Ray.
-    RayHit&& result();
+    RayHit result() const;
 
     // Object interface
 public:

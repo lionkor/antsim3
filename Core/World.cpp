@@ -52,6 +52,7 @@ RayHit World::try_hit(const vec<double>& pos) {
     Ray ray(pos);
     for (auto& object : m_entities) {
         // TODO BROKEN MESS
+        (void)object;
     }
     RayHit hit = ray.result();
     for (auto& h : hit) {

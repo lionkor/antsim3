@@ -9,9 +9,9 @@ DrawSurface::DrawSurface(GameWindow& window)
 
 void DrawSurface::draw(const Drawable& drawable) {
     m_drawables.insert(drawable.get_pointer());
-    drawable.set_disable_fn([this](Drawable& drawable) {
+    drawable.set_disable_fn([this](const Drawable& _drawable) {
         report("drawable released");
-        m_drawables.erase(drawable.get_pointer());
+        m_drawables.erase(_drawable.get_pointer());
     });
 }
 

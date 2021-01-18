@@ -10,6 +10,8 @@ IEventReceiver::~IEventReceiver() {
 }
 
 bool IEventReceiver::operator==(const IEventReceiver&) const {
+    NOTIMPL;
+    return false;
 }
 
 void IEventReceiver::handle(Event&) {

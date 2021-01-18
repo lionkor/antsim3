@@ -2,9 +2,9 @@
 #define DEBUGTOOLS_H
 
 #include <cstdio>
-#include <stdlib.h>
-#include <libgen.h>
 #include <iostream>
+#include <libgen.h>
+#include <stdlib.h>
 // TODO: common.h, precompiled
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
@@ -50,12 +50,9 @@ static const char* const ANSI_UNDERLINE = "\u001b[4m";
 #define FILENAME (std::string(basename(FILE_C_STRING)))
 #define nameof(x) #x
 
-
 #define HERE() fmt::format("{}:{}, {}", FILENAME, __LINE__, __FUNCTION__)
 
-
 namespace impl {
-
 
 #ifndef STRIP_ALL
 
@@ -198,5 +195,33 @@ inline void dump_hex(const char* data, size_t size) {
 }
 
 #endif
+
+template<typename T>
+concept ImplementsOutstreamOperator = requires(T a) {
+    std::ostream() << a;
+};
+
+template<typename T>
+concept IterableContainer = requires(T a) {
+    a.begin();
+    a.end();
+    a[0];
+};
+
+template<typename T>
+concept IterableContainerNotString = IterableContainer<T> && !std::is_convertible_v<T, std::string>;
+
+template<IterableContainerNotString ContainerT>
+std::ostream& operator<<(std::ostream& os, const ContainerT& container) {
+    os << "{ ";
+    for (auto iter = container.begin(); iter != container.end(); ++iter) {
+        os << *iter;
+        if (auto end_copy = container.end(); iter != --end_copy) {
+            os << ", ";
+        }
+    }
+    os << " }";
+    return os;
+}
 
 #endif // DEBUGTOOLS_H

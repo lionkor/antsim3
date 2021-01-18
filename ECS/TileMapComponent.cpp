@@ -11,7 +11,7 @@ TileMapComponent::TileMapComponent(Entity& e, vec<size_t> grid_size, double tile
     m_grid.set_tile_texture({ 2, 2 }, { 1, 0 });
 }
 
-void TileMapComponent::on_update(float dt) {
+void TileMapComponent::on_update(float) {
     m_grid.set_position(parent().transform().position());
 }
 

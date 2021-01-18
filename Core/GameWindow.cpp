@@ -69,7 +69,7 @@ void GameWindow::handle_events() {
             break;
         }
         case sf::Event::Resized: {
-            sf::FloatRect visibleArea(0.f, 0.f, m_event.size.width, m_event.size.height);
+            sf::FloatRect visibleArea(0.f, 0.f, float(m_event.size.width), float(m_event.size.height));
             auto view = getView();
             view.reset(visibleArea);
             setView(view);

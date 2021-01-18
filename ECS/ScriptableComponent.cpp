@@ -1,8 +1,10 @@
 #include "ScriptableComponent.h"
 
 #include "Core/Application.h"
-#include "Utils/stl_ext.h"
 #include "Utils/Constants.h"
+#include "Utils/stl_ext.h"
+
+#include "Rendering/ext_sf.h"
 
 namespace LuaLib {
 
@@ -50,155 +52,154 @@ void end_table_entry(lua_State* L) {
 }
 
 namespace Engine {
-// void log_error(string)
-static int log_error(lua_State* L) {
-    const char* arg = luaL_checkstring(L, 1);
-    lua_pop(L, 1);
-    lua_getglobal(L, "g_scriptfile_name");
-    const char* scriptname = lua_tostring(L, 1);
-    impl::report_impl("{}{}[{}LUA{}{} ERROR] in {}: {}{}\n", ANSI_RESET, ANSI_RED, ANSI_BOLD, ANSI_RESET, ANSI_RED, scriptname, arg, ANSI_RESET);
-    return 0;
-}
-
-// void log_warning(string)
-static int log_warning(lua_State* L) {
-    const char* arg = luaL_checkstring(L, 1);
-    lua_pop(L, 1);
-    lua_getglobal(L, "g_scriptfile_name");
-    const char* scriptname = lua_tostring(L, 1);
-    impl::report_impl("{}{}[{}LUA{}{} WARNING] in {}: {}{}\n", ANSI_RESET, ANSI_YELLOW, ANSI_BOLD, ANSI_RESET, ANSI_YELLOW, scriptname, arg, ANSI_RESET);
-    return 0;
-}
-
-// void log_info(string)
-static int log_info(lua_State* L) {
-    const char* arg = luaL_checkstring(L, 1);
-    lua_pop(L, 1);
-    lua_getglobal(L, "g_scriptfile_name");
-    const char* scriptname = lua_tostring(L, 1);
-    impl::report_impl("[{}LUA{} INFO] in {}: {}\n", ANSI_BOLD, ANSI_RESET, scriptname, arg);
-    return 0;
-}
-
-// number,number world_to_screen_pos(number, number)
-static int world_to_screen_pos(lua_State* L) {
-    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
-        double x = luaL_checknumber(L, 1);
-        double y = luaL_checknumber(L, 2);
-        lua_pop(L, 2);
-        Component* comp = get_component(L, 0);
-        auto vec = comp->window().mapCoordsToPixel(sf::Vector2f(x, y));
-        lua_pushnumber(L, vec.x);
-        lua_pushnumber(L, vec.y);
-        return 2;
-    } else {
-        throw_error(L, "Engine.world_to_screen_pos expects two numbers as arguments");
+    // void log_error(string)
+    static int log_error(lua_State* L) {
+        const char* arg = luaL_checkstring(L, 1);
+        lua_pop(L, 1);
+        lua_getglobal(L, "g_scriptfile_name");
+        const char* scriptname = lua_tostring(L, 1);
+        impl::report_impl("{}{}[{}LUA{}{} ERROR] in {}: {}{}\n", ANSI_RESET, ANSI_RED, ANSI_BOLD, ANSI_RESET, ANSI_RED, scriptname, arg, ANSI_RESET);
+        return 0;
     }
-    return 0;
-}
 
-static const luaL_Reg g_engine_lib[] = {
-    { "log_error", log_error },
-    { "log_warning", log_warning },
-    { "log_info", log_info },
-    { "world_to_screen_pos", world_to_screen_pos },
-};
+    // void log_warning(string)
+    static int log_warning(lua_State* L) {
+        const char* arg = luaL_checkstring(L, 1);
+        lua_pop(L, 1);
+        lua_getglobal(L, "g_scriptfile_name");
+        const char* scriptname = lua_tostring(L, 1);
+        impl::report_impl("{}{}[{}LUA{}{} WARNING] in {}: {}{}\n", ANSI_RESET, ANSI_YELLOW, ANSI_BOLD, ANSI_RESET, ANSI_YELLOW, scriptname, arg, ANSI_RESET);
+        return 0;
+    }
+
+    // void log_info(string)
+    static int log_info(lua_State* L) {
+        const char* arg = luaL_checkstring(L, 1);
+        lua_pop(L, 1);
+        lua_getglobal(L, "g_scriptfile_name");
+        const char* scriptname = lua_tostring(L, 1);
+        impl::report_impl("[{}LUA{} INFO] in {}: {}\n", ANSI_BOLD, ANSI_RESET, scriptname, arg);
+        return 0;
+    }
+
+    // number,number world_to_screen_pos(number, number)
+    static int world_to_screen_pos(lua_State* L) {
+        if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+            double x = luaL_checknumber(L, 1);
+            double y = luaL_checknumber(L, 2);
+            lua_pop(L, 2);
+            Component* comp = get_component(L, 0);
+            auto vec = comp->window().mapCoordsToPixel(ext::sf::to_sf_vec2f(x, y));
+            lua_pushnumber(L, vec.x);
+            lua_pushnumber(L, vec.y);
+            return 2;
+        } else {
+            throw_error(L, "Engine.world_to_screen_pos expects two numbers as arguments");
+        }
+        return 0;
+    }
+
+    static const luaL_Reg g_engine_lib[] = {
+        { "log_error", log_error },
+        { "log_warning", log_warning },
+        { "log_info", log_info },
+        { "world_to_screen_pos", world_to_screen_pos },
+    };
 
 }
 
 namespace Vec {
 
-
-// number,number normalize(number,number)
-static int normalize(lua_State* L) {
-    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
-        double x = luaL_checknumber(L, 1);
-        double y = luaL_checknumber(L, 2);
-        lua_pop(L, 2);
-        vecd v(x, y);
-        v.normalize();
-        lua_pushnumber(L, v.x);
-        lua_pushnumber(L, v.y);
-        return 2;
-    } else {
-        throw_error(L, "Vec.normalize expects two numbers as arguments");
+    // number,number normalize(number,number)
+    static int normalize(lua_State* L) {
+        if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+            double x = luaL_checknumber(L, 1);
+            double y = luaL_checknumber(L, 2);
+            lua_pop(L, 2);
+            vecd v(x, y);
+            v.normalize();
+            lua_pushnumber(L, v.x);
+            lua_pushnumber(L, v.y);
+            return 2;
+        } else {
+            throw_error(L, "Vec.normalize expects two numbers as arguments");
+        }
+        return 0;
     }
-    return 0;
-}
 
-// number length(number,number)
-static int length(lua_State* L) {
-    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
-        double x = luaL_checknumber(L, 1);
-        double y = luaL_checknumber(L, 2);
-        lua_pop(L, 2);
-        vecd v(x, y);
-        lua_pushnumber(L, v.length());
-        return 1;
-    } else {
-        throw_error(L, "Vec.length expects two numbers as arguments");
+    // number length(number,number)
+    static int length(lua_State* L) {
+        if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+            double x = luaL_checknumber(L, 1);
+            double y = luaL_checknumber(L, 2);
+            lua_pop(L, 2);
+            vecd v(x, y);
+            lua_pushnumber(L, v.length());
+            return 1;
+        } else {
+            throw_error(L, "Vec.length expects two numbers as arguments");
+        }
+        return 0;
     }
-    return 0;
-}
 
-static const luaL_Reg g_vec_lib[] = {
-    { "normalize", normalize },
-    { "length", length },
-};
+    static const luaL_Reg g_vec_lib[] = {
+        { "normalize", normalize },
+        { "length", length },
+    };
 
 }
 
 namespace Entity {
 
-// number,number position()
-static int position(lua_State* L) {
-    ::Entity* entity = get_entity(L, 0);
-    lua_pushnumber(L, entity->transform().position().x);
-    lua_pushnumber(L, entity->transform().position().y);
-    return 2;
-}
-
-// number rotation()
-static int rotation(lua_State* L) {
-    ::Entity* entity = get_entity(L, 0);
-    lua_pushnumber(L, entity->transform().rotation());
-    return 1;
-}
-
-// void move_by(dx, dy)
-static int move_by(lua_State* L) {
-    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
-        double dx = luaL_checknumber(L, 1);
-        double dy = luaL_checknumber(L, 2);
-        lua_pop(L, 2);
+    // number,number position()
+    static int position(lua_State* L) {
         ::Entity* entity = get_entity(L, 0);
-        entity->transform().move_by(vecd { dx, dy });
-    } else {
-        throw_error(L, "Entity.move_by expects two numbers as arguments");
+        lua_pushnumber(L, entity->transform().position().x);
+        lua_pushnumber(L, entity->transform().position().y);
+        return 2;
     }
-    return 0;
-}
 
-// void set_position(dx, dy)
-static int set_position(lua_State* L) {
-    if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
-        double dx = luaL_checknumber(L, 1);
-        double dy = luaL_checknumber(L, 2);
-        lua_pop(L, 2);
+    // number rotation()
+    static int rotation(lua_State* L) {
         ::Entity* entity = get_entity(L, 0);
-        entity->transform().set_position(vecd { dx, dy });
-    } else {
-        throw_error(L, "Entity.set_position expects two numbers as arguments");
+        lua_pushnumber(L, entity->transform().rotation());
+        return 1;
     }
-    return 0;
-}
 
-static const luaL_Reg g_entity_lib[] = {
-    { "position", Entity::position },
-    { "rotation", Entity::rotation },
-    { "move_by", Entity::move_by },
-    { "set_position", Entity::set_position },
-};
+    // void move_by(dx, dy)
+    static int move_by(lua_State* L) {
+        if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+            double dx = luaL_checknumber(L, 1);
+            double dy = luaL_checknumber(L, 2);
+            lua_pop(L, 2);
+            ::Entity* entity = get_entity(L, 0);
+            entity->transform().move_by(vecd { dx, dy });
+        } else {
+            throw_error(L, "Entity.move_by expects two numbers as arguments");
+        }
+        return 0;
+    }
+
+    // void set_position(dx, dy)
+    static int set_position(lua_State* L) {
+        if (lua_isnumber(L, 1) && lua_isnumber(L, 2)) {
+            double dx = luaL_checknumber(L, 1);
+            double dy = luaL_checknumber(L, 2);
+            lua_pop(L, 2);
+            ::Entity* entity = get_entity(L, 0);
+            entity->transform().set_position(vecd { dx, dy });
+        } else {
+            throw_error(L, "Entity.set_position expects two numbers as arguments");
+        }
+        return 0;
+    }
+
+    static const luaL_Reg g_entity_lib[] = {
+        { "position", Entity::position },
+        { "rotation", Entity::rotation },
+        { "move_by", Entity::move_by },
+        { "set_position", Entity::set_position },
+    };
 
 }
 
@@ -373,7 +374,6 @@ ScriptableComponent::ScriptableComponent(Entity& e, const std::string& scriptfil
         auto* data = maybe_lazyfile.value().get().load();
         m_script_code = std::string(data->begin(), data->end());
     }
-
 
     /*
     std::function<void(GameWindow&, const HID::MouseAction&)> on_mouse_down { nullptr };
