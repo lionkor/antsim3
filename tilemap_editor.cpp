@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
 
     Application app("tilemap editor", { 1280, 720 });
     auto gui_layer = app.window().add_gui_layer<GuiLayer>();
-    gui_layer.lock()->
+    gui_layer.lock()->add_widget<TextWidget>({ 10, 10 }, "my text");
 
     auto tilemap_entity = app.world().add_entity({ 0, 0 });
 

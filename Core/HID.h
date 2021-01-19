@@ -7,13 +7,13 @@
  */
 
 #include "Physics/vec.h"
-#include "Core/GameWindow.h"
 #include <SFML/Graphics.hpp>
+
+class GameWindow;
 
 namespace HID {
 
-enum MouseButton
-{
+enum MouseButton {
     Left = 0,
     Right = 1,
     Middle = 2,

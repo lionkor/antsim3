@@ -129,3 +129,10 @@ void TileMap::randomize_textures() {
 void TileMap::draw(GameWindow& window) const {
     window.draw(m_varray, sf::RenderStates(sf::BlendAlpha, sf::Transform().translate(ext::sf::to_sf_vec2f(m_position)), m_atlas->texture(), nullptr));
 }
+
+Text::Text(const vecd& pos, uint32_t font_size, const std::string& text, const sf::Font& font)
+    : m_position(pos)
+    , m_font_size(font_size)
+    , m_font(font)
+    , m_text(text, font, font_size) {
+}

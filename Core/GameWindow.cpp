@@ -90,6 +90,9 @@ void GameWindow::handle_mouse_button_press() {
         entity_ptr->on_mouse_down(*this, action);
         return true;
     });
+    for (auto& gui_layer : m_gui_layers) {
+        gui_layer->on_mouse_click(action);
+    }
 }
 
 void GameWindow::handle_mouse_button_release() {

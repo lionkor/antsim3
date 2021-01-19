@@ -1,5 +1,7 @@
 ﻿#include "HID.h"
 
+#include "GameWindow.h"
+
 
 static inline HID::MouseButton from_sf_mouse_button(sf::Mouse::Button button) {
     // just cast

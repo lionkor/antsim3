@@ -1,8 +1,8 @@
 #ifndef DRAWABLE_H
 #define DRAWABLE_H
 
-#include "Physics/vec.h"
 #include "Core/Object.h"
+#include "Physics/vec.h"
 #include "TextureAtlas.h"
 
 #include <SFML/Graphics.hpp>
@@ -12,7 +12,10 @@ struct Color final {
     uint8_t r, g, b, a;
     Color() = default;
     Color(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a)
-        : r(_r), g(_g), b(_b), a(_a) {
+        : r(_r)
+        , g(_g)
+        , b(_b)
+        , a(_a) {
     }
     static const Color Red;
     static const Color Green;
@@ -28,8 +31,7 @@ struct DrawablePointerWrapper {
     bool operator==(DrawablePointerWrapper wrapper) const;
 };
 
-class Drawable : public Object
-{
+class Drawable : public Object {
     OBJNAME(Drawable)
 public:
     struct ID {
@@ -73,7 +75,6 @@ public:
     virtual void set_disable_fn(decltype(m_disable_fn) disable_fn) const final { m_disable_fn = disable_fn; }
 };
 
-
 namespace std {
 template<>
 struct hash<DrawablePointerWrapper> {
@@ -83,8 +84,7 @@ struct hash<DrawablePointerWrapper> {
 };
 }
 
-class Rectangle : public Drawable
-{
+class Rectangle : public Drawable {
     OBJNAME(Rectangle)
 private:
     vecd m_pos;
@@ -130,8 +130,7 @@ public:
     virtual void draw(class GameWindow& window) const override;
 };
 
-class TileMap : public Drawable
-{
+class TileMap : public Drawable {
     OBJNAME(TileMap)
 private:
     sf::VertexArray m_varray;
@@ -141,7 +140,7 @@ private:
     SharedPtr<TextureAtlas> m_atlas;
 
 public:
-    TileMap(const vec<size_t> &grid_size, double tile_size, SharedPtr<TextureAtlas> atlas);
+    TileMap(const vec<size_t>& grid_size, double tile_size, SharedPtr<TextureAtlas> atlas);
 
     virtual void set_position(const vecd& new_pos) override { m_position = new_pos; }
     virtual void set_rotation(double) override { NOTIMPL; }
@@ -164,6 +163,28 @@ public:
     void randomize_textures();
 
     virtual void draw(GameWindow&) const override;
+};
+
+class Text : public Drawable {
+    OBJNAME(Text)
+private:
+    vecd m_position;
+    double m_font_size;
+    sf::Font m_font;
+    sf::Text m_text;
+
+public:
+    Text(const vecd& pos, uint32_t font_size, const std::string& text, const sf::Font& font);
+
+    void set_position(const vecd& new_pos) { m_position = new_pos; }
+    void set_rotation(double new_rot) {}
+    void set_color(Color color);
+    void set_scale(double);
+    vecd position() const;
+    double rotation() const;
+    Color color() const;
+    double scale() const;
+    void draw(GameWindow&) const;
 };
 
 #endif // DRAWABLE_H

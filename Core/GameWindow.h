@@ -95,7 +95,11 @@ public:
 
     template<typename T, typename... Args>
     requires(std::derived_from<T, GuiLayer>)
-        [[nodiscard]] WeakPtr<GuiLayer> add_gui_layer(Args&&...);
+        [[nodiscard]] WeakPtr<T> add_gui_layer(Args&&...);
+
+    const std::vector<SharedPtr<GuiLayer>>& gui_layers() const {
+        return m_gui_layers;
+    }
 
     // Object interface
 public:
@@ -104,8 +108,10 @@ public:
 
 template<typename T, typename... Args>
 requires(std::derived_from<T, GuiLayer>)
-    [[nodiscard]] WeakPtr<GuiLayer> GameWindow::add_gui_layer(Args&&... args) {
-    m_gui_layers.push_back(new T(std::forward<Args>(args)...));
+    [[nodiscard]] WeakPtr<T> GameWindow::add_gui_layer(Args&&... args) {
+    SharedPtr<T> ptr(new T(m_application, std::forward<Args>(args)...));
+    m_gui_layers.push_back(ptr);
+    return ptr;
 }
 
 #endif // GAMEWINDOW_H
