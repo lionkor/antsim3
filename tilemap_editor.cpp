@@ -19,8 +19,12 @@ int main(int argc, char** argv) {
     report("w, h: {}, {}", width, height);
 
     Application app("tilemap editor", { 1280, 720 });
+    auto gui_layer = app.window().add_gui_layer<GuiLayer>();
+    gui_layer.lock()->
 
     auto tilemap_entity = app.world().add_entity({ 0, 0 });
 
-    tilemap_entity.lock()->add_component<TileMapComponent>();
+    //tilemap_entity.lock()->add_component<TileMapComponent>();
+
+    return app.run();
 }

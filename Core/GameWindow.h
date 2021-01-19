@@ -2,20 +2,21 @@
 #define GAMEWINDOW_H
 
 #include <SFML/Graphics.hpp>
-#include <memory>
 #include <chrono>
+#include <concepts>
 #include <fstream>
+#include <memory>
 
 #include <limits>
 
 #include "Core/Object.h"
+#include "Gui/GuiLayer.h"
 #include "Physics/Ray.h"
 #include "Rendering/Draw.h"
 #include "Rendering/GuiElement.h"
 #include "Utils/Managed.h"
 
-class FpsLogger
-{
+class FpsLogger {
 private:
     std::ofstream m_file;
 
@@ -37,8 +38,7 @@ public:
 /// Manages anything window- and rendering related.
 class GameWindow
     : public Object,
-      public sf::RenderWindow
-{
+      public sf::RenderWindow {
     OBJNAME(GameWindow)
 
     friend class Application;
@@ -53,6 +53,7 @@ protected:
     std::string m_title;
     sf::Color m_clear_color;
     class Application& m_application;
+    std::vector<SharedPtr<GuiLayer>> m_gui_layers; // should be very few
 
     // FIXME: We should check somewhere if this is not nullptr anymore
 
@@ -92,9 +93,19 @@ public:
     /// Callback that is called whenever the left mouse button has been clicked.
     std::function<void(const vecd&)> on_left_click { nullptr };
 
+    template<typename T, typename... Args>
+    requires(std::derived_from<T, GuiLayer>)
+        [[nodiscard]] WeakPtr<GuiLayer> add_gui_layer(Args&&...);
+
     // Object interface
 public:
     virtual std::stringstream to_stream() const override;
 };
+
+template<typename T, typename... Args>
+requires(std::derived_from<T, GuiLayer>)
+    [[nodiscard]] WeakPtr<GuiLayer> GameWindow::add_gui_layer(Args&&... args) {
+    m_gui_layers.push_back(new T(std::forward<Args>(args)...));
+}
 
 #endif // GAMEWINDOW_H

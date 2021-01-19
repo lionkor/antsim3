@@ -68,6 +68,7 @@ add_library(Engine SHARED
     Utils/ArgsParser.cpp
     Network/UDPServer.cpp
     Network/UDPClient.cpp
+    Gui/GuiLayer.cpp
 
     # fmt
     fmt/src/format.cc
