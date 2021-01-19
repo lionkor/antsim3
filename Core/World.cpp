@@ -82,16 +82,8 @@ void World::update(GameWindow& window, float dt) {
         entity->on_draw(surface);
     }
 
-    // TODO: Deprecate
-    auto& gui_elems = m_application.gui_elements();
-    for (auto& element : gui_elems) {
-        element->update(dt);
-        element->draw(surface);
-    }
-
     for (const auto& gui_layer : window.gui_layers()) {
         gui_layer->on_update(dt);
-        gui_layer->on_draw(surface);
     }
 
     surface.finalize();

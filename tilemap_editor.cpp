@@ -20,7 +20,15 @@ int main(int argc, char** argv) {
 
     Application app("tilemap editor", { 1280, 720 });
     auto gui_layer = app.window().add_gui_layer<GuiLayer>();
-    gui_layer.lock()->add_widget<TextWidget>({ 10, 10 }, "my text");
+    auto font = app.resource_manager().load_font("mono.ttf");
+    ASSERT(!!font);
+    auto widget = gui_layer.lock()->add_widget<Widget>(vecd { 10, 10 }, vecd { 40, 20 }, fmt::format("new map {}x{}", width, height), *font);
+    widget.lock()->set_resize_to_text(true);
+    widget.lock()->set_background_color(Color::White);
+    widget.lock()->on_click_callback = [&](Widget& widget, const vecd&) {
+        report("{} was clicked!", widget);
+        widget.disable();
+    };
 
     auto tilemap_entity = app.world().add_entity({ 0, 0 });
 

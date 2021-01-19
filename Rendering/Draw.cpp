@@ -20,16 +20,15 @@ void DrawSurface::finalize() {
         drawable.ptr->draw(m_window);
     }
 
-    /*
     // if it takes too long, we could update until a certain amount of time has passed,
     // or just do this in a seperate thread
     auto cached_view = m_window.getView();
+    m_gui_view.reset(sf::FloatRect(0, 0, m_window.getSize().x, m_window.getSize().y));
     m_window.setView(m_gui_view);
-    for (auto& text : m_texts) {
-        m_window.draw(text.get());
+    for (auto& layer : m_window.gui_layers()) {
+        layer->on_draw(m_window);
     }
     m_window.setView(cached_view);
-    m_texts.clear();
-    */
+
     m_window.display();
 }

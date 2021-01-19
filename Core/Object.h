@@ -1,10 +1,10 @@
 ﻿#ifndef OBJNAME_H
 #define OBJNAME_H
 
-#include <string>
-#include <sstream>
-#include <functional>
 #include <atomic>
+#include <functional>
+#include <sstream>
+#include <string>
 
 #define SHOW_UUID 0
 
@@ -20,8 +20,7 @@ using UUID = size_t;
 
 static inline std::atomic_size_t s_uuid_counter = 0;
 
-class Object
-{
+class Object {
 private:
     UUID m_uuid;
 
@@ -105,7 +104,9 @@ public:                                               \
 
 #define TS_BEGIN(base_class) auto ss = base_class::to_stream()
 #define TS_PROP(property) ss << #property << "=" << property << ";"
+#define TS_PROP_STR(property) ss << #property << "=\"" << property << "\";"
 #define TS_PROP_S(name, property) ss << name << "=" << property << ";"
+#define TS_PROP_S_STR(name, property) ss << name << "=\"" << property << "\";"
 #define TS_PROP_M(property)                                        \
     do {                                                           \
         auto __name = std::string(#property);                      \
@@ -117,6 +118,18 @@ public:                                               \
         if (__res != __name.end())                                 \
             __name.erase(__res);                                   \
         ss << __name << "=" << property << ";";                    \
+    } while (false)
+#define TS_PROP_M_STR(property)                                        \
+    do {                                                           \
+        auto __name = std::string(#property);                      \
+        __name.erase(0, 2);                                        \
+        auto __res = std::find(__name.begin(), __name.end(), '('); \
+        if (__res != __name.end())                                 \
+            __name.erase(__res);                                   \
+        __res = std::find(__name.begin(), __name.end(), ')');      \
+        if (__res != __name.end())                                 \
+            __name.erase(__res);                                   \
+        ss << __name << "=\"" << property << "\";";                    \
     } while (false)
 
 #define TS_END() return ss

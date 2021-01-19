@@ -25,6 +25,10 @@ struct Color final {
     static const Color Transparent;
 };
 
+inline std::ostream& operator<<(std::ostream& os, const Color& color) {
+    return os << "(" << int(color.r) << ", " << int(color.g) << ", " << int(color.b) << ", " << int(color.a) << ")";
+}
+
 // pointer to Drawable, with operator== which compares by Drawable::ID
 struct DrawablePointerWrapper {
     const class Drawable* ptr;
@@ -67,7 +71,7 @@ public:
     virtual Color color() const = 0;
     virtual double scale() const = 0;
 
-    virtual void draw(class GameWindow&) const = 0;
+    virtual void draw(sf::RenderTarget&) const = 0;
 
     //  final
     virtual ID id() const final { return m_id; }
@@ -93,7 +97,7 @@ private:
     Color m_color;
     double m_rotation;
     sf::VertexArray m_shape;
-    sf::Texture* m_texture { nullptr };
+    const sf::Texture* m_texture { nullptr };
 
     // to be called whenever a field changes
     void update_internal_shape();
@@ -125,9 +129,9 @@ public:
     vecd size() const { return m_size; }
     void set_size(vecd size) { m_size = size; }
 
-    void set_texture(sf::Texture* texture);
+    void set_texture(const sf::Texture* texture);
 
-    virtual void draw(class GameWindow& window) const override;
+    virtual void draw(sf::RenderTarget& window) const override;
 };
 
 class TileMap : public Drawable {
@@ -162,7 +166,7 @@ public:
 
     void randomize_textures();
 
-    virtual void draw(GameWindow&) const override;
+    virtual void draw(sf::RenderTarget&) const override;
 };
 
 class Text : public Drawable {
@@ -177,14 +181,17 @@ public:
     Text(const vecd& pos, uint32_t font_size, const std::string& text, const sf::Font& font);
 
     void set_position(const vecd& new_pos) { m_position = new_pos; }
-    void set_rotation(double new_rot) {}
+    void set_rotation(double new_rot) { }
     void set_color(Color color);
-    void set_scale(double);
-    vecd position() const;
-    double rotation() const;
-    Color color() const;
-    double scale() const;
-    void draw(GameWindow&) const;
+    void set_scale(double) { }
+    vecd position() const { return m_position; }
+    double rotation() const { return 0.0; }
+    Color color() const { return { m_text.getFillColor().r, m_text.getFillColor().g, m_text.getFillColor().b, m_text.getFillColor().a }; }
+    double scale() const { return 1.0; }
+    void draw(sf::RenderTarget&) const;
+    void set_text(const std::string& text) { m_text.setString(text); }
+    void set_font(const sf::Font& font) { m_font = font; }
+    vecd extents() const;
 };
 
 #endif // DRAWABLE_H

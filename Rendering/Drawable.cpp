@@ -38,13 +38,13 @@ Rectangle::Rectangle(const vecd& pos, const vecd& size, double rotation)
     update_internal_shape();
 }
 
-void Rectangle::set_texture(sf::Texture* texture) {
+void Rectangle::set_texture(const sf::Texture* texture) {
     ASSERT(!!texture);
     m_texture = texture;
     update_internal_shape();
 }
 
-void Rectangle::draw(GameWindow& window) const {
+void Rectangle::draw(sf::RenderTarget& window) const {
     if (m_texture) {
         window.draw(m_shape, sf::RenderStates(m_texture));
     } else {
@@ -126,7 +126,7 @@ void TileMap::randomize_textures() {
     }
 }
 
-void TileMap::draw(GameWindow& window) const {
+void TileMap::draw(sf::RenderTarget& window) const {
     window.draw(m_varray, sf::RenderStates(sf::BlendAlpha, sf::Transform().translate(ext::sf::to_sf_vec2f(m_position)), m_atlas->texture(), nullptr));
 }
 
@@ -135,4 +135,16 @@ Text::Text(const vecd& pos, uint32_t font_size, const std::string& text, const s
     , m_font_size(font_size)
     , m_font(font)
     , m_text(text, font, font_size) {
+}
+
+void Text::set_color(Color color) {
+    m_text.setFillColor(ext::sf::to_sf_color(color));
+}
+
+void Text::draw(sf::RenderTarget& window) const {
+    window.draw(m_text, sf::Transform().translate(ext::sf::to_sf_vec2f(m_position)));
+}
+
+vecd Text::extents() const {
+    return vecd(m_text.getLocalBounds().getSize());
 }

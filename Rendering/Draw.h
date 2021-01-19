@@ -2,23 +2,21 @@
 #define DRAW_H
 
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <memory>
 #include <stack>
 #include <unordered_set>
+#include <vector>
 
 #include "Core/Object.h"
-#include "Utils/DebugTools.h"
-#include "Utils/Common.h"
-#include "Physics/vec.h"
 #include "Drawable.h"
+#include "Physics/vec.h"
+#include "Utils/Common.h"
+#include "Utils/DebugTools.h"
 
 class GameWindow;
 
-class DrawSurface
-{
+class DrawSurface {
     GameWindow& m_window;
-    
 
     std::vector<Ref<sf::Text>> m_texts;
     sf::Color m_clear_color { sf::Color::Black };

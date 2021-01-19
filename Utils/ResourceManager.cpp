@@ -87,3 +87,24 @@ Managed<sf::Texture> ResourceManager::load_texture(const std::string& name) {
     }
     return nullptr;
 }
+
+Managed<sf::Font> ResourceManager::load_font(const std::string& name) {
+    if (m_resources.contains(name)) {
+        Managed<sf::Font> font = make_managed<sf::Font>();
+        LazyFile& file = m_resources.at(name);
+        if (file.is_valid()) {
+            auto data = file.load();
+            if (font->loadFromMemory(data->data(), data->size())) {
+                return font;
+            } else {
+                report_error("an error occured loading font from memory");
+            }
+        } else {
+            report_error("error: {}", file.validation_error_message());
+            // expensive bailout, as we dealloc the texture
+        }
+    } else {
+        report_error("resource \"{}\" not found", name);
+    }
+    return nullptr;
+}
