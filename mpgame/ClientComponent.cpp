@@ -35,6 +35,7 @@ ClientComponent::ClientComponent(Entity& e, const std::string& address, uint16_t
     send_packet(conn_packet);
     m_update_thread = std::thread([this] {
         while (!parent().is_marked_destroyed()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
             update_other_players_from_server();
         }
     });
