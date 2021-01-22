@@ -31,7 +31,6 @@ PlayerComponent::~PlayerComponent() {
     }
 }
 
-
 void PlayerComponent::key_released(HID::Key key) {
     switch (key) {
     case HID::Key::W:
@@ -72,6 +71,8 @@ void PlayerComponent::key_pressed(HID::Key key) {
     }
 }
 
+vecd vel(Random::random(-10, 10), Random::random(-10, 10));
+
 void PlayerComponent::on_update(float) {
     if (!m_is_initialized) {
         m_is_initialized = true;
@@ -86,7 +87,6 @@ void PlayerComponent::on_update(float) {
         comp->send_packet(UpdatePacket { m_name, pos.x, pos.y });
     }
     if (m_is_player_controlled) {
-        vecd vel(0, 0);
         if (m_dir_pressed[0]) {
             vel.y -= 1;
         }

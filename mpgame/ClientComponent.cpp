@@ -1,4 +1,5 @@
 ﻿#include "ClientComponent.h"
+#include "Core/Application.h"
 #include "PlayerComponent.h"
 
 ClientComponent::ClientComponent(Entity& e, const std::string& address, uint16_t port, const std::string& name)
@@ -32,6 +33,11 @@ ClientComponent::ClientComponent(Entity& e, const std::string& address, uint16_t
     conn_packet.name = m_name;
     conn_packet.type = UpdatePacket::Connect;
     send_packet(conn_packet);
+    m_update_thread = std::thread([this] {
+        while (!parent().is_marked_destroyed()) {
+            update_other_players_from_server();
+        }
+    });
 }
 
 ClientComponent::~ClientComponent() {
@@ -39,6 +45,8 @@ ClientComponent::~ClientComponent() {
     disc_packet.name = m_name;
     disc_packet.type = UpdatePacket::Disconnect;
     send_packet(disc_packet);
+    // TODO: is this ok?!
+    m_update_thread.detach();
 }
 
 std::vector<Entity*>::iterator ClientComponent::find_player_with_name(const std::string& name) {
@@ -66,6 +74,7 @@ void ClientComponent::update_other_players_from_server() {
         return;
     }
 
+    //std::scoped_lock lock(m_update_mutex);
     // find player with packet.name as name
     auto player_iter = find_player_with_name(packet.name);
     if (packet.type == UpdatePacket::Disconnect) {
@@ -102,7 +111,6 @@ void ClientComponent::send_packet(const UpdatePacket& packet) {
 }
 
 void ClientComponent::on_update(float) {
-    update_other_players_from_server();
 }
 
 void ClientComponent::on_draw(DrawSurface& surface) {

@@ -26,6 +26,9 @@ private:
     double m_speed { 0.7 };
     bool m_update_to_server { true };
     sf::Font m_font;
+    
+    std::thread m_update_thread;
+    std::mutex m_update_mutex;
 
     void update_other_players_from_server();
     void handle_new_player_connected(const UpdatePacket& packet);
